@@ -8,6 +8,7 @@ import elrond from "../families/elrond/specs";
 import filecoin from "../families/filecoin/specs";
 import hedera from "../families/hedera/specs";
 import internet_computer from "../families/internet_computer/specs";
+import mimblewimble_coin from "../families/mimblewimble_coin/specs";
 import near from "../families/near/specs";
 import ripple from "../families/ripple/specs";
 import solana from "../families/solana/specs";
@@ -31,6 +32,7 @@ export default {
   filecoin,
   hedera,
   internet_computer,
+  mimblewimble_coin,
   near,
   ripple,
   solana,

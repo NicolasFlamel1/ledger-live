@@ -177,6 +177,11 @@ export function clearAccount<T extends AccountLike>(
 
   familyClean?.(copy);
 
+  if (copy.currency.family === "mimblewimble_coin") {
+    copy.operations = account.operations;
+    copy.pendingOperations = account.pendingOperations;
+  }
+
   delete copy.nfts;
   return copy as T;
 }

@@ -138,7 +138,7 @@ class StepImport extends PureComponent<
       )
         .pipe(
           filter(e => e.type === "discovered"),
-          map(e => e.account),
+          map(e => (e as { account: Account }).account),
         )
         .subscribe({
           next: account => {

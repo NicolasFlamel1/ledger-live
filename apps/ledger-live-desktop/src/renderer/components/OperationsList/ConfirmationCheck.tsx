@@ -114,6 +114,7 @@ const iconsComponent = {
   REVOKE: VoteNay,
   ACTIVATE: Vote,
   REGISTER: IconPlus,
+  COINBASE_REWARD: ClaimRewards,
   STAKE: IconDelegate,
   UNSTAKE: IconUndelegate,
   WITHDRAW_UNSTAKED: IconCoins,

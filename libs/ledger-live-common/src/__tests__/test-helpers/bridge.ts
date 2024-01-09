@@ -124,7 +124,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
             })
             .pipe(
               filter(e => e.type === "discovered"),
-              map(e => e.account),
+              map((e: any) => e.account),
               reduce((all, a) => all.concat(a), [] as Account[]),
             ),
         );

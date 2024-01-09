@@ -1,0 +1,26 @@
+diff --git a/android/src/main/java/com/tectiv3/aes/RCTAes.java b/android/src/main/java/com/tectiv3/aes/RCTAes.java
+index 5871b6f0cc0b01754f2265e13e804c8b5ecc8c19..a2f3bb2d75bd7945aed6e10e9778eeaa11cf1ad8 100755
+--- a/android/src/main/java/com/tectiv3/aes/RCTAes.java
++++ b/android/src/main/java/com/tectiv3/aes/RCTAes.java
+@@ -222,7 +222,7 @@ public class RCTAes extends ReactContextBaseJavaModule {
+         Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
+         cipher.init(Cipher.DECRYPT_MODE, secretKey, hexIv == null ? emptyIvSpec : new IvParameterSpec(Hex.decode(hexIv)));
+         byte[] decrypted = cipher.doFinal(Base64.decode(ciphertext, Base64.NO_WRAP));
+-        return new String(decrypted, "UTF-8");
++        return Base64.encodeToString(decrypted, Base64.NO_WRAP);
+     }
+ 
+ }
+diff --git a/ios/RCTAes/lib/AesCrypt.m b/ios/RCTAes/lib/AesCrypt.m
+index 4f20b49ee0c70e0858a442b5e0c733adc3fb8cfd..8d8965fea46e45799fd37f5120401d55226c1903 100755
+--- a/ios/RCTAes/lib/AesCrypt.m
++++ b/ios/RCTAes/lib/AesCrypt.m
+@@ -112,7 +112,7 @@
+ 
+ + (NSString *) decrypt: (NSString *)cipherText key: (NSString *)key iv: (NSString *)iv algorithm: (NSString *)algorithm {
+     NSData *result = [self AESCBC:@"decrypt" data:[[NSData alloc] initWithBase64EncodedString:cipherText options:0] key:key iv:iv algorithm:algorithm];
+-    return [[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding];
++    return [result base64EncodedStringWithOptions:0];
+ }
+ 
+ + (NSString *) hmac256: (NSString *)input key: (NSString *)key {

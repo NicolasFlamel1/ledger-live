@@ -1,4 +1,14 @@
 rootProject.name = 'ledgerlivemobile'
+include ':react-native-aes-crypto'
+project(':react-native-aes-crypto').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-aes-crypto/android')
+include ':@nicolasflamel_secp256k1-zkp-react'
+project(':@nicolasflamel_secp256k1-zkp-react').projectDir = new File(rootProject.projectDir, '../node_modules/@nicolasflamel/secp256k1-zkp-react/android')
+include ':@nicolasflamel_x25519-react'
+project(':@nicolasflamel_x25519-react').projectDir = new File(rootProject.projectDir, '../node_modules/@nicolasflamel/x25519-react/android')
+include ':@nicolasflamel_ed25519-react'
+project(':@nicolasflamel_ed25519-react').projectDir = new File(rootProject.projectDir, '../node_modules/@nicolasflamel/ed25519-react/android')
+include ':@nicolasflamel_smaz-react'
+project(':@nicolasflamel_smaz-react').projectDir = new File(rootProject.projectDir, '../node_modules/@nicolasflamel/smaz-react/android')
 include ':react-native-fast-crypto'
 project(':react-native-fast-crypto').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fast-crypto/android')
 include ':react-native-webview'

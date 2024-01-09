@@ -94,7 +94,7 @@ export default {
                   each: getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
                   with: () => throwError(() => new Error("scan account timeout")),
                 }),
-                map(e => e.account.freshAddress),
+                map((e: any) => e.account.freshAddress),
                 catchError(err => {
                   console.error("couldn't infer address for a " + currency.id + " account", err);
                   return of(null);

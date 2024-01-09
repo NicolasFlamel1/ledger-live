@@ -47,7 +47,10 @@ function findNativeModules(root) {
     if (isNative) {
       nativeModules.push(currentPath);
     }
-    const dependencies = package.dependencies || [];
+    const dependencies = {
+      ...package.dependencies,
+      ...package.optionalDependencies,
+    };
     Object.keys(dependencies).forEach(dependency => {
       // Symlinks must be resolved otherwise node.js will fail to resolve.
       const realPath = fs.realpathSync([currentPath]);
@@ -123,7 +126,10 @@ function dependencyTree(modulePath, { root } = {}) {
     const package = JSON.parse(
       fs.readFileSync(path.resolve(currentPath, "package.json")).toString(),
     );
-    const dependencies = package.dependencies || [];
+    const dependencies = {
+      ...package.dependencies,
+      ...package.optionalDependencies,
+    };
     currentTree.module = package.name;
     currentTree.version = package.version;
     currentTree.path = currentPath;

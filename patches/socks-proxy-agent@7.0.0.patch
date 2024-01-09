@@ -1,0 +1,61 @@
+diff --git a/dist/index.js b/dist/index.js
+index 55b598b7f5ca73b7c6b040b4fd7de02e3bd8804b..a3a8990cbd739b49f06bfb254bc1a0e1a252b9a8 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -16,8 +16,6 @@ exports.SocksProxyAgent = void 0;
+ const socks_1 = require("socks");
+ const agent_base_1 = require("agent-base");
+ const debug_1 = __importDefault(require("debug"));
+-const dns_1 = __importDefault(require("dns"));
+-const tls_1 = __importDefault(require("tls"));
+ const debug = (0, debug_1.default)('socks-proxy-agent');
+ function parseSocksProxy(opts) {
+     var _a;
+@@ -54,6 +52,7 @@ function parseSocksProxy(opts) {
+             // pass through
+             case 'socks': // no version specified, default to 5h
+             case 'socks5h':
++            case 'http':
+                 type = 5;
+                 break;
+             default:
+@@ -133,19 +132,7 @@ class SocksProxyAgent extends agent_base_1.Agent {
+                 throw new Error('No `host` defined!');
+             }
+             if (shouldLookup) {
+-                // Client-side DNS resolution for "4" and "5" socks proxy versions.
+-                host = yield new Promise((resolve, reject) => {
+-                    // Use the request's custom lookup, if one was configured:
+-                    const lookupFn = lookupCallback !== null && lookupCallback !== void 0 ? lookupCallback : dns_1.default.lookup;
+-                    lookupFn(host, {}, (err, res) => {
+-                        if (err) {
+-                            reject(err);
+-                        }
+-                        else {
+-                            resolve(res);
+-                        }
+-                    });
+-                });
++                throw new Error('Not supported');
+             }
+             const socksOpts = {
+                 proxy,
+@@ -167,17 +154,7 @@ class SocksProxyAgent extends agent_base_1.Agent {
+                 socket.on('timeout', () => cleanup());
+             }
+             if (opts.secureEndpoint) {
+-                // The proxy is connecting to a TLS server, so upgrade
+-                // this socket connection to a TLS connection.
+-                debug('Upgrading socket connection to TLS');
+-                const servername = (_a = opts.servername) !== null && _a !== void 0 ? _a : opts.host;
+-                const tlsSocket = tls_1.default.connect(Object.assign(Object.assign(Object.assign({}, omit(opts, 'host', 'hostname', 'path', 'port')), { socket,
+-                    servername }), this.tlsConnectionOptions));
+-                tlsSocket.once('error', (error) => {
+-                    debug('socket TLS error', error.message);
+-                    cleanup(tlsSocket);
+-                });
+-                return tlsSocket;
++                throw new Error('Not supported');
+             }
+             return socket;
+         });

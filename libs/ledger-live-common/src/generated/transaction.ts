@@ -8,6 +8,7 @@ import elrond from "../families/elrond/transaction";
 import filecoin from "../families/filecoin/transaction";
 import hedera from "../families/hedera/transaction";
 import internet_computer from "../families/internet_computer/transaction";
+import mimblewimble_coin from "../families/mimblewimble_coin/transaction";
 import near from "../families/near/transaction";
 import ripple from "../families/ripple/transaction";
 import solana from "../families/solana/transaction";
@@ -31,6 +32,7 @@ export default {
   filecoin,
   hedera,
   internet_computer,
+  mimblewimble_coin,
   near,
   ripple,
   solana,

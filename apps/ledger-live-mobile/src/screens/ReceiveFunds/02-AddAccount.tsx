@@ -116,7 +116,12 @@ function AddAccountsAccounts({ navigation, route }: Props) {
         syncConfig,
       }),
     ).subscribe({
-      next: ({ account }: { account: Account }) => {
+      next: event => {
+        const { type } = event;
+        if (type !== "discovered") {
+          return;
+        }
+        const { account } = event;
         if (currency.type === "TokenCurrency") {
           // handle token accounts cases where we want to create empty new token accounts
           const pa = { ...account };

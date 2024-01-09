@@ -160,6 +160,7 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "REWARD":
     case "REWARD_PAYOUT":
     case "WITHDRAW":
+    case "COINBASE_REWARD":
       return op.value;
 
     case "OUT":

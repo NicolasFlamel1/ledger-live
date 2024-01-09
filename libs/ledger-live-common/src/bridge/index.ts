@@ -36,8 +36,25 @@ export function fromScanAccountEventRaw(raw: ScanAccountEventRaw): ScanAccountEv
         account: fromAccountRaw(raw.account),
       };
 
+    case "device-root-public-key-requested":
+      return {
+        type: raw.type,
+        index: raw.index,
+      };
+
+    case "device-root-public-key-granted":
+      return {
+        type: raw.type,
+      };
+
+    case "synced-percent":
+      return {
+        type: raw.type,
+        percent: raw.percent,
+      };
+
     default:
-      throw new Error("unsupported ScanAccountEvent " + raw.type);
+      throw new Error("unsupported ScanAccountEvent " + (raw as ScanAccountEventRaw).type);
   }
 }
 export function toScanAccountEventRaw(e: ScanAccountEvent): ScanAccountEventRaw {
@@ -48,7 +65,24 @@ export function toScanAccountEventRaw(e: ScanAccountEvent): ScanAccountEventRaw 
         account: toAccountRaw(e.account),
       };
 
+    case "device-root-public-key-requested":
+      return {
+        type: e.type,
+        index: e.index,
+      };
+
+    case "device-root-public-key-granted":
+      return {
+        type: e.type,
+      };
+
+    case "synced-percent":
+      return {
+        type: e.type,
+        percent: e.percent,
+      };
+
     default:
-      throw new Error("unsupported ScanAccountEvent " + e.type);
+      throw new Error("unsupported ScanAccountEvent " + (e as ScanAccountEvent).type);
   }
 }

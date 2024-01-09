@@ -174,7 +174,12 @@ function AddAccountsAccounts({
         syncConfig,
       }),
     ).subscribe({
-      next: ({ account }) => {
+      next: event => {
+        const { type } = event;
+        if (type !== "discovered") {
+          return;
+        }
+        const { account } = event;
         setLatestScannedAccount(account);
       },
       complete: () => setScanning(false),

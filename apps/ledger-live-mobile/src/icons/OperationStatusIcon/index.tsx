@@ -40,6 +40,7 @@ const iconsComponent = {
   UNLOCK: IconsLegacy.UnlockMedium,
   REVOKE: IconsLegacy.VoteNoneMedium,
   REGISTER: IconsLegacy.PlusMedium,
+  COINBASE_REWARD: IconsLegacy.StarMedium,
   STAKE: IconsLegacy.HandshakeMedium,
   UNSTAKE: IconsLegacy.UndelegateMedium,
   WITHDRAW_UNSTAKED: IconsLegacy.CoinsMedium,

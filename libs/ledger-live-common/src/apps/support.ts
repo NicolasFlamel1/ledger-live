@@ -35,6 +35,12 @@ const appVersionsRequired = {
   Celo: ">= 1.1.8",
   "Cardano ADA": ">= 4.1.0",
   Zcash: "> 2.0.6",
+  "MimbleWimble Coin": ">= 7.4.0",
+  "MimbleWimble Coin Floonet": ">= 7.4.0",
+  Grin: ">= 7.4.0",
+  "Grin Testnet": ">= 7.4.0",
+  "Epic Cash": ">= 7.4.0",
+  "Epic Cash Floonet": ">= 7.4.0",
   NEAR: ">= 1.2.1",
   "Tezos Wallet": ">= 2.4.5",
 };

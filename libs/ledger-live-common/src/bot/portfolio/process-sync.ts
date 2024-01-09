@@ -105,7 +105,7 @@ async function main(): Promise<Report> {
         })
         .pipe(
           filter(e => e.type === "discovered"),
-          map(e => e.account),
+          map((e: any) => e.account),
           reduce<Account, Account[]>((all, a) => all.concat(a), []),
           timeout({
             each: getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),

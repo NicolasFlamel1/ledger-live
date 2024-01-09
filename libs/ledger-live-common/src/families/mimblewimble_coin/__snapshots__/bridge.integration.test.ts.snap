@@ -1,0 +1,389 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`grin currency bridge scanAccounts grin seed 1 1`] = `
+Array [
+  Object {
+    "balance": "0",
+    "currencyId": "grin",
+    "derivationMode": "",
+    "freshAddress": "grin1pe6nvyy4n2nqh73l8kr80zqj5uf4cyqdu4jelqhxmmmjufw8g33q42r76l",
+    "freshAddressPath": "44'/592'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "grin1pe6nvyy4n2nqh73l8kr80zqj5uf4cyqdu4jelqhxmmmjufw8g33q42r76l",
+        "derivationPath": "44'/592'/0'/0/0",
+      },
+    ],
+    "id": "js:2:grin:59a666ad7a04a9c397924d14b0e1faba023559b4c23c102df59ad0f20773a2b189bc0acacbf385a1d8997a76ac2b3b7e0332187b85b24653702eec838e32d3b8:",
+    "index": 0,
+    "mimbleWimbleCoinResources": Object {
+      "nextIdentifier": "0300000000000000000000000000000000",
+      "nextTransactionSequenceNumber": 0,
+      "recentHeights": Array [
+        Object {
+          "hash": "0000932efde80e76a807327e6add09a58567c25f6c2f5d810101c6ddce71682a",
+          "height": "1999355",
+        },
+        Object {
+          "hash": "00017010b808f8e944373cbe8471ee001756c16b205d6e7e51772a196cc19763",
+          "height": "1999354",
+        },
+        Object {
+          "hash": "0003e19554a74750f8797a9d45c43e86c79971699565ff62ae2146c1aca29119",
+          "height": "1999353",
+        },
+        Object {
+          "hash": "00010dd704968b713cdbfd6df81ac324c65ec1eb7176c1cc3ee708303c76fb02",
+          "height": "1999351",
+        },
+        Object {
+          "hash": "00045748ff33ac347c687be07a30eb8e2b84acf1cec03cc9ea577cb2bb4a8df9",
+          "height": "1999346",
+        },
+        Object {
+          "hash": "00002fba26fac455415ebaca118d9b7652052f1695dd5c60cb902eeba81fbc1a",
+          "height": "1999328",
+        },
+        Object {
+          "hash": "000283eb364222f319961d8082da4a6ed4e846a4f24c2bcf793d981f3f1c9f9f",
+          "height": "1999274",
+        },
+        Object {
+          "hash": "000247c24de58c1650eb1d029bde2947cb470743a870c813ebb15aae585e6dd6",
+          "height": "1999112",
+        },
+        Object {
+          "hash": "0002c555ca4a7d778ae60a342234170e072d56b9c56e7325115bbc3ed3ce0123",
+          "height": "1998626",
+        },
+        Object {
+          "hash": "000321b1287a91b9ada7c649bee6eb001e593ccb3037c7b326571d1cbe6279a1",
+          "height": "1997168",
+        },
+        Object {
+          "hash": "0004468693ab3bb5eed96fa43ef5581cf44b27c93ff33d5c0cec89432180fc6c",
+          "height": "1992794",
+        },
+        Object {
+          "hash": "0003c26741e6517c2e7c63d4ea40873c30b3925b1d0478f4d9b313ab06843fdb",
+          "height": "1979672",
+        },
+        Object {
+          "hash": "0001f64071a55be4cec5d9a06c30189b572abe361e55b266cee5d1dbdfb6902f",
+          "height": "1940306",
+        },
+      ],
+      "rootPublicKey": "03efd2936a0ec29e49aff8ef7d6d08c42b8b39d5c632ba240b73f98a8f89a79a8a",
+    },
+    "name": "Grin 1",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": undefined,
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 9,
+    "used": false,
+    "xpub": "59a666ad7a04a9c397924d14b0e1faba023559b4c23c102df59ad0f20773a2b189bc0acacbf385a1d8997a76ac2b3b7e0332187b85b24653702eec838e32d3b8",
+  },
+]
+`;
+
+exports[`grin currency bridge scanAccounts grin seed 1 2`] = `
+Array [
+  Array [],
+]
+`;
+
+exports[`grin_testnet currency bridge scanAccounts grin_testnet seed 1 1`] = `
+Array [
+  Object {
+    "balance": "0",
+    "currencyId": "grin_testnet",
+    "derivationMode": "",
+    "freshAddress": "tgrin1txasfcykjh7vk47tadwy24x2wqhexkjk3e93nx7kuah8q87arlqsa3cnlw",
+    "freshAddressPath": "44'/1'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "tgrin1txasfcykjh7vk47tadwy24x2wqhexkjk3e93nx7kuah8q87arlqsa3cnlw",
+        "derivationPath": "44'/1'/0'/0/0",
+      },
+    ],
+    "id": "js:2:grin_testnet:2d4844e2f8aa56a6a41c56fc89a685a5b65a53ee88e57d90d9da35acb57860c0c05f33206382ccbcd04094d5c7651016b4e3997bdf4ff97e4fbe41178f0376fe:",
+    "index": 0,
+    "mimbleWimbleCoinResources": Object {
+      "nextIdentifier": "0300000000000000000000000000000000",
+      "nextTransactionSequenceNumber": 0,
+      "recentHeights": Array [
+        Object {
+          "hash": "6e443fd4f66873673368376674d7b1bc010dc78443840dc88f44689ad2fd4a25",
+          "height": "1441301",
+        },
+        Object {
+          "hash": "24baedee5664eef08fde85d0ecbd01cb320fb6377a2b7e169439e21e6ecd7649",
+          "height": "1441300",
+        },
+        Object {
+          "hash": "3e271181f2a6595454d20d7c29039c1325425442a49146a2b7a7eca2d262d64d",
+          "height": "1441299",
+        },
+        Object {
+          "hash": "70f2a8d199faa954aed864c9b2658b5b864e0d9fe88526f419b958ff88945035",
+          "height": "1441297",
+        },
+        Object {
+          "hash": "533a24e99a107817893ffa4241fc5b670ddc3b66be770e688e69cae0799ad571",
+          "height": "1441292",
+        },
+        Object {
+          "hash": "92c592982860c42fdd5b54d0a4be83c0b971b079d2c1c909bfd4484555e2acff",
+          "height": "1441274",
+        },
+        Object {
+          "hash": "0a2b051a94f7a44554c3434a4a65aba7a594160eee623f8e0566622eb25196f0",
+          "height": "1441220",
+        },
+        Object {
+          "hash": "3933def4abdc969e0e14c4cccdca074af16bb2f7e6f562c2b397481af4f580ac",
+          "height": "1441058",
+        },
+        Object {
+          "hash": "6a987ecbc820d47e9d47e432881126b07122b70a3ecff23f623e09dca537a714",
+          "height": "1440572",
+        },
+        Object {
+          "hash": "041e71cafea1fa83893742642c8ba44d0c136ca461ea8347901b2a479f83c9c0",
+          "height": "1439114",
+        },
+        Object {
+          "hash": "85776486667ac34af0e41c5485dfb7eb84ea898ad37b48f14cae8530d9c816e8",
+          "height": "1434740",
+        },
+        Object {
+          "hash": "4beb3148f746c8ec6b2c9ce65184881c4e19af41cc548e12b576cca3b77bcd2a",
+          "height": "1421618",
+        },
+        Object {
+          "hash": "69c0a62a60149ee02bd90a6c2ce5fe500a2361c3b0bd8d856cbd8e2f40d6305d",
+          "height": "1382252",
+        },
+      ],
+      "rootPublicKey": "036bf8b1016cfb395b5ef06a503c7c06742685ed0e8214bc02f6d6de44acc5f8e1",
+    },
+    "name": "Grin Testnet 1",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": undefined,
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 9,
+    "used": false,
+    "xpub": "2d4844e2f8aa56a6a41c56fc89a685a5b65a53ee88e57d90d9da35acb57860c0c05f33206382ccbcd04094d5c7651016b4e3997bdf4ff97e4fbe41178f0376fe",
+  },
+]
+`;
+
+exports[`grin_testnet currency bridge scanAccounts grin_testnet seed 1 2`] = `
+Array [
+  Array [],
+]
+`;
+
+exports[`mimblewimble_coin currency bridge scanAccounts mimblewimble_coin seed 1 1`] = `
+Array [
+  Object {
+    "balance": "0",
+    "currencyId": "mimblewimble_coin",
+    "derivationMode": "",
+    "freshAddress": "htpob76thyhuc7zcfu3fm5rvii6um3v5vb7qtjubgqoryz6j6lb4txqd",
+    "freshAddressPath": "44'/593'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "htpob76thyhuc7zcfu3fm5rvii6um3v5vb7qtjubgqoryz6j6lb4txqd",
+        "derivationPath": "44'/593'/0'/0/0",
+      },
+    ],
+    "id": "js:2:mimblewimble_coin:096fe43a17434bb1d42a09142faeb5a5cf5a28f25c716e9b64b702a6e67dd5684c98d02fef8a7c969856225caef3e2c8b4b1a3a2b0dc2ef432ea36561e75fdd1:",
+    "index": 0,
+    "mimbleWimbleCoinResources": Object {
+      "nextIdentifier": "0300000000000000000000000000000000",
+      "nextTransactionSequenceNumber": 0,
+      "recentHeights": Array [
+        Object {
+          "hash": "0004d26999708d2a7cceae73aa59102869e7f0828a00eff7472a237f4e18ae32",
+          "height": "1551216",
+        },
+        Object {
+          "hash": "0006bb2c8e38b152f69292697646579f0c78ad62737244c3da35eae6a776e7f7",
+          "height": "1551215",
+        },
+        Object {
+          "hash": "0001eb0cefa32b01591917acde9ff9eea80b30f26827011cefb23b31354e829f",
+          "height": "1551214",
+        },
+        Object {
+          "hash": "0009e185ce3428b098155d248dec4af4faf67321ea04adf685a45d057dc8446b",
+          "height": "1551212",
+        },
+        Object {
+          "hash": "000dedadea40aa0860c710073783f49fe08afbad3519a28a6b4a18411e1a6faa",
+          "height": "1551207",
+        },
+        Object {
+          "hash": "00003e670428710fb2ba7b7f9ae4387615877fb1c9617c9ea4be74a23cf3617e",
+          "height": "1551189",
+        },
+        Object {
+          "hash": "00080d6e15df27b8bf396b8f90f732142bbc5a685d8009873facaa5cd161aa73",
+          "height": "1551135",
+        },
+        Object {
+          "hash": "000c988d0bf13d986643c13a6f183fbc14ca9d9a1f002df09e0f9f47e9285913",
+          "height": "1550973",
+        },
+        Object {
+          "hash": "0013db59f985c349a98f54a36a2717b81ed07048b7ed3e91e9d11e4c4ba8b101",
+          "height": "1550487",
+        },
+        Object {
+          "hash": "0009afa03e9e68e0e549f27de640d659a72a5fa39f85a8e60cd6ab366acc8f92",
+          "height": "1549029",
+        },
+        Object {
+          "hash": "0002dbef3300e2f2ae4fd440d6b96705f1c3306fe7777ea0ebf104021fce3c33",
+          "height": "1544655",
+        },
+        Object {
+          "hash": "00051e1060fad54ee0ee0db8adb34461068b780f5a7a5a6dd4f4e2eff2b51e4b",
+          "height": "1531533",
+        },
+        Object {
+          "hash": "000d773a4979629af4e4c2b37e630d1e8e23fac748f9ce009f009d85defa8102",
+          "height": "1492167",
+        },
+      ],
+      "rootPublicKey": "031d11847503f131f736448684c97fb743ea6324b1e02e4a963c0016e3b4f50674",
+    },
+    "name": "MimbleWimble Coin 1",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": undefined,
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 9,
+    "used": false,
+    "xpub": "096fe43a17434bb1d42a09142faeb5a5cf5a28f25c716e9b64b702a6e67dd5684c98d02fef8a7c969856225caef3e2c8b4b1a3a2b0dc2ef432ea36561e75fdd1",
+  },
+]
+`;
+
+exports[`mimblewimble_coin currency bridge scanAccounts mimblewimble_coin seed 1 2`] = `
+Array [
+  Array [],
+]
+`;
+
+exports[`mimblewimble_coin_floonet currency bridge scanAccounts mimblewimble_coin_floonet seed 1 1`] = `
+Array [
+  Object {
+    "balance": "0",
+    "currencyId": "mimblewimble_coin_floonet",
+    "derivationMode": "",
+    "freshAddress": "7rgrlqdcygvsyjlrawpidkyy4bys67t343kh7knshea2gyld6gz67fid",
+    "freshAddressPath": "44'/1'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "7rgrlqdcygvsyjlrawpidkyy4bys67t343kh7knshea2gyld6gz67fid",
+        "derivationPath": "44'/1'/0'/0/0",
+      },
+    ],
+    "id": "js:2:mimblewimble_coin_floonet:fe30f5f7b405c4475289105d1326dded1b8d5a6b1315da4f70ef69a00d28609f18cafa041d44f3388162ef452f53bf1ba5b08f449c95f96362896f1124b207b6:",
+    "index": 0,
+    "mimbleWimbleCoinResources": Object {
+      "nextIdentifier": "0300000000000000000000000000000000",
+      "nextTransactionSequenceNumber": 0,
+      "recentHeights": Array [
+        Object {
+          "hash": "ba17581890e14198ff51cc3d7e7fd4ae32c1afc0d7dadfd951365a4d289de79e",
+          "height": "1219553",
+        },
+        Object {
+          "hash": "267a4aa1d39ab779bf4470f93611b82228a9a7889d19fab17975af04efea28f3",
+          "height": "1219552",
+        },
+        Object {
+          "hash": "14713aac1e6f31d017012bbd1c00b1604f1d735969c03bafaf1beebb70183910",
+          "height": "1219551",
+        },
+        Object {
+          "hash": "642fb6f3c5532fc49ba50b446f4cc15d091bc24105557b7f61587c73f8c186fc",
+          "height": "1219549",
+        },
+        Object {
+          "hash": "c9d6a9bac4117511898c1aadef22aeba7c0b10745d4d1d723663b9328fa97b77",
+          "height": "1219544",
+        },
+        Object {
+          "hash": "b2532b812713b2e71edd7f8d262ce88fe3cf95d3504a200104e74a544f5ade40",
+          "height": "1219526",
+        },
+        Object {
+          "hash": "d48bd72781a01b72fe53d730d509aad7cb4f1f6c9b650f24434b6d07b3900fa2",
+          "height": "1219472",
+        },
+        Object {
+          "hash": "594252d6a109b2f5645d9b6d2e01b1a066439d2bf4ccd19855d7d1bedb3059f9",
+          "height": "1219310",
+        },
+        Object {
+          "hash": "56349afa9579affb6286dc6ee5110bfdb651c57add0323a9daac6ca5af180c67",
+          "height": "1218824",
+        },
+        Object {
+          "hash": "965a2696858d8d2bb2cce8a598206d0b2404ffe9c645c08016cbcc0ca8acebda",
+          "height": "1217366",
+        },
+        Object {
+          "hash": "daf9ebc0c188856d9441d23e2ecbf8c3f4838b16a0dffb86147a83ab70baa257",
+          "height": "1212992",
+        },
+        Object {
+          "hash": "1bb573c7c7613d8d192f40382dcd7d4ced1e98ccf636a9a2e4d2f46afd89a399",
+          "height": "1199870",
+        },
+        Object {
+          "hash": "021c67a2e7f959a1bf605fdec6e9e2c5dd06aec7e3b40412829babf7225cd65d",
+          "height": "1160504",
+        },
+      ],
+      "rootPublicKey": "035c1b539dec12322947c8dc091f2303ed7552d138790147677d87c3f1679eb192",
+    },
+    "name": "MimbleWimble Coin Floonet 1",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": undefined,
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 9,
+    "used": false,
+    "xpub": "fe30f5f7b405c4475289105d1326dded1b8d5a6b1315da4f70ef69a00d28609f18cafa041d44f3388162ef452f53bf1ba5b08f449c95f96362896f1124b207b6",
+  },
+]
+`;
+
+exports[`mimblewimble_coin_floonet currency bridge scanAccounts mimblewimble_coin_floonet seed 1 2`] = `
+Array [
+  Array [],
+]
+`;

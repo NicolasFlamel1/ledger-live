@@ -4,6 +4,7 @@ import celo from "../families/celo/account";
 import cosmos from "../families/cosmos/account";
 import crypto_org from "../families/crypto_org/account";
 import elrond from "../families/elrond/account";
+import mimblewimble_coin from "../families/mimblewimble_coin/account";
 import near from "../families/near/account";
 import tron from "../families/tron/account";
 import vechain from "../families/vechain/account";
@@ -17,6 +18,7 @@ export default {
   cosmos,
   crypto_org,
   elrond,
+  mimblewimble_coin,
   near,
   tron,
   vechain,

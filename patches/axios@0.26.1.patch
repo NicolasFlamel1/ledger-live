@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index 32c275c3e7461bd5a563df3a4083edeb1bb222b5..98dadec1aff1d58ea2bbaffcf3b32e7e38bf8448 100644
+--- a/package.json
++++ b/package.json
+@@ -69,7 +69,6 @@
+     "webpack-dev-server": "^3.11.0"
+   },
+   "browser": {
+-    "./lib/adapters/http.js": "./lib/adapters/xhr.js"
+   },
+   "jsdelivr": "dist/axios.min.js",
+   "unpkg": "dist/axios.min.js",

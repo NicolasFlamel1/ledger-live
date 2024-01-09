@@ -1,6 +1,6 @@
 import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
-import { Observable, Observer, from } from "rxjs";
+import { Observable, Observer, from, Subscriber } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import {
@@ -76,6 +76,7 @@ export type AccountShapeInfo = {
   initialAccount?: Account;
   derivationPath: string;
   derivationMode: DerivationMode;
+  o?: Subscriber<ScanAccountEvent>;
   rest?: any;
   deviceId?: string;
 };
@@ -308,7 +309,7 @@ export const makeScanAccounts =
     getAddressFn: GetAddressFn;
   }): CurrencyBridge["scanAccounts"] =>
   ({ currency, deviceId, syncConfig }): Observable<ScanAccountEvent> =>
-    new Observable((o: Observer<{ type: "discovered"; account: Account }>) => {
+    new Observable((o: Subscriber<ScanAccountEvent>) => {
       if (buildIterateResult === undefined) {
         buildIterateResult = defaultIterateResultBuilder(getAddressFn);
       }
@@ -338,6 +339,7 @@ export const makeScanAccounts =
             address,
             derivationPath: freshAddressPath,
             derivationMode,
+            o,
             rest,
             deviceId,
           },

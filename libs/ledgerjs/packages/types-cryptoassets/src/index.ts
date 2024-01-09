@@ -137,6 +137,12 @@ export type CryptoCurrencyId =
   | "flare"
   | "songbird"
   | "moonbeam"
+  | "mimblewimble_coin"
+  | "mimblewimble_coin_floonet"
+  | "grin"
+  | "grin_testnet"
+  | "epic_cash"
+  | "epic_cash_floonet"
   | "near"
   | "rsk"
   | "bittorrent"
@@ -263,6 +269,7 @@ export type ExplorerView = {
   tx?: string;
   address?: string;
   token?: string;
+  custom?: string;
   stakePool?: string;
 };
 

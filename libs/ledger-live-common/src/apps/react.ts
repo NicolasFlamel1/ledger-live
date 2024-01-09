@@ -82,7 +82,16 @@ export function useAppsSections(state: State, opts: AppsSectionsOpts): AppsSecti
     [appByName, updateAllQueue],
   );
   const updatableAppList = useMemo(
-    () => apps.filter(({ name }) => installed.some(i => i.name === name && !i.updated)),
+    () =>
+      apps.filter(({ name, version, dependencies }) =>
+        installed.some(
+          i =>
+            i.name === name &&
+            !i.updated &&
+            ((name !== "MimbleWimble Coin" && dependencies.indexOf("MimbleWimble Coin") === -1) ||
+              version !== "3.0.3"),
+        ),
+      ),
     [apps, installed],
   );
   const update = appsUpdating.length > 0 ? appsUpdating : updatableAppList;

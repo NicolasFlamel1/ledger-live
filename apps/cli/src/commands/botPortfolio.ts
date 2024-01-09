@@ -42,7 +42,7 @@ export default {
       ),
       mergeAll(5),
       filter(e => e.type === "discovered"),
-      map(e => (accountFormatters[opts.format] || accountFormatters.default)(e.account)),
+      map((e: any) => (accountFormatters[opts.format] || accountFormatters.default)(e.account)),
     );
   },
 };

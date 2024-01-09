@@ -46,6 +46,10 @@ import { Transaction as internet_computerTransaction } from "../families/interne
 import { TransactionRaw as internet_computerTransactionRaw } from "../families/internet_computer/types";
 import { TransactionStatus as internet_computerTransactionStatus } from "../families/internet_computer/types";
 import { TransactionStatusRaw as internet_computerTransactionStatusRaw } from "../families/internet_computer/types";
+import { Transaction as mimblewimble_coinTransaction } from "../families/mimblewimble_coin/types";
+import { TransactionRaw as mimblewimble_coinTransactionRaw } from "../families/mimblewimble_coin/types";
+import { TransactionStatus as mimblewimble_coinTransactionStatus } from "../families/mimblewimble_coin/types";
+import { TransactionStatusRaw as mimblewimble_coinTransactionStatusRaw } from "../families/mimblewimble_coin/types";
 import { Transaction as nearTransaction } from "../families/near/types";
 import { TransactionRaw as nearTransactionRaw } from "../families/near/types";
 import { TransactionStatus as nearTransactionStatus } from "../families/near/types";
@@ -96,6 +100,7 @@ export type Transaction =
   | filecoinTransaction
   | hederaTransaction
   | internet_computerTransaction
+  | mimblewimble_coinTransaction
   | nearTransaction
   | polkadotTransaction
   | rippleTransaction
@@ -119,6 +124,7 @@ export type TransactionRaw =
   | filecoinTransactionRaw
   | hederaTransactionRaw
   | internet_computerTransactionRaw
+  | mimblewimble_coinTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
   | rippleTransactionRaw
@@ -142,6 +148,7 @@ export type TransactionStatus =
   | filecoinTransactionStatus
   | hederaTransactionStatus
   | internet_computerTransactionStatus
+  | mimblewimble_coinTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
   | rippleTransactionStatus
@@ -165,6 +172,7 @@ export type TransactionStatusRaw =
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
   | internet_computerTransactionStatusRaw
+  | mimblewimble_coinTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | rippleTransactionStatusRaw

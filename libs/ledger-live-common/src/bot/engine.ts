@@ -163,7 +163,7 @@ export async function runWithAppSpec<T extends Transaction>(
             delay: delayBetweenScanAccountRetries,
           }),
           filter(e => e.type === "discovered"),
-          map(e => deepFreezeAccount(e.account)),
+          map((e: any) => deepFreezeAccount(e.account)),
           reduce<Account, Account[]>((all, a) => all.concat(a), []),
           timeout({
             each: getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
