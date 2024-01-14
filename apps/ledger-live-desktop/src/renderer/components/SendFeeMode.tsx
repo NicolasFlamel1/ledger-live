@@ -8,10 +8,13 @@ import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
+import Label from "~/renderer/components/Label";
 
 type Props = {
   isAdvanceMode: boolean;
   setAdvanceMode: (isAdvanceMode: boolean) => void;
+  useLink?: boolean | undefined;
+  label?: string | undefined;
 };
 
 const SelectorContainer = styled.div`
@@ -31,19 +34,23 @@ const Selector = styled(Tabbable)<{
   padding: 4px 12px 4px 12px;
 `;
 
-const SendFeeMode = ({ isAdvanceMode, setAdvanceMode }: Props) => {
+const SendFeeMode = ({ isAdvanceMode, setAdvanceMode, useLink, label }: Props) => {
   const { t } = useTranslation();
   const setAdvanced = useCallback(() => setAdvanceMode(true), [setAdvanceMode]);
   const setStandard = useCallback(() => setAdvanceMode(false), [setAdvanceMode]);
   return (
     <Box data-test-id="send-fee-mode" horizontal alignItems="center" justifyContent="space-between">
-      <LabelWithExternalIcon
-        onClick={() => {
-          openURL(urls.feesMoreInfo);
-          track("Send Flow Fees Help Requested");
-        }}
-        label={t("send.steps.amount.fees")}
-      />
+      {useLink === undefined || useLink ? (
+        <LabelWithExternalIcon
+          onClick={() => {
+            openURL(urls.feesMoreInfo);
+            track("Send Flow Fees Help Requested");
+          }}
+          label={label !== undefined ? label : t("send.steps.amount.fees")}
+        />
+      ) : (
+        <Label>{label !== undefined ? label : t("send.steps.amount.fees")}</Label>
+      )}
       <SelectorContainer>
         <Selector
           active={!isAdvanceMode}

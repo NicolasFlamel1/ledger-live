@@ -79,5 +79,9 @@ files:
       - "!**/build/**/*"
       - "**/build/**/*.{js,cjs,mjs}"
       - "**/*.node"
+  - from: "dist/node_modules/"
+    to: "build"
+    filter:
+      - "*.node"
   # Exclude files
   - "!node_modules"

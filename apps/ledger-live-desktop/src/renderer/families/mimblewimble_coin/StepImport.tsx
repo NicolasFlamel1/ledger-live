@@ -1,12 +1,10 @@
-import React, { useEffect, PureComponent } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useRef, useCallback, PureComponent } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { concat, from, Subscription } from "rxjs";
 import { ignoreElements, filter, map } from "rxjs/operators";
 import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty, groupAddAccounts } from "@ledgerhq/live-common/account/index";
-import { openModal } from "~/renderer/actions/modals";
 import { DeviceShouldStayInApp } from "@ledgerhq/errors";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import uniq from "lodash/uniq";
@@ -22,12 +20,12 @@ import AccountsList, { AccountListProps } from "~/renderer/components/AccountsLi
 import Spinner from "~/renderer/components/Spinner";
 import Text from "~/renderer/components/Text";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import Switch from "~/renderer/components/Switch";
-import { StepProps } from "..";
-import InfoCircle from "~/renderer/icons/InfoCircle";
-import ToolTip from "~/renderer/components/Tooltip";
+import { StepProps } from "~/renderer/modals/AddAccounts";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getLLDCoinFamily } from "~/renderer/families";
+import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
+import useTheme from "~/renderer/hooks/useTheme";
+import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 type Props = AccountListProps & {
   defaultSelected: boolean;
@@ -67,40 +65,65 @@ const SectionAccounts = ({ defaultSelected, ...rest }: Props) => {
   }, []);
   return <AccountsList {...rest} />;
 };
-class StepImport extends PureComponent<
-  StepProps,
-  {
-    showAllCreatedAccounts: boolean;
-  }
-> {
+
+const Separator = styled.div`
+  border-top: 1px solid ${p => p.theme.colors.palette.divider};
+  margin-top: 24px;
+  margin-bottom: 24px;
+`;
+
+const ApproveExportRootPublicKeyOnDevice = ({
+  modelId,
+  accountIndex,
+}: {
+  modelId: DeviceModelId;
+  accountIndex: number;
+}) => {
+  const type = useTheme().colors.palette.type;
+  return (
+    <>
+      <Separator />
+      <Box horizontal alignItems="center" flow={2}>
+        <Text
+          style={{ flexShrink: "unset" }}
+          ff="Inter|SemiBold"
+          color="palette.text.shade100"
+          fontSize={4}
+        >
+          <Trans
+            i18nKey="families.mimblewimble_coin.approveExportingRootPublicKey"
+            values={{ accountIndex: accountIndex.toFixed() }}
+          />
+        </Text>
+      </Box>
+      {renderVerifyUnwrapped({ modelId, type })}
+    </>
+  );
+};
+
+type State = {
+  modelId?: DeviceModelId | undefined;
+  accountIndex?: number | undefined;
+  percentComplete: number;
+};
+
+class StepImport extends PureComponent<StepProps, State> {
   constructor(props: StepProps) {
     super(props);
     this.state = {
-      showAllCreatedAccounts: false,
+      percentComplete: 0,
     };
   }
 
   componentDidMount() {
-    const { currency, setScanStatus } = this.props;
-    if (currency) {
-      const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-      if (mainCurrency && getLLDCoinFamily(mainCurrency.family).StepImport) {
-        return;
-      }
-    }
-    setScanStatus("scanning");
+    this.props.setScanStatus("scanning");
   }
 
   componentDidUpdate(prevProps: StepProps) {
-    const { currency, scanStatus } = this.props;
-    if (currency) {
-      const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-      if (mainCurrency && getLLDCoinFamily(mainCurrency.family).StepImport) {
-        return;
-      }
-    }
-    const didStartScan = prevProps.scanStatus !== "scanning" && scanStatus === "scanning";
-    const didFinishScan = prevProps.scanStatus !== "finished" && scanStatus === "finished";
+    const didStartScan =
+      prevProps.scanStatus !== "scanning" && this.props.scanStatus === "scanning";
+    const didFinishScan =
+      prevProps.scanStatus !== "finished" && this.props.scanStatus === "finished";
 
     // handle case when we click on retry sync
     if (didStartScan) {
@@ -114,13 +137,6 @@ class StepImport extends PureComponent<
   }
 
   componentWillUnmount() {
-    const { currency } = this.props;
-    if (currency) {
-      const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-      if (mainCurrency && getLLDCoinFamily(mainCurrency.family).StepImport) {
-        return;
-      }
-    }
     this.unsub();
   }
 
@@ -134,6 +150,9 @@ class StepImport extends PureComponent<
   startScanAccountsDevice() {
     this.unsub();
     const { currency, device, setScanStatus, setScannedAccounts, blacklistedTokenIds } = this.props;
+    this.setState({
+      percentComplete: 0,
+    });
     if (!currency || !device) return;
     const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
     try {
@@ -156,35 +175,75 @@ class StepImport extends PureComponent<
         }),
       )
         .pipe(
-          filter(e => e.type === "discovered"),
-          map(e => (e as { account: Account }).account),
+          filter(
+            e =>
+              e.type === "discovered" ||
+              e.type === "device-root-public-key-requested" ||
+              e.type === "device-root-public-key-granted" ||
+              e.type === "synced-percent",
+          ),
+          map(e => e),
         )
         .subscribe({
-          next: account => {
-            const { scannedAccounts, checkedAccountsIds, existingAccounts } = this.props;
-            const hasAlreadyBeenScanned = !!scannedAccounts.find(a => account.id === a.id);
-            const hasAlreadyBeenImported = !!existingAccounts.find(a => account.id === a.id);
-            const isNewAccount = isAccountEmpty(account);
-            if (!isNewAccount && !hasAlreadyBeenImported) {
-              onlyNewAccounts = false;
-            }
-            if (!hasAlreadyBeenScanned) {
-              setScannedAccounts({
-                scannedAccounts: [...scannedAccounts, account],
-                checkedAccountsIds: onlyNewAccounts
-                  ? hasAlreadyBeenImported || checkedAccountsIds.length > 0
-                    ? checkedAccountsIds
-                    : [account.id]
-                  : !hasAlreadyBeenImported && !isNewAccount
-                  ? uniq([...checkedAccountsIds, account.id])
-                  : checkedAccountsIds,
-              });
+          next: event => {
+            switch (event.type) {
+              case "discovered": {
+                const { account } = event;
+                const { scannedAccounts, checkedAccountsIds, existingAccounts } = this.props;
+                const hasAlreadyBeenScanned = !!scannedAccounts.find(a => account.id === a.id);
+                const hasAlreadyBeenImported = !!existingAccounts.find(a => account.id === a.id);
+                const isNewAccount = isAccountEmpty(account);
+                if (!isNewAccount && !hasAlreadyBeenImported) {
+                  onlyNewAccounts = false;
+                }
+                if (!hasAlreadyBeenScanned) {
+                  setScannedAccounts({
+                    scannedAccounts: [...scannedAccounts, account],
+                    checkedAccountsIds: onlyNewAccounts
+                      ? hasAlreadyBeenImported || checkedAccountsIds.length > 0
+                        ? checkedAccountsIds
+                        : [account.id]
+                      : !hasAlreadyBeenImported && !isNewAccount
+                      ? uniq([...checkedAccountsIds, account.id])
+                      : checkedAccountsIds,
+                  });
+                }
+                this.setState({
+                  percentComplete: 0,
+                });
+                break;
+              }
+              case "device-root-public-key-requested":
+                this.setState({
+                  modelId: device.modelId,
+                  accountIndex: event.index,
+                });
+                break;
+              case "device-root-public-key-granted":
+                this.setState({
+                  modelId: undefined,
+                  accountIndex: undefined,
+                });
+                break;
+              case "synced-percent":
+                this.setState({
+                  percentComplete: event.percent,
+                });
+                break;
             }
           },
           complete: () => {
+            this.setState({
+              modelId: undefined,
+              accountIndex: undefined,
+            });
             setScanStatus("finished");
           },
           error: err => {
+            this.setState({
+              modelId: undefined,
+              accountIndex: undefined,
+            });
             logger.critical(err);
             const error = remapTransportError(err, currency.name);
             setScanStatus("error", error);
@@ -229,44 +288,6 @@ class StepImport extends PureComponent<
     });
   };
 
-  renderLegacyAccountsToggle() {
-    const { currency } = this.props;
-    if (!currency) return null;
-    const { showAllCreatedAccounts } = this.state;
-    return (
-      <Box ml="auto" mr={3}>
-        <Box color="palette.text.shade60" horizontal alignItems="center">
-          <Text fontSize={2}>
-            <Trans i18nKey="addAccounts.createNewAccount.showAllAddressTypes" />
-          </Text>
-          <ToolTip
-            content={
-              <Trans
-                i18nKey="addAccounts.createNewAccount.showAllAddressTypesTooltip"
-                values={{
-                  family: currency.name,
-                }}
-              />
-            }
-          >
-            <Box mx={1}>
-              <InfoCircle size={14} />
-            </Box>
-          </ToolTip>
-          <Switch
-            isChecked={showAllCreatedAccounts}
-            small
-            onChange={() =>
-              this.setState({
-                showAllCreatedAccounts: !showAllCreatedAccounts,
-              })
-            }
-          />
-        </Box>
-      </Box>
-    );
-  }
-
   render() {
     const {
       scanStatus,
@@ -279,6 +300,7 @@ class StepImport extends PureComponent<
       editedNames,
       t,
     } = this.props;
+    const { modelId, accountIndex, percentComplete } = this.state;
     if (!currency) return null;
     const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
 
@@ -288,43 +310,25 @@ class StepImport extends PureComponent<
       .map(a => a.derivationMode);
     const preferredNewAccountScheme =
       newAccountSchemes && newAccountSchemes.length > 0 ? newAccountSchemes[0] : undefined;
-
-    // custom family UI for StepImport
-    if (mainCurrency) {
-      const CustomStepImport = getLLDCoinFamily(mainCurrency.family).StepImport;
-      if (CustomStepImport) {
-        const CustomStepImportStepImport = (
-          CustomStepImport as { StepImport?: React.ComponentClass<StepProps> }
-        ).StepImport;
-        if (CustomStepImportStepImport) {
-          return <CustomStepImportStepImport {...this.props} />;
-        }
-        const CustomStepImportDefault = CustomStepImport as React.ComponentClass<StepProps>;
-        return <CustomStepImportDefault {...this.props} />;
-      }
-    }
-
     if (err) {
+      const errorHandled =
+        ["UserRefusedOnDevice", "DisconnectedDevice", "DisconnectedDeviceDuringOperation"].indexOf(
+          err.name,
+        ) !== -1;
       return (
         <ErrorDisplay
           error={err}
-          withExportLogs={err.name !== "SatStackDescriptorNotImported"}
-          supportLink={urls.syncErrors}
+          withExportLogs={!errorHandled}
+          supportLink={errorHandled ? undefined : urls.syncErrors}
         />
       );
     }
     const currencyName = mainCurrency ? mainCurrency.name : "";
     const { sections, alreadyEmptyAccount } = groupAddAccounts(existingAccounts, scannedAccounts, {
       scanning: scanStatus === "scanning",
-      preferredNewAccountSchemes: this.state.showAllCreatedAccounts
-        ? undefined
-        : [preferredNewAccountScheme!],
+      preferredNewAccountSchemes: [preferredNewAccountScheme!],
     });
     let creatable;
-    const NoAssociatedAccounts = mainCurrency
-      ? getLLDCoinFamily(mainCurrency.family).NoAssociatedAccounts
-      : null;
-
     if (alreadyEmptyAccount) {
       creatable = (
         <Trans i18nKey="addAccounts.createNewAccount.noOperationOnLastAccount" parent="div">
@@ -334,9 +338,6 @@ class StepImport extends PureComponent<
           </Text>{" "}
         </Trans>
       );
-    } else if (NoAssociatedAccounts) {
-      // custom family UI for "no associated accounts"
-      creatable = <NoAssociatedAccounts {...this.props} />;
     } else {
       creatable = (
         <Trans i18nKey="addAccounts.createNewAccount.noAccountToCreate" parent="div">
@@ -358,12 +359,6 @@ class StepImport extends PureComponent<
         <TrackPage category="AddAccounts" name="Step3" currencyName={currencyName} />
         <Box data-test-id={"add-accounts-step-import-accounts-list"} mt={-4}>
           {sections.map(({ id, selectable, defaultSelected, data, supportLink }, i) => {
-            const hasMultipleSchemes =
-              id === "creatable" &&
-              newAccountSchemes &&
-              newAccountSchemes.length > 1 &&
-              data.length > 0 &&
-              scanStatus !== "scanning";
             return (
               <SectionAccounts
                 currency={currency}
@@ -383,7 +378,6 @@ class StepImport extends PureComponent<
                 editedNames={!selectable ? {} : editedNames}
                 onSelectAll={!selectable ? undefined : this.handleSelectAll}
                 onUnselectAll={!selectable ? undefined : this.handleUnselectAll}
-                ToggleAllComponent={hasMultipleSchemes && this.renderLegacyAccountsToggle()}
                 t={t}
               />
             );
@@ -393,30 +387,36 @@ class StepImport extends PureComponent<
             <LoadingRow>
               <Spinner color="palette.text.shade60" size={16} />
               <Box ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
-                {t("common.sync.syncing")}
+                {t("families.mimblewimble_coin.syncing", {
+                  percentComplete: percentComplete.toFixed(),
+                })}
               </Box>
             </LoadingRow>
           ) : null}
         </Box>
+        {modelId !== undefined && accountIndex !== undefined ? (
+          <ApproveExportRootPublicKeyOnDevice modelId={modelId} accountIndex={accountIndex} />
+        ) : null}
       </>
     );
   }
 }
-export default StepImport;
-export const StepImportFooter = (props: StepProps) => {
+
+const StepImportFooter = (props: StepProps) => {
   const {
     transitionTo,
     setScanStatus,
     scanStatus,
     onClickAdd,
     onCloseModal,
+    resetScanState,
     checkedAccountsIds,
     scannedAccounts,
     currency,
-    err,
     t,
+    device,
   } = props;
-  const dispatch = useDispatch();
+  const initialDevice = useRef(device);
   const willCreateAccount = checkedAccountsIds.some(id => {
     const account = scannedAccounts.find(a => a.id === id);
     return account && isAccountEmpty(account);
@@ -427,7 +427,6 @@ export const StepImportFooter = (props: StepProps) => {
   });
   const count = checkedAccountsIds.length;
   const willClose = !willCreateAccount && !willAddAccounts;
-  const isHandledError = err && err.name === "SatStackDescriptorNotImported";
   const ctaWording =
     scanStatus === "scanning"
       ? t("common.sync.syncing")
@@ -442,54 +441,32 @@ export const StepImportFooter = (props: StepProps) => {
         await onClickAdd();
         transitionTo("finish");
       };
-  const goFullNode = () => {
-    onCloseModal();
-    dispatch(openModal("MODAL_BITCOIN_FULL_NODE", { skipNodeSetup: true }));
-  };
-
-  // custom family UI for StepImportFooter
-  if (currency) {
-    const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-    if (mainCurrency) {
-      const CustomStepImport = getLLDCoinFamily(mainCurrency.family).StepImport;
-      if (CustomStepImport) {
-        const CustomStepImportStepImportFooter = (
-          CustomStepImport as { StepImportFooter?: React.ComponentClass<StepProps> }
-        ).StepImportFooter;
-        if (CustomStepImportStepImportFooter) {
-          return <CustomStepImportStepImportFooter {...props} />;
-        }
-      }
+  const onRetry = useCallback(() => {
+    resetScanState();
+    if (device !== initialDevice.current) {
+      transitionTo("connectDevice");
+    } else {
+      setScanStatus("scanning");
     }
+  }, [resetScanState, device, transitionTo, setScanStatus]);
+  if (useDeviceBlocked()) {
+    return null;
   }
-
   return (
     <>
       <Box grow>{currency && <CurrencyBadge currency={currency} />}</Box>
-      {scanStatus === "error" &&
-        (isHandledError ? (
-          <Button data-test-id={"add-accounts-full-node-reconfigure"} primary onClick={goFullNode}>
-            {t("addAccounts.fullNodeConfigure")}
-          </Button>
-        ) : (
-          <>
-            <RetryButton
-              data-test-id={"add-accounts-import-retry-button"}
-              primary
-              onClick={() => setScanStatus("scanning")}
-            />
-          </>
-        ))}
-      {scanStatus === "scanning" && (
+      {scanStatus === "error" ? (
+        <RetryButton data-test-id={"add-accounts-import-retry-button"} primary onClick={onRetry} />
+      ) : null}
+      {scanStatus === "scanning" ? (
         <Button
           data-test-id={"add-accounts-import-stop-button"}
           onClick={() => setScanStatus("finished")}
         >
           {t("common.stop")}
         </Button>
-      )}
-
-      {isHandledError || scanStatus === "error" ? null : (
+      ) : null}
+      {scanStatus === "error" ? null : (
         <Button
           data-test-id={"add-accounts-import-add-button"}
           primary
@@ -501,4 +478,9 @@ export const StepImportFooter = (props: StepProps) => {
       )}
     </>
   );
+};
+
+export default {
+  StepImport,
+  StepImportFooter,
 };

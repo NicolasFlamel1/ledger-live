@@ -113,7 +113,7 @@ const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
           >
             <Trans
               i18nKey="currentAddress.messageIfUnverified"
-              value={{
+              values={{
                 name,
               }}
             />
@@ -256,7 +256,14 @@ const StepReceiveFunds = (props: StepProps) => {
   const specific = getLLDCoinFamily(mainAccount.currency.family);
   const CustomStepReceiveFunds = specific?.StepReceiveFunds;
   if (CustomStepReceiveFunds) {
-    return <CustomStepReceiveFunds {...props} />;
+    const CustomStepReceiveFundsStepReceiveFunds = (
+      CustomStepReceiveFunds as { StepReceiveFunds?: React.ComponentClass<StepProps> }
+    ).StepReceiveFunds;
+    if (CustomStepReceiveFundsStepReceiveFunds) {
+      return <CustomStepReceiveFundsStepReceiveFunds {...props} />;
+    }
+    const CustomStepReceiveFundsDefault = CustomStepReceiveFunds as React.ComponentClass<StepProps>;
+    return <CustomStepReceiveFundsDefault {...props} />;
   }
 
   const CustomPostAlertReceiveFunds = specific?.StepReceiveFundsPostAlert;
@@ -362,3 +369,22 @@ const StepReceiveFunds = (props: StepProps) => {
   );
 };
 export default StepReceiveFunds;
+
+export function StepReceiveFundsFooter(props: StepProps) {
+  const { account, parentAccount } = props;
+  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  invariant(account && mainAccount, "No account given");
+
+  // custom family UI for StepReceiveFundsFooter
+  const CustomStepReceiveFunds = getLLDCoinFamily(mainAccount.currency.family).StepReceiveFunds;
+  if (CustomStepReceiveFunds) {
+    const CustomStepReceiveFundsStepReceiveFundsFooter = (
+      CustomStepReceiveFunds as { StepReceiveFundsFooter?: React.ComponentClass<StepProps> }
+    ).StepReceiveFundsFooter;
+    if (CustomStepReceiveFundsStepReceiveFundsFooter) {
+      return <CustomStepReceiveFundsStepReceiveFundsFooter {...props} />;
+    }
+  }
+
+  return null;
+}

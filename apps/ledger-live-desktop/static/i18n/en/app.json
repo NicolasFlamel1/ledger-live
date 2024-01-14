@@ -186,6 +186,7 @@
       "REVOKE": "Revoked",
       "ACTIVATE": "Activated",
       "REGISTER": "Registered",
+      "COINBASE_REWARD": "Coinbase reward",
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
@@ -5029,6 +5030,32 @@
     "solana": {
       "memo": "Memo",
       "memoPlaceholder": "Optional"
+    },
+    "mimblewimble_coin": {
+      "approveExportingRootPublicKey": "Please approve exporting the root public key for the account at index {{accountIndex}} on your Ledger device",
+      "kernelExcess": "Kernel Excess",
+      "outputCommitment": "Output Commitment",
+      "recipientPaymentProofSignature": "Recipient Payment Proof Signature",
+      "transactionToReceive": "Enter a transaction to receive",
+      "openTransactionFile": "Open a transaction file",
+      "fundsReceived": "Funds received",
+      "receivedAmount": "You received <0>{{amount}}</0>",
+      "transactionResponse": "Please give this response to the transaction's sender for them to finalize the transaction",
+      "transactionCopied": "Transaction copied",
+      "transactionCopiedSuspicious": "Mismatch between the copied transaction and the one in the clipboard",
+      "saveTransactionFile": "Save transaction to a file",
+      "transactionSaved": "Transaction saved",
+      "sendAsFile": "Send as file",
+      "transactionRequest": "Please give this transaction to the recipient for them to receive the funds",
+      "transactionResponseReceived": "Enter the recipient's response",
+      "maturityStatus": "Maturity",
+      "matureStatus": "Mature",
+      "immatureStatus": "Immature ({{numberOfConfirmations}} / {{requiredNumberOfConfirmations}})",
+      "verifyRecipientPaymentProofAddress": "Verify that the recipient payment proof address displayed on your device exactly matches the address given by the recipient",
+      "noPaymentProof": "This transaction doesn't have a payment proof",
+      "baseFee": "Base fee",
+      "syncing": "Synchronizing... ({{percentComplete}}%)",
+      "fee": "Fee"
     }
   },
   "errors": {
@@ -5802,6 +5829,86 @@
     },
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
+    },
+    "MimbleWimbleCoinInvalidParameters": {
+      "title": "Invalid parameters",
+      "description": ""
+    },
+    "MimbleWimbleCoinNoResponseFromNode": {
+      "title": "No response from the {{nodeName}} node",
+      "description": "Please retry or contact Ledger Support"
+    },
+    "MimbleWimbleCoinUnsupportedResponseFromNode": {
+      "title": "Unsupported response from the {{nodeName}} node",
+      "description": "Please retry or contact Ledger Support"
+    },
+    "MimbleWimbleCoinNoResponseFromRecipient": {
+      "title": "No response from the recipient",
+      "description": "Please verify that the recipient is listening at the address and retry"
+    },
+    "MimbleWimbleCoinUnsupportedResponseFromRecipient": {
+      "title": "Unsupported response from the recipient",
+      "description": ""
+    },
+    "MimbleWimbleCoinCreatingSlateFailed": {
+      "title": "Preparing the transaction failed",
+      "description": "Please retry"
+    },
+    "MimbleWimbleCoinFinalizingSlateFailed": {
+      "title": "Finalizing the transaction failed",
+      "description": "Please retry"
+    },
+    "MimbleWimbleCoinBroadcastingTransactionFailed": {
+      "title": "Broadcasting the transaction failed",
+      "description": "Please retry or contact Ledger Support ({{reason}})"
+    },
+    "MimbleWimbleCoinBroadcastingTransactionFailedUnknownReason": {
+      "title": "Broadcasting the transaction failed",
+      "description": "Please retry or contact Ledger Support"
+    },
+    "MimbleWimbleCoinInvalidTransactionData": {
+      "title": "This is not a valid transaction",
+      "description": ""
+    },
+    "MimbleWimbleCoinInvalidTransactionResponse": {
+      "title": "This is not a valid response",
+      "description": ""
+    },
+    "MimbleWimbleCoinUnsupportedTransactionData": {
+      "title": "The transaction is invalid or contains unsupported features",
+      "description": ""
+    },
+    "MimbleWimbleCoinUnsupportedSlate": {
+      "title": "The transaction contains unsupported features",
+      "description": ""
+    },
+    "MimbleWimbleCoinAddingToSlateFailed": {
+      "title": "Adding to the transaction failed",
+      "description": "Please retry"
+    },
+    "MimbleWimbleCoinTransactionWontHavePaymentProofNoRecipient": {
+      "title": "A transaction with no recipient address won't have a payment proof",
+      "description": ""
+    },
+    "MimbleWimbleCoinTransactionWontHavePaymentProofInapplicableAddress": {
+      "title": "A transaction sent to this recipient won't have a payment proof",
+      "description": ""
+    },
+    "MimbleWimbleCoinTorRequired": {
+      "title": "Tor must be installed to send a transaction to this recipient",
+      "description": ""
+    },
+    "MimbleWimbleCoinCanOnlySendAsFile": {
+      "title": "A transaction can only be sent to this recipient as a file",
+      "description": ""
+    },
+    "MimbleWimbleCoinMaxFeeExceeded": {
+      "title": "Max fee exceeded. Please lower the amount",
+      "description": ""
+    },
+    "MimbleWimbleCoinInvalidBaseFee": {
+      "title": "Invalid base fee",
+      "description": ""
     },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",

@@ -1,7 +1,7 @@
 import "./env";
 import "~/live-common-setup-base";
 import { captureException } from "~/sentry/main";
-import { ipcMain } from "electron";
+import { ipcMain, dialog, BrowserWindow } from "electron";
 import contextMenu from "electron-context-menu";
 import { log } from "@ledgerhq/logs";
 import fs from "fs/promises";
@@ -129,6 +129,40 @@ ipcMain.handle("load-lss-config", async (): Promise<string | undefined | null> =
   }
   return undefined;
 });
+
+ipcMain.handle("open-file-dialog", async (event, title: string): Promise<string | undefined> => {
+  try {
+    const result = await dialog.showOpenDialog(BrowserWindow.getFocusedWindow()!, {
+      title,
+      properties: ["openFile"],
+    });
+    if (result.filePaths.length) {
+      const contents = await fs.readFile(result.filePaths[0], "utf8");
+      return contents;
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-empty
+  }
+  return undefined;
+});
+
+ipcMain.handle(
+  "save-file-dialog",
+  async (event, title: string, contents: string): Promise<boolean> => {
+    try {
+      const result = await dialog.showSaveDialog(BrowserWindow.getFocusedWindow()!, {
+        title,
+      });
+      if (result.filePath) {
+        await fs.writeFile(result.filePath, contents);
+        return true;
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-empty
+    }
+    return false;
+  },
+);
 
 process.setMaxListeners(0);
 

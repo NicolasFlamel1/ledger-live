@@ -17,8 +17,9 @@ import Stepper, { Step } from "~/renderer/components/Stepper";
 import StepAccount, { StepAccountFooter } from "./steps/StepAccount";
 import StepConnectDevice, { StepConnectDeviceFooter } from "./steps/StepConnectDevice";
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
-import StepReceiveFunds from "./steps/StepReceiveFunds";
+import StepReceiveFunds, { StepReceiveFundsFooter } from "./steps/StepReceiveFunds";
 import StepReceiveStakingFlow, { StepReceiveStakingFooter } from "./steps/StepReceiveStakingFlow";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 export type StepId = "warning" | "account" | "device" | "receive" | "stakingFlow";
 
@@ -68,6 +69,7 @@ export type StepProps = {
   onChangeAddressVerified: (b?: boolean | null, a?: Error | null) => void;
   onClose: () => void;
   currencyName: string | undefined | null;
+  onChangeOnBack: (props: StepProps) => void;
 };
 export type St = Step<StepId, StepProps>;
 const createSteps = (): Array<St> => [
@@ -95,6 +97,7 @@ const createSteps = (): Array<St> => [
     id: "receive",
     label: <Trans i18nKey="receive.steps.receiveFunds.title" />,
     component: StepReceiveFunds,
+    footer: StepReceiveFundsFooter,
   },
   {
     id: "stakingFlow",
@@ -122,7 +125,7 @@ const Body = ({
   onChangeAddressVerified,
   params,
 }: Props) => {
-  const [steps] = useState(createSteps);
+  const [steps, setSteps] = useState(createSteps);
   const [account, setAccount] = useState(() => (params && params.account) || accounts[0]);
   const [parentAccount, setParentAccount] = useState(() => params && params.parentAccount);
   const [disabledSteps, setDisabledSteps] = useState<number[]>([]);
@@ -143,8 +146,39 @@ const Body = ({
   }, [closeModal]);
 
   const handleStepChange = useCallback(
-    (e: Step<StepId, StepProps>) => onChangeStepId(e.id),
-    [onChangeStepId],
+    (e: Step<StepId, StepProps>) => {
+      onChangeStepId(e.id);
+      if (e.id === "receive") {
+        // custom family action for StepReceiveFundsOnBack
+        let onBack: ((props: StepProps) => void | undefined) | undefined = undefined;
+        if (currency) {
+          const mainCurrency =
+            currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
+          if (mainCurrency) {
+            const CustomStepReceiveFunds = getLLDCoinFamily(mainCurrency.family).StepReceiveFunds;
+            if (CustomStepReceiveFunds) {
+              const CustomStepReceiveFundsStepReceiveFundsOnBack = (
+                CustomStepReceiveFunds as {
+                  StepReceiveFundsOnBack?: (props: StepProps) => void | undefined;
+                }
+              ).StepReceiveFundsOnBack;
+              if (CustomStepReceiveFundsStepReceiveFundsOnBack) {
+                onBack = CustomStepReceiveFundsStepReceiveFundsOnBack;
+              }
+            }
+          }
+        }
+        setSteps([
+          ...steps.slice(0, 3),
+          {
+            ...steps[3],
+            onBack,
+          },
+          ...steps.slice(4),
+        ]);
+      }
+    },
+    [onChangeStepId, steps, setSteps, currency],
   );
   const handleResetSkip = useCallback(() => {
     setDisabledSteps([]);
@@ -160,6 +194,24 @@ const Body = ({
     }
     onChangeStepId("receive");
   }, [onChangeAddressVerified, setDisabledSteps, steps, onChangeStepId]);
+  const handleChangeOnBack = useCallback(
+    (onBack: (props: StepProps) => void) => {
+      for (let i = 0; i < steps.length; ++i) {
+        if (steps[i].id === stepId) {
+          setSteps([
+            ...steps.slice(0, i),
+            {
+              ...steps[i],
+              onBack,
+            },
+            ...steps.slice(i + 1),
+          ]);
+          break;
+        }
+      }
+    },
+    [stepId, steps, setSteps],
+  );
   useEffect(() => {
     const stepId =
       params && params.startWithWarning ? "warning" : params.receiveTokenMode ? "account" : null;
@@ -219,6 +271,7 @@ const Body = ({
     onStepChange: handleStepChange,
     onClose: handleCloseModal,
     currencyName,
+    onChangeOnBack: handleChangeOnBack,
   };
   return (
     <Stepper {...stepperProps}>

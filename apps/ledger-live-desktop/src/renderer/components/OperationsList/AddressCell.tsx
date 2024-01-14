@@ -30,7 +30,9 @@ export const SplitAddress = ({
   return (
     <Box horizontal {...boxProps}>
       <Left>{left}</Left>
-      <Right>{right}</Right>
+      <Right>
+        <bdi>{right}</bdi>
+      </Right>
     </Box>
   );
 };

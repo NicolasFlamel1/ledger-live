@@ -184,6 +184,8 @@ const OperationD = (props: Props) => {
     : getDefaultTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
 
   const OpDetailsExtra = specific?.operationDetails?.OperationDetailsExtra || OperationDetailsExtra;
+  const opDetailsExtraIncludesLineBreak =
+    specific?.operationDetails?.operationDetailsExtraIncludesLineBreak;
   const { hasFailed } = operation;
   const subOperations: Operation[] = useMemo(
     () => operation.subOperations || [],
@@ -426,11 +428,11 @@ const OperationD = (props: Props) => {
           </OpDetailsData>
         </OpDetailsSection>
       ) : null}
-      {(isNegative || fee) && (
+      {(isNegative || (fee && fee.isPositive())) && (
         <OpDetailsSection>
           <OpDetailsTitle>{t("operationDetails.fees")}</OpDetailsTitle>
           <OpDetailsData>
-            {fee ? (
+            {fee && fee.isPositive() ? (
               <Box alignItems="flex-end">
                 <Box horizontal alignItems="center">
                   {urlFeesInfo ? (
@@ -630,17 +632,19 @@ const OperationD = (props: Props) => {
         </OpDetailsData>
       </OpDetailsSection>
       <B />
-      <OpDetailsSection>
-        <OpDetailsTitle>{t("operationDetails.identifier")}</OpDetailsTitle>
-        <OpDetailsData>
-          <HashContainer>
-            <SplitAddress value={hash} />
-          </HashContainer>
-          <GradientHover>
-            <CopyWithFeedback text={hash} />
-          </GradientHover>
-        </OpDetailsData>
-      </OpDetailsSection>
+      {hash ? (
+        <OpDetailsSection>
+          <OpDetailsTitle>{t("operationDetails.identifier")}</OpDetailsTitle>
+          <OpDetailsData>
+            <HashContainer>
+              <SplitAddress value={hash} />
+            </HashContainer>
+            <GradientHover>
+              <CopyWithFeedback text={hash} />
+            </GradientHover>
+          </OpDetailsData>
+        </OpDetailsSection>
+      ) : null}
       {uniqueSenders.length ? (
         <OpDetailsSection>
           <OpDetailsTitle>{t("operationDetails.from")}</OpDetailsTitle>
@@ -671,10 +675,15 @@ const OperationD = (props: Props) => {
           </Box>
         </OpDetailsSection>
       ) : null}
+      {hash || uniqueSenders.length || recipients.length ? <B /> : null}
       {OpDetailsExtra && (
-        <OpDetailsExtra operation={operation} type={type} account={account as Account} />
+        <>
+          <OpDetailsExtra operation={operation} type={type} account={account as Account} />
+          {OpDetailsExtra !== OperationDetailsExtra && !opDetailsExtraIncludesLineBreak ? (
+            <B />
+          ) : null}
+        </>
       )}
-      <B />
     </Box>
   );
 };
@@ -699,12 +708,14 @@ type OperationDetailsExtraProps = {
   type: OperationType;
 };
 const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
+  let operationDetailShown = false;
   let jsx = null;
 
   // Safety type checks
   if (operation.extra && typeof operation.extra === "object" && !Array.isArray(operation.extra)) {
     jsx = Object.entries(operation.extra as Object).map(([key, value]) => {
       if (typeof value === "object" || typeof value === "function") return null;
+      operationDetailShown = true;
       return (
         <OpDetailsSection key={key}>
           <OpDetailsTitle>
@@ -718,7 +729,12 @@ const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
     });
   }
 
-  return <>{jsx}</>;
+  return (
+    <>
+      {jsx}
+      {operationDetailShown ? <B /> : null}
+    </>
+  );
 };
 const More = styled(Text).attrs<TextProps>(p => ({
   ff: p.ff ? p.ff : "Inter|Bold",

@@ -8,6 +8,9 @@ export const encodeCurrencyAsLedgerId = (currency: Currency): string => {
     }
     case "CryptoCurrency":
     case "TokenCurrency": {
+      if (currency.type === "CryptoCurrency" && currency.family === "mimblewimble_coin") {
+        return currency.ticker;
+      }
       return encodeURIComponent(currency.id);
     }
   }

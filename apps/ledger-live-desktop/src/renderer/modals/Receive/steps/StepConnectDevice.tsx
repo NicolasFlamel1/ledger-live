@@ -10,13 +10,10 @@ import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { StepProps } from "../Body";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { getEnv } from "@ledgerhq/live-env";
+import { getLLDCoinFamily } from "~/renderer/families";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
-export default function StepConnectDevice({
-  account,
-  parentAccount,
-  token,
-  transitionTo,
-}: StepProps) {
+export default function StepConnectDevice(props: StepProps) {
+  const { account, parentAccount, token, transitionTo } = props;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const tokenCurrency = (account && account.type === "TokenAccount" && account.token) || token;
   const request = useMemo(
@@ -26,6 +23,25 @@ export default function StepConnectDevice({
     }),
     [mainAccount, tokenCurrency],
   );
+
+  // custom family UI for StepConnectDevice
+  if (mainAccount) {
+    const CustomStepConnectDevice = getLLDCoinFamily(
+      mainAccount.currency.family,
+    ).ReceiveStepConnectDevice;
+    if (CustomStepConnectDevice) {
+      const CustomStepConnectDeviceStepConnectDevice = (
+        CustomStepConnectDevice as { StepConnectDevice?: React.ComponentClass<StepProps> }
+      ).StepConnectDevice;
+      if (CustomStepConnectDeviceStepConnectDevice) {
+        return <CustomStepConnectDeviceStepConnectDevice {...props} />;
+      }
+      const CustomStepConnectDeviceDefault =
+        CustomStepConnectDevice as React.ComponentClass<StepProps>;
+      return <CustomStepConnectDeviceDefault {...props} />;
+    }
+  }
+
   return (
     <>
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
@@ -38,7 +54,25 @@ export default function StepConnectDevice({
     </>
   );
 }
-export function StepConnectDeviceFooter({ t, onSkipConfirm, eventType, currencyName }: StepProps) {
+export function StepConnectDeviceFooter(props: StepProps) {
+  const { account, parentAccount, t, onSkipConfirm, eventType, currencyName } = props;
+  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+
+  // custom family UI for StepConnectDeviceFooter
+  if (mainAccount) {
+    const CustomStepConnectDevice = getLLDCoinFamily(
+      mainAccount.currency.family,
+    ).ReceiveStepConnectDevice;
+    if (CustomStepConnectDevice) {
+      const CustomStepConnectDeviceStepConnectDeviceFooter = (
+        CustomStepConnectDevice as { StepConnectDeviceFooter?: React.ComponentClass<StepProps> }
+      ).StepConnectDeviceFooter;
+      if (CustomStepConnectDeviceStepConnectDeviceFooter) {
+        return <CustomStepConnectDeviceStepConnectDeviceFooter {...props} />;
+      }
+    }
+  }
+
   return (
     <Box horizontal flow={2}>
       <TrackPage

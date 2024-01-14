@@ -119,6 +119,11 @@ export type LLDCoinFamily<
      * Add extra info
      */
     OperationDetailsExtra?: React.ComponentType<OperationDetailsExtraProps<A, O>>;
+
+    /*
+     * Extra info includes line break
+     */
+    operationDetailsExtraIncludesLineBreak?: boolean | undefined;
   };
 
   accountActions?: {
@@ -278,9 +283,15 @@ export type LLDCoinFamily<
   };
 
   /**
-   * Change Receive funds with this component (example: Hedera)
+   * Change Receive funds with this component (example: Hedera, MimbleWimble Coin)
    */
-  StepReceiveFunds?: React.ComponentType<ReceiveStepProps>;
+  StepReceiveFunds?:
+    | React.ComponentType<ReceiveStepProps>
+    | {
+        StepReceiveFunds?: React.ComponentType<ReceiveStepProps>;
+        StepReceiveFundsFooter?: React.ComponentType<ReceiveStepProps>;
+        StepReceiveFundsOnBack?: (props: ReceiveStepProps) => void | undefined;
+      };
 
   /**
    * Allow to add component below the confirmation address box on receive step
@@ -296,6 +307,36 @@ export type LLDCoinFamily<
    * It was for Hedera specifc, when we do not find any account it show a specific component
    */
   NoAssociatedAccounts?: React.ComponentType<AddAccountsStepProps>;
+
+  /**
+   * Change add accounts import with this component (example: MimbleWimble Coin)
+   */
+  StepImport?:
+    | React.ComponentType<AddAccountsStepProps>
+    | {
+        StepImport?: React.ComponentType<AddAccountsStepProps>;
+        StepImportFooter?: React.ComponentType<AddAccountsStepProps>;
+      };
+
+  /**
+   * Change send connect device with this component (example: MimbleWimble Coin)
+   */
+  SendStepConnectDevice?:
+    | React.ComponentType<SendStepProps>
+    | {
+        StepConnectDevice?: React.ComponentType<SendStepProps>;
+        StepConnectDeviceFooter?: React.ComponentType<SendStepProps>;
+      };
+
+  /**
+   * Change receive connect device with this component (example: MimbleWimble Coin)
+   */
+  ReceiveStepConnectDevice?:
+    | React.ComponentType<ReceiveStepProps>
+    | {
+        StepConnectDevice?: React.ComponentType<ReceiveStepProps>;
+        StepConnectDeviceFooter?: React.ComponentType<ReceiveStepProps>;
+      };
 
   /**
    * Component banner before Account body header

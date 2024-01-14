@@ -19,7 +19,7 @@ import { EvmFamily } from "../types";
 
 const ErrorContainer = styled(Box)<{ hasError: Error }>`
   margin-top: 0px;
-  font-size: 10px;
+  font-size: 12px;
   width: 100%;
   transition: all 0.4s ease-in-out;
   will-change: max-height;

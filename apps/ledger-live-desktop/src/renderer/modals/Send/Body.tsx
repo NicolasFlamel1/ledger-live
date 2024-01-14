@@ -25,7 +25,7 @@ import Track from "~/renderer/analytics/Track";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import StepRecipient, { StepRecipientFooter } from "./steps/StepRecipient";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
-import StepConnectDevice from "./steps/StepConnectDevice";
+import StepConnectDevice, { StepConnectDeviceFooter } from "./steps/StepConnectDevice";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
@@ -102,6 +102,7 @@ const createSteps = (disableBacks: string[] = [], shouldSkipAmount = false): St[
       id: "device",
       label: <Trans i18nKey="send.steps.device.title" />,
       component: StepConnectDevice,
+      footer: StepConnectDeviceFooter,
       onBack: !disableBacks.includes("device")
         ? ({ transitionTo }) => transitionTo("summary")
         : null,
@@ -354,7 +355,9 @@ const Body = ({
 
   return (
     <Stepper {...stepperProps}>
-      {stepId === "confirmation" ? null : <SyncSkipUnderPriority priority={100} />}
+      {stepId === "confirmation" && !transactionError ? null : (
+        <SyncSkipUnderPriority priority={100} />
+      )}
       <Track onUnmount event="CloseModalSend" />
     </Stepper>
   );

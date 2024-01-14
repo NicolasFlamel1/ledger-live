@@ -41,6 +41,7 @@ function inferColor(p: ThemedStyledProps<ContainerProps, DefaultTheme>) {
     case "FREEZE":
       return p.theme.colors.wallet;
     case "REWARD":
+    case "COINBASE_REWARD":
       return p.theme.colors.gold;
     default:
       return p.theme.colors.palette.text.shade60;

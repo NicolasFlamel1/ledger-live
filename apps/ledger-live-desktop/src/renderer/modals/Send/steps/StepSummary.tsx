@@ -139,33 +139,39 @@ const StepSummary = (props: StepProps) => {
               </Box>
             </Box>
           </Box>
-          <VerticalSeparator />
-          <Box horizontal alignItems="center">
-            <Circle>
-              <IconQrCode size={14} />
-            </Circle>
-            <Box flex={1}>
-              <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-                <Trans i18nKey="send.steps.details.to" />
-              </Text>
-              {transaction.recipientDomain && (
-                <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={4}>
-                  {transaction.recipientDomain.domain}
-                </Text>
-              )}
-              <Ellipsis>
-                <Text
-                  ff="Inter"
-                  color={
-                    transaction.recipientDomain ? "palette.text.shade70" : "palette.text.shade100"
-                  }
-                  fontSize={4}
-                >
-                  {transaction.recipient}
-                </Text>
-              </Ellipsis>
-            </Box>
-          </Box>
+          {transaction.recipient.trim() && (
+            <>
+              <VerticalSeparator />
+              <Box horizontal alignItems="center">
+                <Circle>
+                  <IconQrCode size={14} />
+                </Circle>
+                <Box flex={1}>
+                  <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+                    <Trans i18nKey="send.steps.details.to" />
+                  </Text>
+                  {transaction.recipientDomain && (
+                    <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={4}>
+                      {transaction.recipientDomain.domain}
+                    </Text>
+                  )}
+                  <Ellipsis>
+                    <Text
+                      ff="Inter"
+                      color={
+                        transaction.recipientDomain
+                          ? "palette.text.shade70"
+                          : "palette.text.shade100"
+                      }
+                      fontSize={4}
+                    >
+                      {transaction.recipient.trim()}
+                    </Text>
+                  </Ellipsis>
+                </Box>
+              </Box>
+            </>
+          )}
         </Box>
         <Separator />
         {memo && (
