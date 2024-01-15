@@ -36,7 +36,9 @@ export default function StepConnectDevice(props: StepProps) {
     }
     const CustomStepConnectDeviceDefault =
       CustomStepConnectDevice as React.ComponentClass<StepProps>;
-    return <CustomStepConnectDeviceDefault {...props} />;
+    if (React.isValidElement(CustomStepConnectDeviceDefault)) {
+      return <CustomStepConnectDeviceDefault {...props} />;
+    }
   }
 
   return (

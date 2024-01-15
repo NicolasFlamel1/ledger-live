@@ -263,7 +263,9 @@ const StepReceiveFunds = (props: StepProps) => {
       return <CustomStepReceiveFundsStepReceiveFunds {...props} />;
     }
     const CustomStepReceiveFundsDefault = CustomStepReceiveFunds as React.ComponentClass<StepProps>;
-    return <CustomStepReceiveFundsDefault {...props} />;
+    if (React.isValidElement(CustomStepReceiveFundsDefault)) {
+      return <CustomStepReceiveFundsDefault {...props} />;
+    }
   }
 
   const CustomPostAlertReceiveFunds = specific?.StepReceiveFundsPostAlert;

@@ -5039,7 +5039,7 @@
       "transactionToReceive": "Enter a transaction to receive",
       "openTransactionFile": "Open a transaction file",
       "fundsReceived": "Funds received",
-      "receivedAmount": "You received <0>{{amount}}</0>",
+      "receivedAmount": "You received {{amount}}",
       "transactionResponse": "Please give this response to the transaction's sender for them to finalize the transaction",
       "transactionCopied": "Transaction copied",
       "transactionCopiedSuspicious": "Mismatch between the copied transaction and the one in the clipboard",
@@ -5879,7 +5879,7 @@
       "description": ""
     },
     "MimbleWimbleCoinUnsupportedSlate": {
-      "title": "The transaction contains unsupported features",
+      "title": "The transaction contains unsupported features or was already used",
       "description": ""
     },
     "MimbleWimbleCoinAddingToSlateFailed": {

@@ -84,8 +84,15 @@ class StepImport extends PureComponent<
     const { currency, setScanStatus } = this.props;
     if (currency) {
       const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-      if (mainCurrency && getLLDCoinFamily(mainCurrency.family).StepImport) {
-        return;
+      if (mainCurrency) {
+        const CustomStepImport = getLLDCoinFamily(mainCurrency.family).StepImport;
+        if (
+          CustomStepImport &&
+          ((CustomStepImport as { StepImport?: React.ComponentClass<StepProps> }).StepImport ||
+            React.isValidElement(CustomStepImport as React.ComponentClass<StepProps>))
+        ) {
+          return;
+        }
       }
     }
     setScanStatus("scanning");
@@ -95,8 +102,15 @@ class StepImport extends PureComponent<
     const { currency, scanStatus } = this.props;
     if (currency) {
       const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-      if (mainCurrency && getLLDCoinFamily(mainCurrency.family).StepImport) {
-        return;
+      if (mainCurrency) {
+        const CustomStepImport = getLLDCoinFamily(mainCurrency.family).StepImport;
+        if (
+          CustomStepImport &&
+          ((CustomStepImport as { StepImport?: React.ComponentClass<StepProps> }).StepImport ||
+            React.isValidElement(CustomStepImport as React.ComponentClass<StepProps>))
+        ) {
+          return;
+        }
       }
     }
     const didStartScan = prevProps.scanStatus !== "scanning" && scanStatus === "scanning";
@@ -117,8 +131,15 @@ class StepImport extends PureComponent<
     const { currency } = this.props;
     if (currency) {
       const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-      if (mainCurrency && getLLDCoinFamily(mainCurrency.family).StepImport) {
-        return;
+      if (mainCurrency) {
+        const CustomStepImport = getLLDCoinFamily(mainCurrency.family).StepImport;
+        if (
+          CustomStepImport &&
+          ((CustomStepImport as { StepImport?: React.ComponentClass<StepProps> }).StepImport ||
+            React.isValidElement(CustomStepImport as React.ComponentClass<StepProps>))
+        ) {
+          return;
+        }
       }
     }
     this.unsub();
@@ -300,7 +321,9 @@ class StepImport extends PureComponent<
           return <CustomStepImportStepImport {...this.props} />;
         }
         const CustomStepImportDefault = CustomStepImport as React.ComponentClass<StepProps>;
-        return <CustomStepImportDefault {...this.props} />;
+        if (React.isValidElement(CustomStepImportDefault)) {
+          return <CustomStepImportDefault {...this.props} />;
+        }
       }
     }
 

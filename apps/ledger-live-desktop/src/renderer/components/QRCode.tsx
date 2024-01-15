@@ -4,6 +4,7 @@ import qrcode from "qrcode";
 type Props = {
   data: string;
   size: number;
+  errorCorrectionLevel?: qrcode.QRCodeErrorCorrectionLevel | undefined;
 };
 class QRCode extends PureComponent<Props> {
   static defaultProps = {
@@ -21,7 +22,7 @@ class QRCode extends PureComponent<Props> {
   canvas: React.RefObject<HTMLCanvasElement> = React.createRef();
 
   drawQRCode() {
-    const { data, size } = this.props;
+    const { data, size, errorCorrectionLevel } = this.props;
     const { current } = this.canvas;
     if (!current) return;
     qrcode.toCanvas(
@@ -30,6 +31,7 @@ class QRCode extends PureComponent<Props> {
       {
         width: current.width,
         margin: 0,
+        errorCorrectionLevel,
       },
       () => {
         // fix again the CSS because lib changes it –_–

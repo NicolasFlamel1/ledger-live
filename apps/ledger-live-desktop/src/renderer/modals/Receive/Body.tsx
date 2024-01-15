@@ -69,7 +69,7 @@ export type StepProps = {
   onChangeAddressVerified: (b?: boolean | null, a?: Error | null) => void;
   onClose: () => void;
   currencyName: string | undefined | null;
-  onChangeOnBack: (props: StepProps) => void;
+  onChangeOnBack: (f: ((props: StepProps) => void) | undefined) => void;
 };
 export type St = Step<StepId, StepProps>;
 const createSteps = (): Array<St> => [
