@@ -21,6 +21,9 @@ export type OperationType =
   | "FEES"
   | "FREEZE"
   | "UNFREEZE"
+  | "WITHDRAW_EXPIRE_UNFREEZE"
+  | "UNDELEGATE_RESOURCE"
+  | "LEGACY_UNFREEZE"
   // POLKADOT
   | "VOTE"
   | "REWARD_PAYOUT"
