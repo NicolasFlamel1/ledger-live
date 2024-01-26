@@ -52,6 +52,7 @@ import { TezosDelegationFlowParamList } from "~/families/tezos/DelegationFlow/ty
 import { TronVoteFlowParamList } from "~/families/tron/VoteFlow/types";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SignMessageNavigatorStackParamList } from "~/components/RootNavigator/types/SignMessageNavigator";
+import byFamily from "../generated/SendFundsConnectDevice";
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { SignedOperation } from "@ledgerhq/types-live";
 
@@ -113,7 +114,8 @@ export const navigateToSelectDevice = (navigation: Props["navigation"], route: P
       forceSelectDevice: true,
     },
   );
-export default function ConnectDevice({ route, navigation }: Props) {
+export default function ConnectDevice(props: Props) {
+  const { route, navigation } = props;
   const action = useTransactionDeviceAction();
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -147,7 +149,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
     : {
         renderOnResult: onResult,
       };
-  return useMemo(
+  const render = useMemo(
     () =>
       transaction ? (
         <SafeAreaView
@@ -181,6 +183,31 @@ export default function ConnectDevice({ route, navigation }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [status, transaction, tokenCurrency, route.params.device],
   );
+
+  // custom family UI for SendFundsConnectDevice
+  if (
+    route.name === ScreenName.SendConnectDevice &&
+    mainAccount &&
+    mainAccount.currency.type === "CryptoCurrency" &&
+    Object.keys(byFamily).includes(mainAccount.currency.family)
+  ) {
+    const CustomSendFundsConnectDevice =
+      mainAccount.currency.type === "CryptoCurrency"
+        ? byFamily[mainAccount.currency.family as keyof typeof byFamily]
+        : null;
+    if (CustomSendFundsConnectDevice) {
+      return (
+        <CustomSendFundsConnectDevice
+          {...(props as StackNavigatorProps<
+            SendFundsNavigatorStackParamList,
+            ScreenName.SendConnectDevice
+          >)}
+        />
+      );
+    }
+  }
+
+  return render;
 }
 
 const edges = ["bottom"] as Edge[];

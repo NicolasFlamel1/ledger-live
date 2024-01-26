@@ -463,6 +463,10 @@ export enum ScreenName {
   CasperEditTransferId = "CasperEditTransferId",
   // hedera
   HederaEditMemo = "HederaEditMemo",
+  // mimblewimble_coin
+  MimbleWimbleCoinEditBaseFee = "MimbleWimbleCoinEditBaseFee",
+  MimbleWimbleCoinScanTransactionResponse = "MimbleWimbleCoinScanTransactionResponse",
+  MimbleWimbleCoinScanTransactionData = "MimbleWimbleCoinScanTransactionData",
   // near
   NearStakingValidator = "NearStakingValidator",
   NearStakingValidatorSelect = "NearStakingValidatorSelect",

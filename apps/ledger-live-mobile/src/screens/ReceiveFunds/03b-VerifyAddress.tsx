@@ -129,7 +129,8 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
     if (device) {
       verifyOnDevice(device);
     }
-  }, [device, verifyOnDevice]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!account || !currency || !mainAccount || !device) return null;
 

@@ -34,6 +34,7 @@ export default ({
   navigation,
   route,
   setTransaction,
+  status,
   ...props
 }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
@@ -50,6 +51,7 @@ export default ({
         parentAccount={parentAccount}
         navigation={navigation}
         route={route}
+        status={status}
       />
     );
   }

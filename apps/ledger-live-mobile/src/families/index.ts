@@ -8,6 +8,7 @@ export * from "./elrond";
 export * from "./evm";
 export * from "./hedera";
 export * from "./internet_computer";
+export * from "./mimblewimble_coin";
 export * from "./near";
 export * from "./polkadot";
 export * from "./ripple";

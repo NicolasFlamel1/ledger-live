@@ -24,6 +24,7 @@ export default function Wrapper({ size, Icon, failed, confirmed, type }: Props) 
           return colors.live;
 
         case "REWARD":
+        case "COINBASE_REWARD":
           return colors.yellow;
 
         default:

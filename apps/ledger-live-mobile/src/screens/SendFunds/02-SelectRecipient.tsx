@@ -31,6 +31,7 @@ import NavigationScrollView from "~/components/NavigationScrollView";
 import RetryButton from "~/components/RetryButton";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import sendRecipientFieldsByFamily from "../../generated/SendRecipientFields";
 import { ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { currencySettingsForAccountSelector } from "~/reducers/settings";
@@ -45,7 +46,8 @@ type Props = BaseComposite<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSelectRecipient>
 >;
 
-export default function SendSelectRecipient({ navigation, route }: Props) {
+export default function SendSelectRecipient(props: Props) {
+  const { navigation, route } = props;
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -185,6 +187,10 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
   const error = withoutHiddenError(status.errors.recipient);
   const warning = status.warnings.recipient;
+  const CustomSendRecipientFields =
+    currency && currency.type === "CryptoCurrency"
+      ? sendRecipientFieldsByFamily[currency.family as keyof typeof sendRecipientFieldsByFamily]
+      : null;
   const isSomeIncomingTxPending = account.operations?.some(
     (op: Operation) =>
       (op.type === "IN" || op.type === "NFT_IN") &&
@@ -279,6 +285,14 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 error={error}
               />
             )}
+            {CustomSendRecipientFields ? (
+              <CustomSendRecipientFields
+                setTransaction={setTransaction}
+                account={account}
+                parentAccount={parentAccount}
+                transaction={transaction}
+              />
+            ) : null}
             {isSomeIncomingTxPending ? (
               <View style={styles.pendingIncomingTxWarning}>
                 <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
@@ -287,7 +301,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           </NavigationScrollView>
           <View style={styles.container}>
             {(!isDomainResolutionEnabled || !isCurrencySupported) &&
-            transaction.recipient &&
+            transaction.recipient.trim() &&
             !(error || warning) ? (
               <View style={styles.infoBox}>
                 <Alert type="primary">{t("send.recipient.verifyAddress")}</Alert>

@@ -32,7 +32,7 @@ const DefaultRecipientTemplate = memo(({ transaction }: Pick<Props, "transaction
         style={recipientDomain ? styles.domainRowText : styles.summaryRowText}
         color={recipientDomain ? "neutral.c70" : "neutral.c100"}
       >
-        {recipient}
+        {recipient.trim()}
       </LText>
     </>
   );
@@ -58,7 +58,7 @@ const RecipientWithResolutionTemplate = memo(({ transaction }: Pick<Props, "tran
         style={recipientDomain ? styles.domainRowText : styles.summaryRowText}
         color={recipientDomain ? "neutral.c70" : "neutral.c100"}
       >
-        {recipient}
+        {recipient.trim()}
       </LText>
     </>
   );

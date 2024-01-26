@@ -140,6 +140,7 @@ export default function ValidateOnDevice({
         footer?: React.ComponentType<{
           transaction: Transaction;
           recipientWording: string;
+          status: TransactionStatus;
         }>;
       }
     ).footer;
@@ -230,7 +231,7 @@ export default function ValidateOnDevice({
         </Flex>
       </ScrollView>
       {Footer ? (
-        <Footer transaction={transaction} recipientWording={recipientWording} />
+        <Footer transaction={transaction} recipientWording={recipientWording} status={status} />
       ) : (
         <Flex>
           <Alert type="help">{recipientWording}</Alert>

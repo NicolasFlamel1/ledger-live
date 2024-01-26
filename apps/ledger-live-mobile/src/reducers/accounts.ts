@@ -131,11 +131,17 @@ export const exportSelector = (s: State) => ({
 export const accountsSelector = (s: State): Account[] => s.accounts.active;
 
 // NB some components don't need to refresh every time an account is updated, usually it's only
-// when the balance/name/length/starred/swapHistory of accounts changes.
+// when the balance/name/length/starred/swapHistory/freshAddressPath/spendableBalance of accounts changes.
 const accountHash = (a: AccountLike) =>
   `${a.type === "Account" ? a.name : ""}-${a.id}${
     a.starred ? "-*" : ""
-  }-${a.balance.toString()}-swapHistory(${a.swapHistory.length})`;
+  }-${a.balance.toString()}-swapHistory(${a.swapHistory.length})${
+    a.type === "Account"
+      ? `-freshAddressPath(${
+          a.freshAddresses.length ? a.freshAddresses[0].derivationPath : a.freshAddressPath
+        })`
+      : ""
+  }${a.type === "Account" ? `-spendableBalance(${a.spendableBalance.toString()})` : ""}`;
 
 // TODO can we share with desktop in common?
 const shallowAccountsSelectorCreator = createSelectorCreator(defaultMemoize, (a, b): boolean =>

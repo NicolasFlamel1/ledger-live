@@ -363,7 +363,7 @@ export default function Content({
         value={<FormatDate withHoursMinutes date={operation.date} />}
       />
 
-      {isNegative || operation.fee ? (
+      {isNegative || (operation.fee && operation.fee.isPositive()) ? (
         <Section
           title={t("operationDetails.fees")}
           headerRight={
@@ -378,7 +378,7 @@ export default function Content({
             ) : undefined
           }
         >
-          {operation.fee ? (
+          {operation.fee && operation.fee.isPositive() ? (
             <View style={styles.feeValueContainer}>
               <LText style={sectionStyles.value} semiBold>
                 <CurrencyUnitValue showCode unit={feeUnit} value={operation.fee} />
@@ -405,7 +405,9 @@ export default function Content({
         </Section>
       ) : null}
 
-      <Section title={t("operationDetails.identifier")} value={operation.hash} />
+      {operation.hash ? (
+        <Section title={t("operationDetails.identifier")} value={operation.hash} />
+      ) : null}
 
       {uniqueSenders.length > 0 && (
         <View style={sectionStyles.wrapper}>

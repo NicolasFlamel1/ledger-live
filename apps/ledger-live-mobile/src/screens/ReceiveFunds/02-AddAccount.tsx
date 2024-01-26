@@ -29,6 +29,7 @@ import {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
+import byFamily from "../../generated/ReceiveFundsAddAccount";
 import Animation from "~/components/Animation";
 import lottie from "./assets/lottie.json";
 import GradientContainer from "~/components/GradientContainer";
@@ -36,7 +37,8 @@ import { useTheme } from "styled-components/native";
 
 type Props = StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveAddAccount>;
 
-function AddAccountsAccounts({ navigation, route }: Props) {
+function AddAccountsAccounts(props: Props) {
+  const { route, navigation } = props;
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -55,7 +57,16 @@ function AddAccountsAccounts({ navigation, route }: Props) {
   } = route.params || {};
 
   useEffect(() => {
+    if (
+      currency &&
+      currency.type === "CryptoCurrency" &&
+      Object.keys(byFamily).includes(currency.family) &&
+      byFamily[currency.family as keyof typeof byFamily]
+    ) {
+      return;
+    }
     startSubscription();
+    // eslint-disable-next-line consistent-return
     return () => stopSubscription(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -91,11 +102,19 @@ function AddAccountsAccounts({ navigation, route }: Props) {
   );
 
   useEffect(() => {
+    if (
+      currency &&
+      currency.type === "CryptoCurrency" &&
+      Object.keys(byFamily).includes(currency.family) &&
+      byFamily[currency.family as keyof typeof byFamily]
+    ) {
+      return;
+    }
     if (!scanning && scannedAccounts.length === 1) {
       setAddingAccount(true);
       selectAccount(scannedAccounts[0], 4000);
     }
-  }, [scanning, scannedAccounts, selectAccount]);
+  }, [scanning, scannedAccounts, selectAccount, currency]);
 
   const startSubscription = useCallback(() => {
     const c = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
@@ -223,6 +242,21 @@ function AddAccountsAccounts({ navigation, route }: Props) {
   );
 
   const keyExtractor = useCallback((item: Account) => item?.id, []);
+
+  // custom family UI for ReceiveFundsAddAccount
+  if (
+    currency &&
+    currency.type === "CryptoCurrency" &&
+    Object.keys(byFamily).includes(currency.family)
+  ) {
+    const CustomReceiveFundsAddAccount =
+      currency.type === "CryptoCurrency"
+        ? byFamily[currency.family as keyof typeof byFamily]
+        : null;
+    if (CustomReceiveFundsAddAccount) {
+      return <CustomReceiveFundsAddAccount {...props} />;
+    }
+  }
 
   return (
     <>

@@ -29,6 +29,10 @@ const targets = [
   "ReceiveConfirmationPostAlert",
   "ConnectDevice",
   "NoAssociatedAccounts",
+  "AddAccountsAccounts",
+  "SendRecipientFields",
+  "SendFundsConnectDevice",
+  "ReceiveFundsAddAccount",
   "EditOperationPanel",
 ];
 

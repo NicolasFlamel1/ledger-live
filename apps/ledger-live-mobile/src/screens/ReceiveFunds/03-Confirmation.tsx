@@ -126,6 +126,14 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   }, [depositWithdrawBannerMobile?.params?.url]);
 
   useEffect(() => {
+    if (
+      currency &&
+      currency.type === "CryptoCurrency" &&
+      Object.keys(byFamily).includes(currency.family) &&
+      byFamily[currency.family as keyof typeof byFamily]
+    ) {
+      return;
+    }
     if (route.params?.createTokenAccount && !hasAddedTokenAccount) {
       const newMainAccount = { ...mainAccount };
       if (
@@ -154,6 +162,14 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   }, [currency, route.params?.createTokenAccount, mainAccount, dispatch, hasAddedTokenAccount]);
 
   useEffect(() => {
+    if (
+      currency &&
+      currency.type === "CryptoCurrency" &&
+      Object.keys(byFamily).includes(currency.family) &&
+      byFamily[currency.family as keyof typeof byFamily]
+    ) {
+      return;
+    }
     navigation.setOptions({
       //headerTitle: getAccountName(account as AccountLike),
       headerTitle: () => (
@@ -163,6 +179,14 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   }, [colors, navigation, account, currency]);
 
   useEffect(() => {
+    if (
+      currency &&
+      currency.type === "CryptoCurrency" &&
+      Object.keys(byFamily).includes(currency.family) &&
+      byFamily[currency.family as keyof typeof byFamily]
+    ) {
+      return;
+    }
     if (verified && currency) {
       track("Verification Success", {
         asset: currency.name,
@@ -180,10 +204,18 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   }, [network, currency?.name]);
 
   useEffect(() => {
+    if (
+      currency &&
+      currency.type === "CryptoCurrency" &&
+      Object.keys(byFamily).includes(currency.family) &&
+      byFamily[currency.family as keyof typeof byFamily]
+    ) {
+      return;
+    }
     if (verified || !isModalOpened) {
       triggerSuccessEvent();
     }
-  }, [verified, isModalOpened, triggerSuccessEvent]);
+  }, [verified, isModalOpened, triggerSuccessEvent, currency]);
 
   const onShare = useCallback(() => {
     track("button_clicked", {
@@ -224,10 +256,12 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     [mainAccount?.freshAddress, pushToast, t],
   );
 
-  if (!account || !currency || !mainAccount) return null;
-
   // check for coin specific UI
-  if (currency.type === "CryptoCurrency" && Object.keys(byFamily).includes(currency.family)) {
+  if (
+    currency &&
+    currency.type === "CryptoCurrency" &&
+    Object.keys(byFamily).includes(currency.family)
+  ) {
     const CustomConfirmation =
       currency.type === "CryptoCurrency"
         ? byFamily[currency.family as keyof typeof byFamily]
@@ -242,6 +276,8 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       );
     }
   }
+
+  if (!account || !currency || !mainAccount) return null;
 
   let CustomConfirmationAlert;
   if (

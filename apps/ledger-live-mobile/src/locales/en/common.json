@@ -808,6 +808,86 @@
     "StellarBurnAddressError": {
       "title": "A problem occurred while trying to add a Stellar account"
     },
+    "MimbleWimbleCoinInvalidParameters": {
+      "title": "Invalid parameters",
+      "description": ""
+    },
+    "MimbleWimbleCoinNoResponseFromNode": {
+      "title": "No response from the {{nodeName}} node",
+      "description": "Please retry or contact Ledger Support"
+    },
+    "MimbleWimbleCoinUnsupportedResponseFromNode": {
+      "title": "Unsupported response from the {{nodeName}} node",
+      "description": "Please retry or contact Ledger Support"
+    },
+    "MimbleWimbleCoinNoResponseFromRecipient": {
+      "title": "No response from the recipient",
+      "description": "Please verify that the recipient is listening at the address and retry"
+    },
+    "MimbleWimbleCoinUnsupportedResponseFromRecipient": {
+      "title": "Unsupported response from the recipient",
+      "description": ""
+    },
+    "MimbleWimbleCoinCreatingSlateFailed": {
+      "title": "Preparing the transaction failed",
+      "description": "Please retry"
+    },
+    "MimbleWimbleCoinFinalizingSlateFailed": {
+      "title": "Finalizing the transaction failed",
+      "description": "Please retry"
+    },
+    "MimbleWimbleCoinBroadcastingTransactionFailed": {
+      "title": "Broadcasting the transaction failed",
+      "description": "Please retry or contact Ledger Support ({{reason}})"
+    },
+    "MimbleWimbleCoinBroadcastingTransactionFailedUnknownReason": {
+      "title": "Broadcasting the transaction failed",
+      "description": "Please retry or contact Ledger Support"
+    },
+    "MimbleWimbleCoinInvalidTransactionData": {
+      "title": "This is not a valid transaction",
+      "description": ""
+    },
+    "MimbleWimbleCoinInvalidTransactionResponse": {
+      "title": "This is not a valid response",
+      "description": ""
+    },
+    "MimbleWimbleCoinUnsupportedTransactionData": {
+      "title": "The transaction is invalid or contains unsupported features",
+      "description": ""
+    },
+    "MimbleWimbleCoinUnsupportedSlate": {
+      "title": "The transaction contains unsupported features or was already used",
+      "description": ""
+    },
+    "MimbleWimbleCoinAddingToSlateFailed": {
+      "title": "Adding to the transaction failed",
+      "description": "Please retry"
+    },
+    "MimbleWimbleCoinTransactionWontHavePaymentProofNoRecipient": {
+      "title": "A transaction with no recipient address won't have a payment proof",
+      "description": ""
+    },
+    "MimbleWimbleCoinTransactionWontHavePaymentProofInapplicableAddress": {
+      "title": "A transaction sent to this recipient won't have a payment proof",
+      "description": ""
+    },
+    "MimbleWimbleCoinTorRequired": {
+      "title": "Tor must be installed to send a transaction to this recipient",
+      "description": ""
+    },
+    "MimbleWimbleCoinCanOnlySendAsFile": {
+      "title": "A transaction can only be sent to this recipient as a file",
+      "description": ""
+    },
+    "MimbleWimbleCoinMaxFeeExceeded": {
+      "title": "Max fee exceeded. Please lower the amount",
+      "description": ""
+    },
+    "MimbleWimbleCoinInvalidBaseFee": {
+      "title": "Invalid base fee",
+      "description": ""
+    },
     "ImageLoadFromGalleryError": {
       "title": "Image loading from gallery failed",
       "description": "Please try again with another image"
@@ -2333,6 +2413,7 @@
       "REVOKE": "Revoked",
       "REGISTER": "Registered",
       "WITHDRAW": "Withdrawn",
+      "COINBASE_REWARD": "Coinbase reward",
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn"
@@ -5742,6 +5823,32 @@
       },
       "reserveWarning": "Please ensure you reserve at least {{amount}} SOL in your wallet to cover future network fees to deactivate and withdraw your stake"
     }
+  },
+  "mimblewimble_coin": {
+    "approveExportingRootPublicKey": "Please approve exporting the root public key for the account at index {{accountIndex}} on your Ledger device",
+    "kernelExcess": "Kernel Excess",
+    "outputCommitment": "Output Commitment",
+    "recipientPaymentProofSignature": "Recipient Payment Proof Signature",
+    "transactionToReceive": "Enter a transaction to receive",
+    "fundsReceived": "Funds received",
+    "receivedAmount": "You received <0>{{amount}}</0>",
+    "transactionResponse": "Please give this response to the transaction's sender for them to finalize the transaction",
+    "sendAsFile": "Send as file",
+    "transactionRequest": "Please give this transaction to the recipient for them to receive the funds",
+    "transactionResponseReceived": "Enter the recipient's response",
+    "maturityStatus": "Maturity",
+    "matureStatus": "Mature",
+    "immatureStatus": "Immature ({{numberOfConfirmations}} / {{requiredNumberOfConfirmations}})",
+    "verifyRecipientPaymentProofAddress": "Verify that the recipient payment proof address displayed on your device exactly matches the address given by the recipient",
+    "noPaymentProof": "This transaction doesn't have a payment proof",
+    "baseFee": "Base fee",
+    "synchronizing": "Synchronizing ({{percentComplete}}%)",
+    "customizeBaseFee": "Customize Base Fee",
+    "shareTransaction": "Share transaction",
+    "enterResponse": "Enter response",
+    "enterTransaction": "Enter transaction",
+    "receiveFunds": "Receive Funds",
+    "shareResponse": "Share response"
   },
   "near": {
     "info": {

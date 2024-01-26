@@ -8,7 +8,7 @@ import { isAccountEmpty, groupAddAccounts } from "@ledgerhq/live-common/account/
 import type { AddAccountSupportLink } from "@ledgerhq/live-common/account/index";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
@@ -40,7 +40,6 @@ import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { urls } from "~/utils/urls";
 import noAssociatedAccountsByFamily from "../../generated/NoAssociatedAccounts";
-import addAccountsAccountsByFamily from "../../generated/AddAccountsAccounts";
 import { State } from "~/reducers/types";
 import {
   BaseComposite,
@@ -50,6 +49,35 @@ import {
 import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import Config from "react-native-config";
+import { Flex } from "@ledgerhq/native-ui";
+import styled from "styled-components/native";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
+import Animation from "../../components/Animation";
+import SkipLock from "../../components/behaviour/SkipLock";
+import { TitleText } from "../../components/DeviceAction/rendering";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+
+const DeviceActionContainer = styled(Flex).attrs({
+  flexDirection: "row",
+})``;
+
+export const Wrapper = styled(Flex).attrs({
+  flex: 1,
+  alignItems: "center",
+  justifyContent: "center",
+  minHeight: "160px",
+})``;
+
+const AnimationContainer = styled(Flex).attrs({
+  alignSelf: "stretch",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "150px",
+})``;
+
+const animationStyles = (modelId: DeviceModelId) =>
+  modelId === DeviceModelId.stax ? { height: 210 } : {};
 
 const SectionAccounts = ({
   defaultSelected,
@@ -63,6 +91,37 @@ const SectionAccounts = ({
     } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return <SelectableAccountsList useFullBalance {...rest} />;
+};
+
+const ApproveExportRootPublicKeyOnDevice = ({
+  device,
+  accountIndex,
+}: {
+  device: Device;
+  accountIndex: number;
+}) => {
+  const { dark } = useTheme();
+  const { t } = useTranslation();
+  const theme: "dark" | "light" = dark ? "dark" : "light";
+  return (
+    <Flex>
+      <DeviceActionContainer>
+        <Wrapper>
+          <AnimationContainer marginTop="16px" marginBottom="16px">
+            <Animation
+              source={getDeviceAnimation({ device, key: "sign", theme })}
+              style={animationStyles(device.modelId)}
+            />
+          </AnimationContainer>
+          <TitleText>
+            {t("mimblewimble_coin.approveExportingRootPublicKey", {
+              accountIndex: accountIndex.toFixed(),
+            })}
+          </TitleText>
+        </Wrapper>
+      </DeviceActionContainer>
+    </Flex>
+  );
 };
 
 type NavigationProps = BaseComposite<
@@ -100,13 +159,11 @@ function AddAccountsAccounts(props: Props) {
   const [showAllCreatedAccounts, setShowAllCreatedAccounts] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [cancelled, setCancelled] = useState(false);
+  const [rootPublicKeyRequested, setRootPublicKeyRequested] = useState(false);
+  const [accountIndex, setAccountIndex] = useState(0);
+  const [percentComplete, setPercentComplete] = useState(0);
   const scanSubscription = useRef<Subscription | null>(null);
-  const {
-    currency,
-    device: { deviceId },
-    inline,
-    returnToSwap,
-  } = route.params || {};
+  const { currency, device, inline, returnToSwap } = route.params || {};
 
   const newAccountSchemes = useMemo(() => {
     // Find accounts that are (scanned && !existing && !used)
@@ -123,29 +180,12 @@ function AddAccountsAccounts(props: Props) {
     [newAccountSchemes],
   );
   useEffect(() => {
-    if (
-      currency &&
-      currency.type === "CryptoCurrency" &&
-      Object.keys(addAccountsAccountsByFamily).includes(currency.family) &&
-      addAccountsAccountsByFamily[currency.family as keyof typeof addAccountsAccountsByFamily]
-    ) {
-      return;
-    }
     startSubscription();
-    // eslint-disable-next-line consistent-return
     return () => stopSubscription(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (
-      currency &&
-      currency.type === "CryptoCurrency" &&
-      Object.keys(addAccountsAccountsByFamily).includes(currency.family) &&
-      addAccountsAccountsByFamily[currency.family as keyof typeof addAccountsAccountsByFamily]
-    ) {
-      return;
-    }
     if (latestScannedAccount) {
       const hasAlreadyBeenScanned = scannedAccounts.some(a => latestScannedAccount.id === a.id);
       const hasAlreadyBeenImported = existingAccounts.some(a => latestScannedAccount.id === a.id);
@@ -168,15 +208,9 @@ function AddAccountsAccounts(props: Props) {
         );
       }
     }
-  }, [
-    existingAccounts,
-    latestScannedAccount,
-    onlyNewAccounts,
-    scannedAccounts,
-    selectedIds,
-    currency,
-  ]);
+  }, [existingAccounts, latestScannedAccount, onlyNewAccounts, scannedAccounts, selectedIds]);
   const startSubscription = useCallback(() => {
+    setPercentComplete(0);
     const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
     const bridge = getCurrencyBridge(cryptoCurrency);
     const syncConfig = {
@@ -190,33 +224,59 @@ function AddAccountsAccounts(props: Props) {
       from(prepareCurrency(cryptoCurrency)).pipe(ignoreElements()),
       bridge.scanAccounts({
         currency: cryptoCurrency,
-        deviceId,
+        deviceId: device.deviceId,
         syncConfig,
       }),
     ).subscribe({
       next: event => {
         const { type } = event;
-        if (type !== "discovered") {
-          return;
+        switch (type) {
+          case "discovered": {
+            const { account } = event;
+            setLatestScannedAccount(account);
+            setPercentComplete(0);
+            break;
+          }
+          case "device-root-public-key-requested": {
+            const { index } = event;
+            setAccountIndex(index);
+            setRootPublicKeyRequested(true);
+            break;
+          }
+          case "device-root-public-key-granted":
+            setRootPublicKeyRequested(false);
+            break;
+          case "synced-percent": {
+            const { percent } = event;
+            setPercentComplete(percent);
+            break;
+          }
+          default:
+            break;
         }
-        const { account } = event;
-        setLatestScannedAccount(account);
       },
-      complete: () => setScanning(false),
+      complete: () => {
+        setRootPublicKeyRequested(false);
+        setScanning(false);
+      },
       error: error => {
+        setRootPublicKeyRequested(false);
         logger.critical(error);
         setError(error);
       },
     });
-  }, [blacklistedTokenIds, currency, deviceId]);
+  }, [blacklistedTokenIds, currency, device.deviceId]);
   const restartSubscription = useCallback(() => {
     setScanning(true);
     setScannedAccounts([]);
     setSelectedIds([]);
     setError(null);
     setCancelled(false);
-    startSubscription();
-  }, [startSubscription]);
+    navigation.navigate(ScreenName.AddAccountsSelectDevice, {
+      ...(route?.params ?? {}),
+      currency,
+    });
+  }, [navigation, currency, route?.params]);
   const stopSubscription = useCallback((syncUI = true) => {
     if (scanSubscription.current) {
       scanSubscription.current.unsubscribe();
@@ -340,22 +400,6 @@ function AddAccountsAccounts(props: Props) {
       </LText>
     ),
   };
-
-  // custom family UI for AddAccountsAccounts
-  if (
-    currency &&
-    currency.type === "CryptoCurrency" &&
-    Object.keys(addAccountsAccountsByFamily).includes(currency.family)
-  ) {
-    const CustomAddAccountsAccounts =
-      currency.type === "CryptoCurrency"
-        ? addAccountsAccountsByFamily[currency.family as keyof typeof addAccountsAccountsByFamily]
-        : null;
-    if (CustomAddAccountsAccounts) {
-      return <CustomAddAccountsAccounts {...props} />;
-    }
-  }
-
   return (
     <SafeAreaView
       style={[
@@ -367,6 +411,7 @@ function AddAccountsAccounts(props: Props) {
     >
       <TrackScreen category="AddAccounts" name="Accounts" currencyName={currency.name} />
       <PreventNativeBack />
+      {rootPublicKeyRequested ? <SkipLock /> : null}
       <NavigationScrollView style={styles.inner} contentContainerStyle={styles.innerContent}>
         {sections.map(({ id, selectable, defaultSelected, data }, i) => {
           const hasMultipleSchemes =
@@ -430,7 +475,7 @@ function AddAccountsAccounts(props: Props) {
             <Trans i18nKey="addAccounts.synchronizingDesc" />
           </LText>
         ) : null}
-        {scanning ? <ScanLoading colors={colors} /> : null}
+        {scanning ? <ScanLoading colors={colors} percentComplete={percentComplete} /> : null}
       </NavigationScrollView>
       {!!scannedAccounts.length && (
         <Footer
@@ -460,6 +505,9 @@ function AddAccountsAccounts(props: Props) {
           </>
         }
       />
+      <QueuedDrawer isRequestingToBeOpened={rootPublicKeyRequested} noCloseButton={true}>
+        <ApproveExportRootPublicKeyOnDevice device={device} accountIndex={accountIndex} />
+      </QueuedDrawer>
     </SafeAreaView>
   );
 }
@@ -600,9 +648,10 @@ const Footer = ({
 
 type ScanProps = {
   colors: Theme["colors"];
+  percentComplete: number;
 };
 
-const ScanLoading = ({ colors }: ScanProps) => {
+const ScanLoading = ({ colors, percentComplete }: ScanProps) => {
   return (
     <View
       style={[
@@ -616,7 +665,10 @@ const ScanLoading = ({ colors }: ScanProps) => {
         <LiveLogo color={colors.grey} size={16} />
       </Spinning>
       <LText semiBold style={styles.scanLoadingText} color="grey">
-        <Trans i18nKey="addAccounts.synchronizing" />
+        <Trans
+          i18nKey="mimblewimble_coin.synchronizing"
+          values={{ percentComplete: percentComplete.toFixed() }}
+        />
       </LText>
     </View>
   );
