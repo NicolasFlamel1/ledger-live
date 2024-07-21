@@ -18,7 +18,6 @@ const mimblewimble_coin: AppSpec<Transaction> = {
 const mimblewimble_coin_floonet: AppSpec<Transaction> = {
   name: "MimbleWimble Coin Floonet",
   currency: getCryptoCurrencyById("mimblewimble_coin_floonet"),
-  dependency: "MimbleWimble Coin",
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "MimbleWimble Coin Floonet",
@@ -29,7 +28,6 @@ const mimblewimble_coin_floonet: AppSpec<Transaction> = {
 const grin: AppSpec<Transaction> = {
   name: "Grin",
   currency: getCryptoCurrencyById("grin"),
-  dependency: "MimbleWimble Coin",
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Grin",
@@ -40,7 +38,6 @@ const grin: AppSpec<Transaction> = {
 const grin_testnet: AppSpec<Transaction> = {
   name: "Grin Testnet",
   currency: getCryptoCurrencyById("grin_testnet"),
-  dependency: "MimbleWimble Coin",
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Grin Testnet",
@@ -51,7 +48,6 @@ const grin_testnet: AppSpec<Transaction> = {
 const epic_cash: AppSpec<Transaction> = {
   name: "Epic Cash",
   currency: getCryptoCurrencyById("epic_cash"),
-  dependency: "MimbleWimble Coin",
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Epic Cash",
@@ -62,7 +58,6 @@ const epic_cash: AppSpec<Transaction> = {
 const epic_cash_floonet: AppSpec<Transaction> = {
   name: "Epic Cash Floonet",
   currency: getCryptoCurrencyById("epic_cash_floonet"),
-  dependency: "MimbleWimble Coin",
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Epic Cash Floonet",

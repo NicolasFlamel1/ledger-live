@@ -112,7 +112,7 @@ class TextAreaTransaction extends PureComponent<Props, State> {
       <TextArea
         {...this.props}
         ref={this.element}
-        style={{ wordBreak: "break-all" }}
+        style={{ wordBreak: "break-all", fontVariantLigatures: "none" }}
         spellCheck="false"
         renderRight={
           <Right>

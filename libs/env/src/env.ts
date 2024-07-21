@@ -124,7 +124,7 @@ const envDefinitions = {
   },
   API_EPIC_CASH_NODE: {
     parser: stringParser,
-    def: "https://fastepic.eu:3413",
+    def: "https://node.epiccash.com:3413",
     desc: "Node for Epic Cash",
   },
   API_EPIC_CASH_FLOONET_NODE: {

@@ -181,15 +181,6 @@ function SendSummary({ navigation, route }: Props) {
             <SummaryToSection transaction={transaction} currency={mainAccount.currency} />
           </>
         ) : null}
-        <View
-          style={[
-            styles.verticalConnector,
-            {
-              borderColor: colors.lightFog,
-            },
-          ]}
-        />
-        <SummaryToSection transaction={transaction} currency={mainAccount.currency} />
         {status.warnings.recipient ? (
           <LText style={styles.warning} color="orange">
             <TranslatedError error={status.warnings.recipient} />

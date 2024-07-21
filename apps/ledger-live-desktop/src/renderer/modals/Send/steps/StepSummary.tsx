@@ -139,7 +139,7 @@ const StepSummary = (props: StepProps) => {
               </Box>
             </Box>
           </Box>
-          {transaction.recipient.trim() && (
+          {transaction.recipient && transaction.recipient.trim() && (
             <>
               <VerticalSeparator />
               <Box horizontal alignItems="center">

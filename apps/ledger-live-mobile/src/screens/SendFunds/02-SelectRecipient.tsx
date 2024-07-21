@@ -301,6 +301,7 @@ export default function SendSelectRecipient(props: Props) {
           </NavigationScrollView>
           <View style={styles.container}>
             {(!isDomainResolutionEnabled || !isCurrencySupported) &&
+            transaction.recipient &&
             transaction.recipient.trim() &&
             !(error || warning) ? (
               <View style={styles.infoBox}>

@@ -33,6 +33,7 @@ const TransactionDataWrapper = styled(Box).attrs(() => ({
   cursor: text;
   user-select: text;
   word-break: break-all;
+  font-variant-ligatures: none;
 `;
 
 const Feedback = styled(Box).attrs(() => ({
