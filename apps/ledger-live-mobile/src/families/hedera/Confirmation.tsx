@@ -6,10 +6,7 @@ import QRCode from "react-native-qrcode-svg";
 import { Trans } from "react-i18next";
 import ReactNativeModal from "react-native-modal";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import {
-  getMainAccount,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { accountScreenSelector } from "~/reducers/accounts";
@@ -106,7 +103,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
       headerRight,
       gestureEnabled: Platform.OS === "ios",
     });
-  }, [allowNavigation, colors, navigation, account]);
+  }, [allowNavigation, accountName, colors, navigation, account]);
   if (!mainAccount || !account) return null;
   const { width } = getWindowDimensions();
   const unsafe = !route.params.device?.deviceId;

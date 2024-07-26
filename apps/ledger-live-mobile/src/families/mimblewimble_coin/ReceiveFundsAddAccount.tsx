@@ -11,7 +11,6 @@ import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
-import { replaceAccounts } from "~/actions/accounts";
 import logger from "../../logger";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";

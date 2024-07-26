@@ -7,7 +7,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Transaction } from "@ledgerhq/live-common/families/mimblewimble_coin/types";
-import { useSendAmount } from "@ledgerhq/live-countervalues-react";
 import { validateBaseFee } from "@ledgerhq/live-common/families/mimblewimble_coin/react";
 import { Account } from "@ledgerhq/types-live";
 import { StackNavigationProp } from "@react-navigation/stack";

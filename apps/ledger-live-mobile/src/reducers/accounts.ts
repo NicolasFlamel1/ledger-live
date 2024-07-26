@@ -154,9 +154,7 @@ export const accountsSelector = (s: State): Account[] => s.accounts.active;
 // when the balance/name/length/starred/swapHistory/freshAddressPath/spendableBalance of accounts changes.
 const accountHash = (a: AccountLike) =>
   `${a.id}-${a.balance.toString()}-swapHistory(${a.swapHistory.length})${
-    a.type === "Account"
-      ? `-freshAddressPath(${a.freshAddressPath})`
-      : ""
+    a.type === "Account" ? `-freshAddressPath(${a.freshAddressPath})` : ""
   }${a.type === "Account" ? `-spendableBalance(${a.spendableBalance.toString()})` : ""}`;
 
 // TODO can we share with desktop in common?
