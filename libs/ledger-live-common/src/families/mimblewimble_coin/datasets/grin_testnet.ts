@@ -27,12 +27,6 @@ export default {
         index: 0,
         freshAddress: "tgrin1txasfcykjh7vk47tadwy24x2wqhexkjk3e93nx7kuah8q87arlqsa3cnlw",
         freshAddressPath: "44'/1'/0'/0/0",
-        freshAddresses: [
-          {
-            address: "tgrin1txasfcykjh7vk47tadwy24x2wqhexkjk3e93nx7kuah8q87arlqsa3cnlw",
-            derivationPath: "44'/1'/0'/0/0",
-          },
-        ],
         name: "Grin Testnet 1",
         balance: "0",
         spendableBalance: "0",

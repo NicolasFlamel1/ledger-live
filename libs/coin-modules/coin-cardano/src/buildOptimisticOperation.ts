@@ -133,11 +133,11 @@ export const buildOptimisticOperation = (
   )
     ? "DELEGATE"
     : txCertificates.find(c => c.certType === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION)
-      ? "UNDELEGATE"
-      : getOperationType({
-          valueChange: operationValue,
-          fees: unsignedTransaction.getFee(),
-        });
+    ? "UNDELEGATE"
+    : getOperationType({
+        valueChange: operationValue,
+        fees: unsignedTransaction.getFee(),
+      });
 
   const op: CardanoOperation = {
     id: encodeOperationId(account.id, transactionHash, opType),

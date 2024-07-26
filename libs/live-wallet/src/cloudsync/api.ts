@@ -94,7 +94,10 @@ function listenNotifications(
   getFreshJwt: () => Promise<JWT>,
   datatype: string,
 ): Observable<number> {
-  const url = `${getEnv("CLOUD_SYNC_API").replace("http", "ws")}/atomic/v1/${datatype}/notifications`;
+  const url = `${getEnv("CLOUD_SYNC_API").replace(
+    "http",
+    "ws",
+  )}/atomic/v1/${datatype}/notifications`;
   const ws: WebSocket = new WS(url);
 
   return new Observable(observer => {

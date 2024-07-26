@@ -182,7 +182,7 @@ export default class Slatepack {
           } catch (error: any) {
             throw new MimbleWimbleCoinInvalidParameters("Invalid Slatepack");
           }
-          if (recipientAddress !== account.freshAddresses[0].address) {
+          if (recipientAddress !== account.freshAddress) {
             throw new MimbleWimbleCoinInvalidParameters("Invalid Slatepack");
           }
           const nonce = Common.subarray(
@@ -221,7 +221,7 @@ export default class Slatepack {
               Uint16Array.BYTES_PER_ELEMENT,
           );
           const decryptedSlatepackData = await mimbleWimbleCoin.decryptSlatepackData(
-            account.freshAddresses[0].derivationPath,
+            account.freshAddressPath,
             nonce,
             encryptedSlatepackData,
             senderAddress,
@@ -466,7 +466,7 @@ export default class Slatepack {
           } catch (error: any) {
             throw new MimbleWimbleCoinInvalidParameters("Invalid serialized slate");
           }
-          const senderAddress = account.freshAddresses[0].address;
+          const senderAddress = account.freshAddress;
           let senderPublicKey: Buffer;
           try {
             senderPublicKey = Tor.torAddressToPublicKey(senderAddress);
@@ -496,7 +496,7 @@ export default class Slatepack {
           serializedSlate.copy(slatepackData, 0);
           slatepackData.writeInt32BE(checksum, serializedSlate.length);
           const { nonce, encryptedSlatepackData } = await mimbleWimbleCoin.encryptSlatepackData(
-            account.freshAddresses[0].derivationPath,
+            account.freshAddressPath,
             slatepackData,
             recipientAddress,
           );
@@ -560,21 +560,18 @@ export default class Slatepack {
           } catch (error: any) {
             throw new MimbleWimbleCoinInvalidParameters("Invalid serialized slate");
           }
-          if (account.freshAddresses[0].address.length > 0xff) {
+          if (account.freshAddress.length > 0xff) {
             throw new MimbleWimbleCoinInvalidParameters("Invalid serialized slate");
           }
           const metadata = Buffer.alloc(
             Uint16Array.BYTES_PER_ELEMENT +
               Uint8Array.BYTES_PER_ELEMENT +
-              account.freshAddresses[0].address.length,
+              account.freshAddress.length,
           );
           metadata.writeUInt16BE(0b00000001, 0);
-          metadata.writeUInt8(
-            account.freshAddresses[0].address.length,
-            Uint16Array.BYTES_PER_ELEMENT,
-          );
+          metadata.writeUInt8(account.freshAddress.length, Uint16Array.BYTES_PER_ELEMENT);
           metadata.write(
-            account.freshAddresses[0].address,
+            account.freshAddress,
             Uint16Array.BYTES_PER_ELEMENT + Uint8Array.BYTES_PER_ELEMENT,
           );
           if (metadata.length > 0xffffffff) {

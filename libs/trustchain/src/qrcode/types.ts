@@ -58,7 +58,7 @@ export type Message =
 export type DecryptedPayload<M> = M extends { payload: Encrypted<infer T> }
   ? T
   : M extends { payload: infer T }
-    ? T
-    : never;
+  ? T
+  : never;
 
 export type ExtractEncryptedPayloads<T> = T extends { payload: Encrypted<infer P> } ? P : never;

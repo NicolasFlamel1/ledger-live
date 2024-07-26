@@ -1,10 +1,6 @@
 import invariant from "invariant";
 import React, { PureComponent } from "react";
-import {
-  getAccountUnit,
-  getMainAccount,
-  getAccountName,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { Trans } from "react-i18next";
@@ -52,6 +48,8 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import getTransactionResponse from "@ledgerhq/live-common/families/mimblewimble_coin/getTransactionResponse";
 import { Subscription } from "rxjs";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const action = createAction(connectApp);
 
@@ -168,7 +166,7 @@ const ApproveReceivingTransaction = ({
   fee: string;
   senderPaymentProofAddress: string | null;
 }) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const type = useTheme().colors.palette.type;
   return (
     <Container>
@@ -219,6 +217,34 @@ const ApproveReceivingTransaction = ({
       </Box>
       {renderVerifyUnwrapped({ modelId: device.modelId, type })}
     </Container>
+  );
+};
+
+const ReceivedAmount = ({
+  mainAccount,
+  operationAmount,
+  locale,
+}: {
+  mainAccount: Account;
+  operationAmount: string | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  locale: any;
+}) => {
+  const formattedAmount = formatCurrencyUnit(
+    useAccountUnit(mainAccount),
+    new BigNumber(operationAmount !== null ? operationAmount : 0),
+    {
+      disableRounding: true,
+      alwaysShowSign: false,
+      showCode: true,
+      locale,
+    },
+  );
+  return (
+    <Trans
+      i18nKey="families.mimblewimble_coin.receivedAmount"
+      values={{ amount: formattedAmount }}
+    />
   );
 };
 
@@ -563,18 +589,8 @@ class StepReceiveFunds extends PureComponent<Props, State> {
 
     const mainAccount = account ? getMainAccount(account, parentAccount) : null;
     invariant(account && mainAccount, "No account given");
-    const name = token ? token.name : getAccountName(account);
-    const address = mainAccount.freshAddresses[0].address;
-    const formattedAmount = formatCurrencyUnit(
-      mainAccount.unit,
-      new BigNumber(operationAmount !== null ? operationAmount : 0),
-      {
-        disableRounding: true,
-        alwaysShowSign: false,
-        showCode: true,
-        locale,
-      },
-    );
+    const name = token ? token.name : getDefaultAccountName(account);
+    const address = mainAccount.freshAddress;
 
     return (
       <>
@@ -591,9 +607,10 @@ class StepReceiveFunds extends PureComponent<Props, State> {
                 description={
                   <>
                     <Text mb={2}>
-                      <Trans
-                        i18nKey="families.mimblewimble_coin.receivedAmount"
-                        values={{ amount: formattedAmount }}
+                      <ReceivedAmount
+                        mainAccount={mainAccount}
+                        operationAmount={operationAmount}
+                        locale={locale}
                       />
                     </Text>
                     <Box style={{ display: "block" }} textAlign="left" horizontal flow={2} mb={4}>

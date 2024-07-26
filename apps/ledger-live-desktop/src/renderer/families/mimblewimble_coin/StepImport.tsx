@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { concat, from, Subscription } from "rxjs";
 import { ignoreElements, filter, map } from "rxjs/operators";
 import { Account } from "@ledgerhq/types-live";
-import { isAccountEmpty, groupAddAccounts } from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { DeviceShouldStayInApp } from "@ledgerhq/errors";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import uniq from "lodash/uniq";
@@ -22,6 +22,8 @@ import Text from "~/renderer/components/Text";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { StepProps } from "~/renderer/modals/AddAccounts";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
@@ -334,7 +336,7 @@ class StepImport extends PureComponent<StepProps, State> {
         <Trans i18nKey="addAccounts.createNewAccount.noOperationOnLastAccount" parent="div">
           {" "}
           <Text ff="Inter|SemiBold" color="palette.text.shade100">
-            {alreadyEmptyAccount.name}
+            {getDefaultAccountName(alreadyEmptyAccount)}
           </Text>{" "}
         </Trans>
       );
@@ -378,7 +380,6 @@ class StepImport extends PureComponent<StepProps, State> {
                 editedNames={!selectable ? {} : editedNames}
                 onSelectAll={!selectable ? undefined : this.handleSelectAll}
                 onUnselectAll={!selectable ? undefined : this.handleUnselectAll}
-                t={t}
               />
             );
           })}

@@ -4430,8 +4430,8 @@ export function listCryptoCurrencies(
       ? cryptocurrenciesArray
       : prodCryptoArray
     : withDevCrypto
-      ? cryptocurrenciesArrayWithoutTerminated
-      : prodCryptoArrayWithoutTerminated;
+    ? cryptocurrenciesArrayWithoutTerminated
+    : prodCryptoArrayWithoutTerminated;
 }
 
 /**

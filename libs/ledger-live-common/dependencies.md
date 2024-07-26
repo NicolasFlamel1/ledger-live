@@ -74,6 +74,7 @@ yarn upgrade-interactive -i --latest
 | bip32-path                                  | coin integrations                                                 | monthly                                                              |
 | bip39                                       | needed for bot                                                    | monthly                                                              |
 | bitcoinjs-lib                               | Bitcoin coin integration                                          | **ticket missing**: apparently blocking LLM                          |
+| blake2b                                     | MimbleWimble Coin coin integration                                | monthly                                                              |
 | blake-hash                                  | Bitcoin coin integration                                          | monthly                                                              |
 | bn.js                                       | Stacks coin integration                                           | monthly                                                              |
 | bs58                                        | Bitcoin coin integration                                          | monthly                                                              |

@@ -27,12 +27,6 @@ export default {
         index: 0,
         freshAddress: "htpob76thyhuc7zcfu3fm5rvii6um3v5vb7qtjubgqoryz6j6lb4txqd",
         freshAddressPath: "44'/23000'/0'/0/0",
-        freshAddresses: [
-          {
-            address: "htpob76thyhuc7zcfu3fm5rvii6um3v5vb7qtjubgqoryz6j6lb4txqd",
-            derivationPath: "44'/23000'/0'/0/0",
-          },
-        ],
         name: "Epic Cash 1",
         balance: "0",
         spendableBalance: "0",

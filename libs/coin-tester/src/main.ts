@@ -129,7 +129,11 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
       const status = await accountBridge.getTransactionStatus(scenarioAccount, transaction);
       if (Object.entries(status.errors).length) {
         throw new Error(
-          `${testTransaction.name} transaction\nError in transaction status: ${JSON.stringify(status.errors, null, 3)}`,
+          `${testTransaction.name} transaction\nError in transaction status: ${JSON.stringify(
+            status.errors,
+            null,
+            3,
+          )}`,
         );
       }
 

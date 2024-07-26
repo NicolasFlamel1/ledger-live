@@ -90,8 +90,8 @@ const getAccountShape: GetAccountShape = async (
     );
     const freshAddresses: Address[] = [
       {
-        address: initialAccount?.freshAddresses[0].address || address,
-        derivationPath: initialAccount?.freshAddresses[0].derivationPath || derivationPath,
+        address: initialAccount?.freshAddress || address,
+        derivationPath: initialAccount?.freshAddressPath || derivationPath,
       },
     ];
     if (!initialAccount && newOperations.length) {
@@ -119,7 +119,6 @@ const getAccountShape: GetAccountShape = async (
         : spendableBalanceChange,
       operations: newOperations,
       operationsCount: newOperations.length,
-      freshAddresses,
       freshAddress: freshAddresses[0].address,
       freshAddressPath: freshAddresses[0].derivationPath,
       blockHeight: newAccountHeight.toNumber(),

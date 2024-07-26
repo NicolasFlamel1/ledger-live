@@ -5,11 +5,10 @@ import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { Trans } from "react-i18next";
 import ReactNativeModal from "react-native-modal";
-import type { Account, TokenAccount, AccountLike } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import {
   getMainAccount,
   getAccountCurrency,
-  getAccountName,
 } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import getWindowDimensions from "~/logic/getWindowDimensions";
@@ -92,7 +91,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   useEffect(() => {
     if (!allowNavigation) {
       navigation.setOptions({
-        headerTitle: getAccountName(account as AccountLike),
+        headerTitle: accountName,
         headerLeft: undefined,
         headerRight: () => null,
         gestureEnabled: false,
@@ -102,7 +101,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
 
     const { headerRight } = getStackNavigatorConfig(colors, true);
     navigation.setOptions({
-      headerTitle: getAccountName(account as AccountLike),
+      headerTitle: accountName,
       headerLeft: undefined,
       headerRight,
       gestureEnabled: Platform.OS === "ios",

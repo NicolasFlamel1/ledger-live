@@ -6,9 +6,8 @@ import { StyleSheet, View, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { useSelector } from "react-redux";
 import type { Transaction } from "@ledgerhq/live-common/families/mimblewimble_coin/types";
-import { useSendAmount } from "@ledgerhq/live-common/countervalues/react";
+import { useSendAmount } from "@ledgerhq/live-countervalues-react";
 import { validateBaseFee } from "@ledgerhq/live-common/families/mimblewimble_coin/react";
 import { Account } from "@ledgerhq/types-live";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -16,10 +15,10 @@ import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import LText from "../../components/LText";
 import CurrencyInput from "../../components/CurrencyInput";
-import { counterValueCurrencySelector } from "../../reducers/settings";
 import TranslatedError from "../../components/TranslatedError";
 import { ScreenName } from "../../const";
 import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const styles = StyleSheet.create({
   root: {
@@ -67,12 +66,7 @@ function MimbleWimbleCoinEditBaseFee({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, transaction } = route.params;
-  const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const { cryptoUnit } = useSendAmount({
-    account,
-    fiatCurrency,
-    cryptoAmount: transaction.baseFee,
-  });
+  const cryptoUnit = useAccountUnit(account);
   const [baseFee, setBaseFee] = useState(transaction.baseFee.toFixed());
   const [error, setError] = useState<undefined | Error>(undefined);
   const onChangeBaseFee = useCallback((baseFee: BigNumber) => {

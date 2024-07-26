@@ -20,8 +20,8 @@ export const buildOptimisticOperation = (
   const value = subAccountId
     ? fees
     : transaction.useAllAmount
-      ? spendableBalance
-      : transaction.amount.plus(fees);
+    ? spendableBalance
+    : transaction.amount.plus(fees);
 
   const type = subAccountId ? "FEES" : transaction.mode === "optIn" ? "OPT_IN" : "OUT";
 

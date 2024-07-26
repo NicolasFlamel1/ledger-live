@@ -251,8 +251,8 @@ const Body = ({
     isOldestEditableOperation && haveFundToSpeedup
       ? "speedup"
       : haveFundToCancel
-        ? "cancel"
-        : undefined,
+      ? "cancel"
+      : undefined,
   );
   const handleSetEditType: StepProps["setEditType"] = useCallback(
     editType => setEditType(editType),

@@ -71,11 +71,7 @@ export const accountsSelector = (state: { accounts: AccountsState }): Account[] 
 // when the balance/name/length/starred/swapHistory/freshAddressPath/spendableBalance of accounts changes.
 const accountHash = (a: AccountLike) =>
   `${a.id}-${a.balance.toString()}-swapHistory(${a.swapHistory?.length || "0"})${
-    a.type === "Account"
-      ? `-freshAddressPath(${
-          a.freshAddresses.length ? a.freshAddresses[0].derivationPath : a.freshAddressPath
-        })`
-      : ""
+    a.type === "Account" ? `-freshAddressPath(${a.freshAddressPath})` : ""
   }${a.type === "Account" ? `-spendableBalance(${a.spendableBalance.toString()})` : ""}`;
 const shallowAccountsSelectorCreator = createSelectorCreator(defaultMemoize, (a, b) =>
   isEqual(flattenAccounts(a).map(accountHash), flattenAccounts(b).map(accountHash)),
@@ -111,8 +107,8 @@ export const subAccountByCurrencyOrderedSelector = createSelector(
             a.account.balance.gt(b.account.balance)
               ? -1
               : a.account.balance.eq(b.account.balance)
-                ? 0
-                : 1,
+              ? 0
+              : 1,
           )
       : [];
   },

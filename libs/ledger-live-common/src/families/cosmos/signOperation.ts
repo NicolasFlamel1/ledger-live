@@ -108,12 +108,12 @@ export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
             transaction.mode === "undelegate"
               ? "UNDELEGATE"
               : transaction.mode === "delegate"
-                ? "DELEGATE"
-                : transaction.mode === "redelegate"
-                  ? "REDELEGATE"
-                  : ["claimReward", "claimRewardCompound"].includes(transaction.mode)
-                    ? "REWARD"
-                    : "OUT";
+              ? "DELEGATE"
+              : transaction.mode === "redelegate"
+              ? "REDELEGATE"
+              : ["claimReward", "claimRewardCompound"].includes(transaction.mode)
+              ? "REWARD"
+              : "OUT";
 
           const senders: string[] = [];
           const recipients: string[] = [];
@@ -144,8 +144,8 @@ export const signOperation: AccountBridge<Transaction>["signOperation"] = ({
               type === "REWARD"
                 ? new BigNumber(0)
                 : transaction.useAllAmount
-                  ? account.spendableBalance
-                  : transaction.amount.plus(fee),
+                ? account.spendableBalance
+                : transaction.amount.plus(fee),
             fee,
             extra,
             blockHash: null,

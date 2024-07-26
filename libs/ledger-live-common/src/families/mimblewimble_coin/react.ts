@@ -76,7 +76,6 @@ export const addReceivedTransactionToAccount = (
   return addPendingOperation(
     {
       ...account,
-      freshAddresses: [freshAddress],
       freshAddress: freshAddress.address,
       freshAddressPath: freshAddress.derivationPath,
       mimbleWimbleCoinResources: {
@@ -112,7 +111,6 @@ export const addSentTransactionToAccount = (
       {
         ...account,
         spendableBalance: newSpendableBalance,
-        freshAddresses: [freshAddress],
         freshAddress: freshAddress.address,
         freshAddressPath: freshAddress.derivationPath,
         operations: account.operations.map((operation: Operation): Operation => {
@@ -145,7 +143,6 @@ export const addSentTransactionToAccount = (
     return {
       ...account,
       spendableBalance: newSpendableBalance,
-      freshAddresses: [freshAddress],
       freshAddress: freshAddress.address,
       freshAddressPath: freshAddress.derivationPath,
       operations: account.operations.map((operation: Operation): Operation => {

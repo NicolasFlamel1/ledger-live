@@ -27,12 +27,6 @@ export default {
         index: 0,
         freshAddress: "grin1pe6nvyy4n2nqh73l8kr80zqj5uf4cyqdu4jelqhxmmmjufw8g33q42r76l",
         freshAddressPath: "44'/592'/0'/0/0",
-        freshAddresses: [
-          {
-            address: "grin1pe6nvyy4n2nqh73l8kr80zqj5uf4cyqdu4jelqhxmmmjufw8g33q42r76l",
-            derivationPath: "44'/592'/0'/0/0",
-          },
-        ],
         name: "Grin 1",
         balance: "0",
         spendableBalance: "0",

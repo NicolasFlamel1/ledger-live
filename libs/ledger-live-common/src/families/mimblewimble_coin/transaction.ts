@@ -1,27 +1,21 @@
 import type { Transaction, TransactionRaw } from "./types";
+import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
+  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
-  formatTransactionStatusCommon,
-  fromTransactionStatusRawCommon,
-  toTransactionStatusRawCommon,
-} from "@ledgerhq/coin-framework/transaction/common";
+  toTransactionStatusRawCommon as toTransactionStatusRaw,
+} from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import BigNumber from "bignumber.js";
-
-const formatTransactionStatus = formatTransactionStatusCommon;
-
-const fromTransactionStatusRaw = fromTransactionStatusRawCommon;
-
-const toTransactionStatusRaw = toTransactionStatusRawCommon;
 
 export const formatTransaction = (transaction: Transaction, account: Account): string => {
   return `SEND ${
     transaction.useAllAmount
       ? "MAX"
-      : formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
+      : formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
           showCode: true,
           disableRounding: true,
         })

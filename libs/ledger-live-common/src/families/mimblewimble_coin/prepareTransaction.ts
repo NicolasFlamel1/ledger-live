@@ -131,7 +131,7 @@ export default async (
     tipHeight.plus(1),
     new BigNumber(0),
     null,
-    usePaymentProof ? account.freshAddresses[0].address : null,
+    usePaymentProof ? account.freshAddress : null,
     usePaymentProof ? recipient : null,
     null,
   );
@@ -178,7 +178,7 @@ export default async (
     .nextIdentifier;
   if (!change.isZero()) {
     commitment = await mimbleWimbleCoin.getCommitment(
-      account.freshAddresses[0].derivationPath,
+      account.freshAddressPath,
       currentIdentifier.withHeight(account.currency, slate.height!),
       change,
       Crypto.SwitchType.REGULAR,
@@ -195,7 +195,7 @@ export default async (
           uniqueCommitment = false;
           currentIdentifier = currentIdentifier.getNext();
           commitment = await mimbleWimbleCoin.getCommitment(
-            account.freshAddresses[0].derivationPath,
+            account.freshAddressPath,
             currentIdentifier.withHeight(account.currency, slate.height!),
             change,
             Crypto.SwitchType.REGULAR,
@@ -214,7 +214,7 @@ export default async (
           uniqueCommitment = false;
           currentIdentifier = currentIdentifier.getNext();
           commitment = await mimbleWimbleCoin.getCommitment(
-            account.freshAddresses[0].derivationPath,
+            account.freshAddressPath,
             currentIdentifier.withHeight(account.currency, slate.height!),
             change,
             Crypto.SwitchType.REGULAR,
@@ -225,7 +225,7 @@ export default async (
     }
     const proof = await mimbleWimbleCoin.getProof(
       (account as MimbleWimbleCoinAccount).mimbleWimbleCoinResources.rootPublicKey,
-      account.freshAddresses[0].derivationPath,
+      account.freshAddressPath,
       currentIdentifier.withHeight(account.currency, slate.height!),
       change,
       Crypto.SwitchType.REGULAR,
@@ -273,7 +273,7 @@ export default async (
     }
   }
   await mimbleWimbleCoin.startTransaction(
-    account.freshAddresses[0].derivationPath,
+    account.freshAddressPath,
     change,
     inputAmount.minus(fee),
     fee,

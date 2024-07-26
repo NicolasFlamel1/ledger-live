@@ -55,7 +55,7 @@ const buildOptimisticOperation = async (
     value: slate.amount,
     fee: slate.fee,
     senders: slate.senderPaymentProofAddress !== null ? [slate.senderPaymentProofAddress] : [],
-    recipients: [account.freshAddresses[0].address],
+    recipients: [account.freshAddress],
     blockHash: null,
     blockHeight: null,
     accountId: account.id,
@@ -158,7 +158,7 @@ export default (
             }
             if (
               slate.recipientPaymentProofAddress !== null &&
-              slate.recipientPaymentProofAddress !== account.freshAddresses[0].address
+              slate.recipientPaymentProofAddress !== account.freshAddress
             ) {
               throw new MimbleWimbleCoinUnsupportedSlate("Invalid slate payment proof");
             }
@@ -242,7 +242,7 @@ export default (
               }
             }
             let commitment: Buffer = await mimbleWimbleCoin.getCommitment(
-              account.freshAddresses[0].derivationPath,
+              account.freshAddressPath,
               (account as MimbleWimbleCoinAccount).mimbleWimbleCoinResources.nextIdentifier,
               slate.amount,
               Crypto.SwitchType.REGULAR,
@@ -261,7 +261,7 @@ export default (
                     account as MimbleWimbleCoinAccount
                   ).mimbleWimbleCoinResources.nextIdentifier.getNext();
                   commitment = await mimbleWimbleCoin.getCommitment(
-                    account.freshAddresses[0].derivationPath,
+                    account.freshAddressPath,
                     (account as MimbleWimbleCoinAccount).mimbleWimbleCoinResources.nextIdentifier,
                     slate.amount,
                     Crypto.SwitchType.REGULAR,
@@ -284,7 +284,7 @@ export default (
                     account as MimbleWimbleCoinAccount
                   ).mimbleWimbleCoinResources.nextIdentifier.getNext();
                   commitment = await mimbleWimbleCoin.getCommitment(
-                    account.freshAddresses[0].derivationPath,
+                    account.freshAddressPath,
                     (account as MimbleWimbleCoinAccount).mimbleWimbleCoinResources.nextIdentifier,
                     slate.amount,
                     Crypto.SwitchType.REGULAR,
@@ -295,7 +295,7 @@ export default (
             }
             const proof = await mimbleWimbleCoin.getProof(
               (account as MimbleWimbleCoinAccount).mimbleWimbleCoinResources.rootPublicKey,
-              account.freshAddresses[0].derivationPath,
+              account.freshAddressPath,
               (account as MimbleWimbleCoinAccount).mimbleWimbleCoinResources.nextIdentifier,
               slate.amount,
               Crypto.SwitchType.REGULAR,
@@ -307,7 +307,7 @@ export default (
               throw new MimbleWimbleCoinAddingToSlateFailed("Failed adding output to slate");
             }
             await mimbleWimbleCoin.startTransaction(
-              account.freshAddresses[0].derivationPath,
+              account.freshAddressPath,
               slate.amount,
               new BigNumber(0),
               slate.fee,
@@ -402,9 +402,7 @@ export default (
                 );
               }
             }
-            const bipPath = BIPPath.fromString(
-              account.freshAddresses[0].derivationPath,
-            ).toPathArray();
+            const bipPath = BIPPath.fromString(account.freshAddressPath).toPathArray();
             ++bipPath[Crypto.BIP44_PATH_INDEX_INDEX];
             const newDerivationPath = BIPPath.fromPathArray(bipPath).toString(true);
             const newAddress = await mimbleWimbleCoin.getAddress(newDerivationPath);

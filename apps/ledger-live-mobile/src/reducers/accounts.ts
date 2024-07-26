@@ -155,9 +155,7 @@ export const accountsSelector = (s: State): Account[] => s.accounts.active;
 const accountHash = (a: AccountLike) =>
   `${a.id}-${a.balance.toString()}-swapHistory(${a.swapHistory.length})${
     a.type === "Account"
-      ? `-freshAddressPath(${
-          a.freshAddresses.length ? a.freshAddresses[0].derivationPath : a.freshAddressPath
-        })`
+      ? `-freshAddressPath(${a.freshAddressPath})`
       : ""
   }${a.type === "Account" ? `-spendableBalance(${a.spendableBalance.toString()})` : ""}`;
 
@@ -341,8 +339,8 @@ export const subAccountByCurrencyOrderedSelector = createSelector(
         a.account.balance.gt(b.account.balance)
           ? -1
           : a.account.balance.eq(b.account.balance)
-            ? 0
-            : 1,
+          ? 0
+          : 1,
       );
   },
 );

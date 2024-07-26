@@ -75,7 +75,7 @@ import type {
   TransactionRaw as mimblewimble_coinTransactionRaw,
   TransactionStatus as mimblewimble_coinTransactionStatus,
   TransactionStatusRaw as mimblewimble_coinTransactionStatusRaw,
-} from "../families/coin-mimblewimble_coin/types";
+} from "../families/mimblewimble_coin/types";
 import type {
   Transaction as nearTransaction,
   TransactionRaw as nearTransactionRaw,

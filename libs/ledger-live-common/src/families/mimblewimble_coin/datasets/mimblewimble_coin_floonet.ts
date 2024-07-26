@@ -27,12 +27,6 @@ export default {
         index: 0,
         freshAddress: "7rgrlqdcygvsyjlrawpidkyy4bys67t343kh7knshea2gyld6gz67fid",
         freshAddressPath: "44'/1'/0'/0/0",
-        freshAddresses: [
-          {
-            address: "7rgrlqdcygvsyjlrawpidkyy4bys67t343kh7knshea2gyld6gz67fid",
-            derivationPath: "44'/1'/0'/0/0",
-          },
-        ],
         name: "MimbleWimble Coin Floonet 1",
         balance: "0",
         spendableBalance: "0",

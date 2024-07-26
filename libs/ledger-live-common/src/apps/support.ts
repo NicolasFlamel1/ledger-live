@@ -26,7 +26,6 @@ export function shouldUpgrade(appName: string, appVersion: string): boolean {
   return false;
 }
 
-
 export function mustUpgrade(appName: string, appVersion: string): boolean {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) return false;
   // we should convert the app name to camel case and replace spaces with underscores to match the config convention in firebase

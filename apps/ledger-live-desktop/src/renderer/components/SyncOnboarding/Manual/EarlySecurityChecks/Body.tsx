@@ -69,23 +69,23 @@ const SoftwareCheckContent = ({
                 modelName,
               })
             : genuineCheckStatus === SoftwareCheckStatus.cancelled
-              ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.title.cancelled", {
-                  modelName,
-                })
-              : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.title.active", {
-                  modelName,
-                })
+            ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.title.cancelled", {
+                modelName,
+              })
+            : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.title.active", {
+                modelName,
+              })
         }
         subtitle={
           genuineCheckStatus === SoftwareCheckStatus.completed
             ? undefined
             : genuineCheckStatus === SoftwareCheckStatus.cancelled
-              ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.subtitle.cancelled", {
-                  modelName,
-                })
-              : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.subtitle.active", {
-                  modelName,
-                })
+            ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.subtitle.cancelled", {
+                modelName,
+              })
+            : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.subtitle.active", {
+                modelName,
+              })
         }
       >
         {genuineCheckStatus === SoftwareCheckStatus.cancelled ? (
@@ -109,16 +109,13 @@ const SoftwareCheckContent = ({
                 modelName,
               })
             : firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable
-              ? t(
-                  "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.title.updateAvailable",
-                  {
-                    modelName,
-                    firmwareVersion: availableFirmwareVersion,
-                  },
-                )
-              : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.title.active", {
-                  modelName,
-                })
+            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.title.updateAvailable", {
+                modelName,
+                firmwareVersion: availableFirmwareVersion,
+              })
+            : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.title.active", {
+                modelName,
+              })
         }
         subtitle={
           firmwareUpdateStatus === SoftwareCheckStatus.completed
@@ -126,15 +123,15 @@ const SoftwareCheckContent = ({
                 modelName,
               })
             : firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable
-              ? t(
-                  "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.subtitle.updateAvailable",
-                  {
-                    modelName,
-                  },
-                )
-              : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.subtitle.active", {
+            ? t(
+                "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.subtitle.updateAvailable",
+                {
                   modelName,
-                })
+                },
+              )
+            : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.subtitle.active", {
+                modelName,
+              })
         }
       >
         {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable ? (

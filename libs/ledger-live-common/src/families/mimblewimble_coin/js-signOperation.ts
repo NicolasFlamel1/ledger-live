@@ -51,7 +51,7 @@ const buildOptimisticOperation = async (
     type: "OUT",
     value: slate.amount,
     fee: slate.fee,
-    senders: [account.freshAddresses[0].address],
+    senders: [account.freshAddress],
     recipients: [transaction.recipient.trim()],
     blockHash: null,
     blockHeight: null,
@@ -238,7 +238,7 @@ export default ({
             transaction.sendAsFile ? transaction.height! : tipHeight.plus(1),
             new BigNumber(0),
             null,
-            usePaymentProof ? account.freshAddresses[0].address : null,
+            usePaymentProof ? account.freshAddress : null,
             usePaymentProof ? recipient : null,
             supportedSlateVersions,
           );
@@ -300,7 +300,7 @@ export default ({
             .mimbleWimbleCoinResources.nextIdentifier;
           if (!change.isZero()) {
             commitment = await mimbleWimbleCoin.getCommitment(
-              account.freshAddresses[0].derivationPath,
+              account.freshAddressPath,
               currentIdentifier.withHeight(account.currency, slate.height!),
               change,
               Crypto.SwitchType.REGULAR,
@@ -317,7 +317,7 @@ export default ({
                   uniqueCommitment = false;
                   currentIdentifier = currentIdentifier.getNext();
                   commitment = await mimbleWimbleCoin.getCommitment(
-                    account.freshAddresses[0].derivationPath,
+                    account.freshAddressPath,
                     currentIdentifier.withHeight(account.currency, slate.height!),
                     change,
                     Crypto.SwitchType.REGULAR,
@@ -338,7 +338,7 @@ export default ({
                   uniqueCommitment = false;
                   currentIdentifier = currentIdentifier.getNext();
                   commitment = await mimbleWimbleCoin.getCommitment(
-                    account.freshAddresses[0].derivationPath,
+                    account.freshAddressPath,
                     currentIdentifier.withHeight(account.currency, slate.height!),
                     change,
                     Crypto.SwitchType.REGULAR,
@@ -353,7 +353,7 @@ export default ({
             } else {
               proof = await mimbleWimbleCoin.getProof(
                 (account as MimbleWimbleCoinAccount).mimbleWimbleCoinResources.rootPublicKey,
-                account.freshAddresses[0].derivationPath,
+                account.freshAddressPath,
                 currentIdentifier.withHeight(account.currency, slate.height!),
                 change,
                 Crypto.SwitchType.REGULAR,
@@ -425,7 +425,7 @@ export default ({
             privateNonceIndex = 0;
           }
           await mimbleWimbleCoin.startTransaction(
-            account.freshAddresses[0].derivationPath,
+            account.freshAddressPath,
             change,
             inputAmount.minus(fee),
             fee,
@@ -553,7 +553,7 @@ export default ({
             }
           }
           await mimbleWimbleCoin.startTransaction(
-            account.freshAddresses[0].derivationPath,
+            account.freshAddressPath,
             change,
             inputAmount.minus(fee),
             fee,
@@ -731,9 +731,7 @@ export default ({
             Crypto.SwitchType.REGULAR,
             timestamp,
           );
-          const bipPath = BIPPath.fromString(
-            account.freshAddresses[0].derivationPath,
-          ).toPathArray();
+          const bipPath = BIPPath.fromString(account.freshAddressPath).toPathArray();
           ++bipPath[Crypto.BIP44_PATH_INDEX_INDEX];
           const newDerivationPath = BIPPath.fromPathArray(bipPath).toString(true);
           const newAddress = await mimbleWimbleCoin.getAddress(newDerivationPath);

@@ -350,7 +350,7 @@ export default class Age {
         Crypto.CHACHA20_POLY1305_NONCE_LENGTH - 1,
       );
       const decryptedChunk = await mimbleWimbleCoin.decryptAgeChunk(
-        account.freshAddresses[0].derivationPath,
+        account.freshAddressPath,
         stanzas[0].ephemeralX25519PublicKey,
         stanzas[0].encryptedFileKey,
         payloadNonce,

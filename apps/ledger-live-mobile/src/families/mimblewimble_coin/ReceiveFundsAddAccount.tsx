@@ -41,6 +41,7 @@ import { TitleText } from "../../components/DeviceAction/rendering";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useTheme as useThemeNavigation } from "@react-navigation/native";
 import QueuedDrawer from "~/components/QueuedDrawer";
+import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 
 const DeviceActionContainer = styled(Flex).attrs({
   flexDirection: "row",
@@ -125,7 +126,8 @@ function AddAccountsAccounts(props: Props) {
       if (!selectedAccount) {
         setSelectedAccount(account.id);
         dispatch(
-          replaceAccounts({
+          addAccountsAction({
+            existingAccounts,
             scannedAccounts,
             selectedIds: [account.id],
             renamings: {},
