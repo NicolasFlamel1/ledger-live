@@ -10,17 +10,19 @@ import {
   loadWindow,
 } from "./window-lifecycle";
 import { getSentryEnabled, setUserId } from "./internal-lifecycle";
-import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import db from "./db";
 import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
 import { SettingsState } from "~/renderer/reducers/settings";
 import { User } from "~/renderer/storage";
+import electronAppUniversalProtocolClient from "electron-app-universal-protocol-client";
 
 Store.initRenderer();
 
 const gotLock = app.requestSingleInstanceLock();
-const userDataDirectory = resolveUserDataDirectory();
+const { LEDGER_CONFIG_DIRECTORY } = process.env;
+const userDataDirectory = LEDGER_CONFIG_DIRECTORY || app.getPath("userData");
+
 if (!gotLock) {
   app.quit();
 } else {
@@ -166,6 +168,20 @@ app.on("ready", async () => {
       });
     }, 300),
   );
+
+  if (__DEV__) {
+    electronAppUniversalProtocolClient.on("request", requestUrl => {
+      // Handle the request
+      const win = getMainWindow();
+      if (win) win.webContents.send("deep-linking", requestUrl);
+    });
+
+    await electronAppUniversalProtocolClient.initialize({
+      protocol: "ledgerlive",
+      mode: "development",
+    });
+  }
+
   await clearSessionCache(window.webContents.session);
 });
 
@@ -192,6 +208,12 @@ ipcMain.on("app-reload", () => {
   const w = getMainWindow();
   if (w) {
     w.reload();
+  }
+});
+ipcMain.on("show-app", () => {
+  const w = getMainWindow();
+  if (w) {
+    show(w);
   }
 });
 

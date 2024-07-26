@@ -38,6 +38,7 @@ import type {
   StackNavigatorNavigation,
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
+import { useMaybeAccountName } from "~/reducers/wallet";
 
 type ScreenProps = CompositeScreenProps<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>,
@@ -84,6 +85,10 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()?.pop();
   }
 
+  const accountName = useMaybeAccountName(account);
+  const mainAccount = account && getMainAccount(account, parentAccount);
+  const mainAccountName = useMaybeAccountName(mainAccount);
+
   useEffect(() => {
     if (!allowNavigation) {
       navigation.setOptions({
@@ -103,14 +108,13 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
       gestureEnabled: Platform.OS === "ios",
     });
   }, [allowNavigation, colors, navigation, account]);
-  if (!account) return null;
+  if (!mainAccount || !account) return null;
   const { width } = getWindowDimensions();
   const unsafe = !route.params.device?.deviceId;
   const QRSize = Math.round(width / 1.8 - 16);
-  const mainAccount = getMainAccount(account, parentAccount);
   const address = mainAccount.freshAddress;
   const currency = getAccountCurrency(account);
-  const name = mainAccount.name;
+  const name = mainAccountName;
   return (
     <SafeAreaView
       style={[
@@ -171,7 +175,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           <View style={styles.addressWrapper}>
             <CurrencyIcon currency={currency} size={20} />
             <LText semiBold style={styles.addressTitleBold}>
-              {getAccountName(account)}
+              {accountName}
             </LText>
           </View>
           <View style={styles.address}>

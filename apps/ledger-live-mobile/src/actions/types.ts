@@ -1,9 +1,5 @@
 import type { Action } from "redux-actions";
-import type {
-  AccountComparator,
-  AddAccountsProps,
-  ImportAccountsReduceInput,
-} from "@ledgerhq/live-common/account/index";
+import type { AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
   Account,
@@ -15,6 +11,8 @@ import type {
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import type {
   AppState,
   FwUpdateBackgroundEvent,
@@ -33,17 +31,19 @@ import type {
   DynamicContentState,
   ProtectState,
   NftState,
+  MarketState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
+import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
 
 //  === ACCOUNTS ACTIONS ===
 
 export enum AccountsActionTypes {
   ACCOUNTS_IMPORT = "ACCOUNTS_IMPORT",
   ACCOUNTS_USER_IMPORT = "ACCOUNTS_USER_IMPORT",
+  ADD_ACCOUNT = "ADD_ACCOUNT",
   REORDER_ACCOUNTS = "REORDER_ACCOUNTS",
-  ACCOUNTS_ADD = "ACCOUNTS_ADD",
   SET_ACCOUNTS = "SET_ACCOUNTS",
   UPDATE_ACCOUNT = "UPDATE_ACCOUNT",
   DELETE_ACCOUNT = "DELETE_ACCOUNT",
@@ -51,28 +51,20 @@ export enum AccountsActionTypes {
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
-export type AccountsImportStorePayload = Account[];
 export type AccountsReorderPayload = AccountComparator;
 export type AccountsImportAccountsPayload = ImportAccountsReduceInput;
-export type AccountsReplaceAccountsPayload = Pick<
-  AddAccountsProps,
-  "scannedAccounts" | "selectedIds" | "renamings"
-> &
-  Partial<AddAccountsProps>;
-export type AccountsSetAccountsPayload = Account[];
 export type AccountsUpdateAccountWithUpdaterPayload = {
   accountId: string;
   updater: (arg0: Account) => Account;
 };
 export type AccountsDeleteAccountPayload = Account;
 export type AccountsPayload =
-  | AccountsImportStorePayload
+  | HandlersPayloads["INIT_ACCOUNTS"]
   | AccountsReorderPayload
   | AccountsImportAccountsPayload
-  | AccountsReplaceAccountsPayload
-  | AccountsSetAccountsPayload
   | AccountsUpdateAccountWithUpdaterPayload
-  | AccountsDeleteAccountPayload;
+  | AccountsDeleteAccountPayload
+  | Account;
 
 // === APPSTATE ACTIONS ===
 
@@ -227,6 +219,7 @@ export enum SettingsActionTypes {
   SETTINGS_DISABLE_PRIVACY = "SETTINGS_DISABLE_PRIVACY",
   SETTINGS_SET_REPORT_ERRORS = "SETTINGS_SET_REPORT_ERRORS",
   SETTINGS_SET_ANALYTICS = "SETTINGS_SET_ANALYTICS",
+  SETTINGS_SET_PERSONALIZED_RECOMMENDATIONS = "SETTINGS_SET_PERSONALIZED_RECOMMENDATIONS",
   SETTINGS_SET_COUNTERVALUE = "SETTINGS_SET_COUNTERVALUE",
   SETTINGS_SET_ORDER_ACCOUNTS = "SETTINGS_SET_ORDER_ACCOUNTS",
   SETTINGS_SET_PAIRS = "SETTINGS_SET_PAIRS",
@@ -255,19 +248,15 @@ export enum SettingsActionTypes {
   SETTINGS_SET_DATE_FORMAT = "SETTINGS_SET_DATE_FORMAT",
   SET_SWAP_SELECTABLE_CURRENCIES = "SET_SWAP_SELECTABLE_CURRENCIES",
   ACCEPT_SWAP_PROVIDER = "ACCEPT_SWAP_PROVIDER",
-  LAST_SEEN_DEVICE = "LAST_SEEN_DEVICE",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
   LAST_SEEN_DEVICE_LANGUAGE_ID = "LAST_SEEN_DEVICE_LANGUAGE_ID",
   SET_KNOWN_DEVICE_MODEL_IDS = "SET_KNOWN_DEVICE_MODEL_IDS",
   SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP = "SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP",
   SET_LAST_SEEN_CUSTOM_IMAGE = "SET_LAST_SEEN_CUSTOM_IMAGE",
-  ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
-  REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_LAST_CONNECTED_DEVICE = "SET_LAST_CONNECTED_DEVICE",
   SET_CUSTOM_IMAGE_TYPE = "SET_CUSTOM_IMAGE_TYPE",
   SET_CUSTOM_IMAGE_BACKUP = "SET_CUSTOM_IMAGE_BACKUP",
   SET_HAS_ORDERED_NANO = "SET_HAS_ORDERED_NANO",
-  SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
   SET_MARKET_COUNTER_CURRENCY = "SET_MARKET_COUNTER_CURRENCY",
   SET_MARKET_FILTER_BY_STARRED_ACCOUNTS = "SET_MARKET_FILTER_BY_STARRED_ACCOUNTS",
   SET_SENSITIVE_ANALYTICS = "SET_SENSITIVE_ANALYTICS",
@@ -287,6 +276,12 @@ export enum SettingsActionTypes {
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
   SET_USER_NPS = "SET_USER_NPS",
   SET_SUPPORTED_COUNTER_VALUES = "SET_SUPPORTED_COUNTER_VALUES",
+  SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT = "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
+  SET_DISMISSED_CONTENT_CARD = "SET_DISMISSED_CONTENT_CARD",
+  CLEAR_DISMISSED_CONTENT_CARDS = "CLEAR_DISMISSED_CONTENT_CARDS",
+
+  ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
+  REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -302,6 +297,8 @@ export type SettingsSetPrivacyPayload = Privacy;
 export type SettingsSetPrivacyBiometricsPayload = boolean;
 export type SettingsSetReportErrorsPayload = SettingsState["reportErrorsEnabled"];
 export type SettingsSetAnalyticsPayload = SettingsState["analyticsEnabled"];
+export type SettingsSetPersonalizedRecommendationsPayload =
+  SettingsState["personalizedRecommendationsEnabled"];
 export type SettingsSetCountervaluePayload = SettingsState["counterValue"];
 export type SettingsSetOrderAccountsPayload = SettingsState["orderAccounts"];
 export type SettingsSetPairsPayload = { pairs: Array<Pair> };
@@ -338,8 +335,6 @@ export type SettingsLastSeenDevicePayload = NonNullable<
 export type SettingsLastSeenDeviceInfoPayload = DeviceModelInfo;
 export type SettingsLastSeenDeviceLanguagePayload = DeviceInfo["languageId"];
 export type SettingsSetKnownDeviceModelIdsPayload = { [key in DeviceModelId]?: boolean };
-export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
-export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsSetLastConnectedDevicePayload = Device;
 export type SettingsSetHasSeenStaxEnabledNftsPopupPayload = Pick<
   SettingsState,
@@ -348,13 +343,11 @@ export type SettingsSetHasSeenStaxEnabledNftsPopupPayload = Pick<
 export type SettingsSetCustomImageBackupPayload = {
   hex: string;
   hash: string;
-};
-export type SettingsSetCustomImageTypePayload = Pick<SettingsState, "customImageType">;
+  deviceModelId: CLSSupportedDeviceModelId;
+} | null;
+export type SettingsSetCustomImageTypePayload = Pick<SettingsState, "customLockScreenType">;
 export type SettingsSetHasOrderedNanoPayload = SettingsState["hasOrderedNano"];
-export type SettingsSetMarketRequestParamsPayload = SettingsState["marketRequestParams"];
 export type SettingsSetMarketCounterCurrencyPayload = SettingsState["marketCounterCurrency"];
-export type SettingsSetMarketFilterByStarredAccountsPayload =
-  SettingsState["marketFilterByStarredAccounts"];
 export type SettingsSetSensitiveAnalyticsPayload = SettingsState["sensitiveAnalytics"];
 export type SettingsSetOnboardingHasDevicePayload = SettingsState["onboardingHasDevice"];
 
@@ -387,6 +380,12 @@ export type SettingsCompleteOnboardingPayload = void | SettingsState["hasComplet
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 export type SettingsSetUserNps = number;
 export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
+export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
+export type SettingsSetDismissedContentCardsPayload = SettingsState["dismissedContentCards"];
+export type SettingsClearDismissedContentCardsPayload = string[];
+
+export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
+export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -396,6 +395,7 @@ export type SettingsPayload =
   | SettingsSetPrivacyBiometricsPayload
   | SettingsSetReportErrorsPayload
   | SettingsSetAnalyticsPayload
+  | SettingsSetPersonalizedRecommendationsPayload
   | SettingsSetCountervaluePayload
   | SettingsSetOrderAccountsPayload
   | SettingsSetPairsPayload
@@ -420,13 +420,9 @@ export type SettingsPayload =
   | SettingsLastSeenDeviceLanguagePayload
   | SettingsLastSeenDeviceInfoPayload
   | SettingsSetLastSeenCustomImagePayload
-  | SettingsAddStarredMarketcoinsPayload
-  | SettingsRemoveStarredMarketcoinsPayload
   | SettingsSetLastConnectedDevicePayload
   | SettingsSetHasOrderedNanoPayload
-  | SettingsSetMarketRequestParamsPayload
   | SettingsSetMarketCounterCurrencyPayload
-  | SettingsSetMarketFilterByStarredAccountsPayload
   | SettingsSetSensitiveAnalyticsPayload
   | SettingsSetOnboardingHasDevicePayload
   | SettingsSetNotificationsPayload
@@ -442,7 +438,12 @@ export type SettingsPayload =
   | SettingsSetOnboardingTypePayload
   | SettingsSetClosedNetworkBannerPayload
   | SettingsSetUserNps
-  | SettingsSetSupportedCounterValues;
+  | SettingsSetSupportedCounterValues
+  | SettingsSetHasSeenAnalyticsOptInPrompt
+  | SettingsSetDismissedContentCardsPayload
+  | SettingsClearDismissedContentCardsPayload
+  | SettingsAddStarredMarketcoinsPayload
+  | SettingsRemoveStarredMarketcoinsPayload;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {
@@ -486,6 +487,40 @@ export type ProtectDataPayload = ProtectState["data"];
 export type ProtectStatusPayload = ProtectState["protectStatus"];
 export type ProtectPayload = ProtectDataPayload | ProtectStatusPayload;
 
+// === NFT ACTIONS ===
+export enum NftStateActionTypes {
+  SET_GALLERY_CHAIN_FILTER = "SET_GALLERY_CHAIN_FILTER",
+  SET_GALLERY_FILTER_DRAWER_VISIBLE = "SET_GALLERY_FILTER_DRAWER_VISIBLE",
+}
+
+export type NftStateGalleryChainFiltersPayload = [keyof NftState["galleryChainFilters"], boolean];
+export type NftStateGalleryFilterDrawerVisiblePayload = NftState["filterDrawerVisible"];
+
+export type NftPayload =
+  | NftStateGalleryChainFiltersPayload
+  | NftStateGalleryFilterDrawerVisiblePayload;
+
+// === MARKET ACTIONS ===
+export enum MarketStateActionTypes {
+  SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
+  SET_MARKET_FILTER_BY_STARRED_CURRENCIES = "SET_MARKET_FILTER_BY_STARRED_CURRENCIES",
+  MARKET_SET_CURRENT_PAGE = "MARKET_SET_CURRENT_PAGE",
+  MARKET_IMPORT = "MARKET_IMPORT",
+}
+
+export type MarketSetMarketFilterByStarredCurrenciesPayload =
+  MarketState["marketFilterByStarredCurrencies"];
+export type MarketSetCurrentPagePayload = MarketState["marketCurrentPage"];
+export type MarketSetMarketRequestParamsPayload = MarketState["marketParams"];
+
+export type MarketImportPayload = Partial<MarketState>;
+
+export type MarketPayload =
+  | MarketSetMarketFilterByStarredCurrenciesPayload
+  | MarketSetMarketRequestParamsPayload
+  | MarketSetCurrentPagePayload
+  | MarketImportPayload;
+
 // === PAYLOADS ===
 
 export type ActionsPayload =
@@ -499,17 +534,6 @@ export type ActionsPayload =
   | Action<PostOnboardingPayload>
   | Action<SwapPayload>
   | Action<ProtectPayload>
-  | Action<EarnPayload>;
-
-// === NFT ACTIONS ===
-export enum NftStateActionTypes {
-  SET_GALLERY_CHAIN_FILTER = "SET_GALLERY_CHAIN_FILTER",
-  SET_GALLERY_FILTER_DRAWER_VISIBLE = "SET_GALLERY_FILTER_DRAWER_VISIBLE",
-}
-
-export type NftStateGalleryChainFiltersPayload = [keyof NftState["galleryChainFilters"], boolean];
-export type NftStateGalleryFilterDrawerVisiblePayload = NftState["filterDrawerVisible"];
-
-export type NftStatePayload =
-  | NftStateGalleryChainFiltersPayload
-  | NftStateGalleryFilterDrawerVisiblePayload;
+  | Action<EarnPayload>
+  | Action<MarketPayload>
+  | Action<NftPayload>;

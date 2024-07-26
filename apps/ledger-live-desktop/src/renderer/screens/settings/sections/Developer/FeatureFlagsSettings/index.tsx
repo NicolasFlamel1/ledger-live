@@ -10,7 +10,7 @@ import {
   useFeature,
   useFeatureFlags,
   useHasLocallyOverriddenFeatureFlags,
-} from "@ledgerhq/live-config/featureFlags/index";
+} from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, SearchInput, Alert, Tag, Text, Switch } from "@ledgerhq/react-ui";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { FeatureId } from "@ledgerhq/types-live";
@@ -23,6 +23,7 @@ import GroupedFeatures from "./GroupedFeatures";
 import TabBar from "~/renderer/components/TabBar";
 import { featureFlagsButtonVisibleSelector } from "~/renderer/reducers/settings";
 import { setFeatureFlagsButtonVisible } from "~/renderer/actions/settings";
+import { objectKeysType } from "@ledgerhq/live-common/helpers";
 
 export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boolean }) => {
   const { t } = useTranslation();
@@ -56,7 +57,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
   }, [featureFlags, searchInput]);
 
   const filteredGroups = useMemo(() => {
-    return Object.keys(groupedFeatures)
+    return objectKeysType(groupedFeatures)
       .sort()
       .filter(
         groupName =>
@@ -73,11 +74,11 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
 
   const [cheatActivated, setCheatActivated] = useState(false);
   const ruleThemAll = useCallback(() => {
-    groupedFeatures.stax.featureIds.forEach(featureId =>
+    groupedFeatures.europa.featureIds.forEach(featureId =>
       overrideFeature(featureId, { ...getFeature(featureId), enabled: true }),
     );
     setCheatActivated(true);
-  }, [overrideFeature, getFeature]);
+  }, [getFeature, overrideFeature]);
 
   const onDescriptionClick = useCallback(() => {
     if (timeoutRef.current) {

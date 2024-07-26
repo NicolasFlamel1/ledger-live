@@ -44,7 +44,7 @@ yarn upgrade-interactive -i --latest
 | @nicolasflamel/ed25519                      | MimbleWimble Coin coin integration                                | monthly                                                              |
 | @nicolasflamel/secp256k1-zkp                | MimbleWimble Coin coin integration                                | monthly                                                              |
 | @nicolasflamel/smaz                         | MimbleWimble Coin coin integration                                | monthly                                                              |
-| @nicolasflamel/x25519                       | MimbleWimble Coin coin integration                                | monthly
+| @nicolasflamel/x25519                       | MimbleWimble Coin coin integration                                | monthly                                                              |
 | @polkadot/types                             | Polkadot coin integration                                         | monthly                                                              |
 | @polkadot/types-known                       | Polkadot coin integration                                         | monthly                                                              |
 | @polkadot/util                              | Polkadot coin integration                                         | monthly                                                              |
@@ -63,7 +63,6 @@ yarn upgrade-interactive -i --latest
 | TBD DEPRECATE?                              |
 | algosdk                                     | Algorand coin integration                                         | monthly                                                              |
 | @zondax/ledger-filecoin                     | Filecoin coin integration                                         | monthly                                                              |
-| @zondax/izari-filecoin                      | Filecoin coin integration                                         | monthly                                                              |
 | @zondax/ledger-stacks                       | Stacks coin integration                                           | monthly                                                              |
 | async                                       | ???                                                               | UNCLEAR IF USED                                                      |
 | axios                                       | network                                                           | monthly                                                              |
@@ -82,9 +81,10 @@ yarn upgrade-interactive -i --latest
 | buffer                                      | many parts for bytes ops                                          | monthly                                                              |
 | cashaddrjs                                  | Bitcoin coin integration                                          | monthly                                                              |
 | cbor                                        | Filecoin coin integration                                         | monthly                                                              |
-| chacha                                      | MimbleWimble Coin coin integration                                | monthly
+| chacha                                      | MimbleWimble Coin coin integration                                | monthly                                                              |
 | coininfo                                    | Bitcoin coin integration                                          | monthly                                                              |
-| crc-32                                      | MimbleWimble Coin coin integration                                | monthly
+| crc-32                                      | MimbleWimble Coin coin integration                                | monthly                                                              |
+| create-hmac                                 | MimbleWimble Coin coin integration                                | monthly                                                              |
 | crypto-js                                   | NEO coin integration                                              | monthly                                                              |
 | c32check                                    | Stacks coin integration                                           | monthly                                                              |
 | eip55                                       | Ethereum coin integration                                         | monthly                                                              |
@@ -92,12 +92,13 @@ yarn upgrade-interactive -i --latest
 | ethereumjs-abi                              | Ethereum coin integration                                         | monthly                                                              |
 | ethereumjs-util                             | Ethereum coin integration                                         | monthly                                                              |
 | expect                                      | Tests                                                             | monthly                                                              |
-| futoin-hkdf                                 | MimbleWimble Coin coin integration                                | monthly
+| futoin-hkdf                                 | MimbleWimble Coin coin integration                                | monthly                                                              |
 | generic-pool                                | Bitcoin coin integration                                          | monthly                                                              |
-| hi-base32                                   | MimbleWimble Coin coin integration                                | monthly
+| hi-base32                                   | MimbleWimble Coin coin integration                                | monthly                                                              |
 | invariant                                   | generic helper                                                    | monthly                                                              |
 | isomorphic-ws                               | WebSocket helper                                                  | monthly                                                              |
-| json-bignumber                              | MimbleWimble Coin coin integration                                | monthly
+| iso-filecoin                                | Filecoin coin integration                                         | monthly                                                              |
+| json-bignumber                              | MimbleWimble Coin coin integration                                | monthly                                                              |
 | json-rpc-2.0                                | Ethereum coin integration                                         | monthly                                                              |
 | lodash                                      | generic helper                                                    | monthly                                                              |
 | long                                        | Osmosis coin integration                                          | monthly                                                              |
@@ -118,10 +119,10 @@ yarn upgrade-interactive -i --latest
 | semver                                      | generic helper                                                    | monthly                                                              |
 | sha.js                                      | generic helper for crypto                                         | monthly                                                              |
 | sha3                                        | MimbleWimble Coin coin integration                                | monthly                                                              |
-| socks-proxy-agent                           | MimbleWimble Coin coin integration                                | monthly
+| socks-proxy-agent                           | MimbleWimble Coin coin integration                                | monthly                                                              |
 | stellar-sdk                                 | Stellar coin integration                                          | monthly                                                              |
 | triple-beam                                 | logs                                                              | monthly                                                              |
-| uuid                                        | MimbleWimble Coin coin integration                                | monthly
+| uuid                                        | MimbleWimble Coin coin integration                                | monthly                                                              |
 | winston                                     | logs                                                              | monthly                                                              |
 | xstate                                      | generic helper for React                                          | **TBD why it's needed.**                                             |
 | zcash-bitcore-lib                           | Bitcoin coin integration                                          | monthly                                                              |

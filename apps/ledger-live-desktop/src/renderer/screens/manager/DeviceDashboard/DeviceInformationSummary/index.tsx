@@ -3,9 +3,9 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
-import { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
-import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
+import { DeviceModel } from "@ledgerhq/devices";
 import { Flex, Text } from "@ledgerhq/react-ui";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import Card from "~/renderer/components/Box/Card";
 import Box from "~/renderer/components/Box";
 import CustomImageManagerButton from "./CustomImageManagerButton";
@@ -158,12 +158,13 @@ const DeviceInformationSummary = ({
               />
             )}
 
-            {deviceModel.id === DeviceModelId.stax ? (
+            {isCustomLockScreenSupported(deviceModel.id) ? (
               <>
                 {deviceInfo.languageId !== undefined && <VerticalSeparator />}
-                <FeatureToggle featureId="customImage">
-                  <CustomImageManagerButton disabled={navigationLocked} />
-                </FeatureToggle>
+                <CustomImageManagerButton
+                  disabled={navigationLocked}
+                  deviceModelId={deviceModel.id}
+                />
               </>
             ) : null}
           </Flex>

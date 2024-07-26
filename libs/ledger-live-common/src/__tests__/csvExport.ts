@@ -3,7 +3,7 @@ import { setEnv } from "@ledgerhq/live-env";
 import { genAccount } from "../mock/account";
 import { getCryptoCurrencyById } from "../currencies";
 import { accountsOpToCSV } from "../csvExport";
-import { initialState, loadCountervalues } from "../countervalues/logic";
+import { initialState, loadCountervalues } from "@ledgerhq/live-countervalues/logic";
 import { getFiatCurrencyByTicker, setSupportedCurrencies } from "../currencies";
 
 setSupportedCurrencies(["ethereum", "ripple"]);
@@ -19,6 +19,8 @@ test("export CSV", async () => {
       startDate: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000),
     })),
     autofillGaps: false,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
   });
   const accounts = currencies.map(currency =>
     genAccount(`${currency.id}_export`, {

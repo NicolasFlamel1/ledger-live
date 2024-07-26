@@ -3,7 +3,7 @@ import { FlatList } from "react-native";
 import { concat, from } from "rxjs";
 import type { Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
@@ -11,7 +11,6 @@ import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
-import { replaceAccounts } from "~/actions/accounts";
 import logger from "../../logger";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
@@ -34,6 +33,10 @@ import Animation from "~/components/Animation";
 import lottie from "./assets/lottie.json";
 import GradientContainer from "~/components/GradientContainer";
 import { useTheme } from "styled-components/native";
+import { walletSelector } from "~/reducers/wallet";
+import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { accountsSelector } from "~/reducers/accounts";
 
 type Props = StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveAddAccount>;
 
@@ -49,6 +52,7 @@ function AddAccountsAccounts(props: Props) {
   const [cancelled, setCancelled] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
+  const existingAccounts = useSelector(accountsSelector);
   const scanSubscription = useRef<Subscription | null>();
 
   const {
@@ -76,7 +80,8 @@ function AddAccountsAccounts(props: Props) {
       if (!selectedAccount) {
         setSelectedAccount(account.id);
         dispatch(
-          replaceAccounts({
+          addAccountsAction({
+            existingAccounts,
             scannedAccounts,
             selectedIds: [account.id],
             renamings: {},
@@ -98,7 +103,7 @@ function AddAccountsAccounts(props: Props) {
         }
       }
     },
-    [dispatch, navigation, route.params, scannedAccounts, selectedAccount],
+    [dispatch, navigation, route.params, scannedAccounts, existingAccounts, selectedAccount],
   );
 
   useEffect(() => {
@@ -201,6 +206,8 @@ function AddAccountsAccounts(props: Props) {
     }
   }, [cancelled, navigation]);
 
+  const walletState = useSelector(walletSelector);
+
   const renderItem = useCallback(
     ({ item: account }: { item: Account }) => {
       const acc =
@@ -215,14 +222,16 @@ function AddAccountsAccounts(props: Props) {
             onPress={() => selectAccount(account)}
             AccountSubTitle={
               currency.type === "TokenCurrency" ? (
-                <LText color="neutral.c70">{account.name}</LText>
+                <LText color="neutral.c70">
+                  {accountNameWithDefaultSelector(walletState, account)}
+                </LText>
               ) : null
             }
           />
         </Flex>
       ) : null;
     },
-    [currency.id, currency.type, selectAccount],
+    [currency.id, currency.type, selectAccount, walletState],
   );
 
   const renderHeader = useCallback(
@@ -310,6 +319,7 @@ function ScanLoading({
   stopSubscription: () => void;
 }) {
   const { t } = useTranslation();
+  const numberOfAccountsFound = scannedAccounts?.length;
 
   return (
     <Loading
@@ -335,11 +345,11 @@ function ScanLoading({
           m={6}
           justifyContent="flex-end"
         >
-          {scannedAccounts?.length > 0 ? (
+          {numberOfAccountsFound > 0 ? (
             <>
               <LText textAlign="center" mb={6} variant="body" color="neutral.c80">
-                {t("transfer.receive.addAccount.foundAccounts", {
-                  count: scannedAccounts?.length,
+                {t("transfer.receive.addAccount.foundAccount", {
+                  count: numberOfAccountsFound,
                 })}
               </LText>
               <Button type="secondary" onPress={stopSubscription}>

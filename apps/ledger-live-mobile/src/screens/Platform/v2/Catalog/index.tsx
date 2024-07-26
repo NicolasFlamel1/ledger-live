@@ -11,14 +11,14 @@ import { ManifestList } from "./ManifestList";
 import { RecentlyUsed } from "./RecentlyUsed";
 import { CatalogSection } from "./CatalogSection";
 import { DAppDisclaimer } from "./DAppDisclaimer";
+import { LocalLiveApp } from "./LocalLiveApp";
 
 const AnimatedView = Animatable.View;
 
 export function Catalog() {
   const { t } = useTranslation();
   const title = t("browseWeb3.catalog.title");
-  const { categories, recentlyUsed, search, disclaimer } = useCatalog();
-
+  const { categories, recentlyUsed, search, disclaimer, localLiveApps } = useCatalog();
   return (
     <TabBarSafeAreaView edges={["top", "bottom", "left", "right"]}>
       {/* TODO: put under the animation header and style  */}
@@ -26,7 +26,7 @@ export function Catalog() {
       <DAppDisclaimer disclaimer={disclaimer} />
 
       {search.isActive ? (
-        <Search title={title} categories={categories} disclaimer={disclaimer} search={search} />
+        <Search title={title} disclaimer={disclaimer} search={search} />
       ) : (
         <>
           <Layout
@@ -34,7 +34,7 @@ export function Catalog() {
             middleHeaderContent={
               <>
                 <Flex marginBottom={16}>
-                  <Text fontWeight="semiBold" variant="h4">
+                  <Text fontWeight="semiBold" variant="h4" testID="discover-banner">
                     {title}
                   </Text>
                 </Flex>
@@ -43,17 +43,17 @@ export function Catalog() {
             }
             disableStyleBottomHeader
             bottomHeaderContent={
-              <RecentlyUsed recentlyUsed={recentlyUsed} disclaimer={disclaimer} />
+              <>
+                {localLiveApps.length !== 0 && <LocalLiveApp localLiveApps={localLiveApps} />}
+                <RecentlyUsed recentlyUsed={recentlyUsed} disclaimer={disclaimer} />
+              </>
             }
             disableStyleSubBottomHeader
             subBottomHeaderContent={<CatalogSection categories={categories} />}
             bodyContent={
               <AnimatedView animation="fadeInUp" delay={50} duration={300}>
                 <Flex paddingTop={4}>
-                  <ManifestList
-                    manifests={categories.manifestsByCategories.get(categories.selected) ?? []}
-                    onSelect={disclaimer.onSelect}
-                  />
+                  <ManifestList manifests={search.result} onSelect={disclaimer.onSelect} />
                 </Flex>
               </AnimatedView>
             }

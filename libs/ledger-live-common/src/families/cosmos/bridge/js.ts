@@ -1,21 +1,32 @@
-import createTransaction from "../js-createTransaction";
-import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import getTransactionStatus from "../js-getTransactionStatus";
-import prepareTransaction from "../js-prepareTransaction";
-import signOperation from "../js-signOperation";
-import { sync, scanAccounts } from "../js-synchronisation";
-import updateTransaction from "../js-updateTransaction";
-import type { CosmosCurrencyConfig, CosmosValidatorItem, Transaction } from "../types";
-import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
-import { asSafeCosmosPreloadData, setCosmosPreloadData } from "../preloadedData";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { CosmosAPI } from "../api/Cosmos";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type {
+  CosmosAccount,
+  CosmosCurrencyConfig,
+  CosmosValidatorItem,
+  Transaction,
+  TransactionStatus,
+} from "../types";
+import { asSafeCosmosPreloadData, setCosmosPreloadData } from "../preloadedData";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
-import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import getTransactionStatus from "../getTransactionStatus";
 import { getCurrencyConfiguration } from "../../../config";
+import { prepareTransaction } from "../prepareTransaction";
+import { updateTransaction } from "../updateTransaction";
+import { createTransaction } from "../createTransaction";
+import { sync, scanAccounts } from "../synchronisation";
+import { signOperation } from "../signOperation";
 import cryptoFactory from "../chain/chain";
+import { CosmosAPI } from "../api/Cosmos";
+import {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
+} from "../serialization";
 
 const receive = makeAccountBridgeReceive();
 
@@ -26,7 +37,7 @@ const getPreloadStrategy = _currency => ({
 const currencyBridge: CurrencyBridge = {
   getPreloadStrategy,
   preload: async (currency: CryptoCurrency) => {
-    const config = await getCurrencyConfiguration(currency);
+    const config = getCurrencyConfiguration(currency);
     const cosmosValidatorsManager = new CosmosValidatorsManager(
       getCryptoCurrencyById(currency.id),
       { endPoint: (config as unknown as CosmosCurrencyConfig).lcd },
@@ -35,6 +46,7 @@ const currencyBridge: CurrencyBridge = {
     setCosmosPreloadData(currency.id, {
       validators,
     });
+
     return Promise.resolve({
       validators,
       config,
@@ -58,7 +70,7 @@ const currencyBridge: CurrencyBridge = {
   scanAccounts,
 };
 
-const accountBridge: AccountBridge<Transaction> = {
+const accountBridge: AccountBridge<Transaction, CosmosAccount, TransactionStatus> = {
   createTransaction,
   updateTransaction,
   prepareTransaction,
@@ -74,6 +86,8 @@ const accountBridge: AccountBridge<Transaction> = {
       signedOperation,
     });
   },
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
 };
 
 export default {

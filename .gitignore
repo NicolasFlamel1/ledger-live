@@ -1,11 +1,15 @@
 .DS_Store
 node_modules
 .turbo
-.vscode
+.vscode/*
 !.vscode/launch.json
+!.vscode/extensions.json
 .pnpm-*
 /temp
 .idea
 .eslintcache
 tsconfig.tsbuildinfo
 rce
+.env
+coverage
+db.sqlite*

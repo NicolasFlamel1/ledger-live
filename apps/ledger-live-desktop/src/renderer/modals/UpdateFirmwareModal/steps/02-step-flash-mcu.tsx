@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
+import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/device/use-cases/isDeviceLocalizationSupported";
 import firmwareUpdateMain from "@ledgerhq/live-common/hw/firmwareUpdate-main";
 import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
@@ -30,7 +30,6 @@ type BodyProps = {
   deviceModelId: DeviceModelId;
   firmware?: FirmwareUpdateContext;
   initialDelayPhase: boolean;
-
   current: number;
   total: number;
 };

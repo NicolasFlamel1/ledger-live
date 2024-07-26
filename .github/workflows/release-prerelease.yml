@@ -9,11 +9,6 @@ on:
       ref:
         description: the branch to prerelease from
         required: true
-      recover:
-        description: Recover Beta release track
-        required: false
-        type: boolean
-        default: false
 
 jobs:
   prerelease:
@@ -39,14 +34,14 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
-      - uses: ./tools/actions/get-package-infos
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: ./tools/actions/get-package-infos
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -58,11 +53,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
-      - uses: ./tools/actions/get-package-infos
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: ./tools/actions/get-package-infos
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -137,7 +132,7 @@ jobs:
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: "${{ inputs.recover && 'pre-mobile-recover.yml' || 'pre-mobile.yml' }}",
+              workflow_id: "pre-mobile.yml",
               inputs: {
                 ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
               }

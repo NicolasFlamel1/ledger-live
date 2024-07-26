@@ -20,7 +20,7 @@ import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import VersionNumber from "react-native-version-number";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { Platform } from "react-native";
-import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
+import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/logic";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { prepareCurrency } from "./bridge/cache";
 import BluetoothTransport from "./react-native-hw-transport-ble";
@@ -76,12 +76,7 @@ setSupportedCurrencies([
   "komodo",
   "pivx",
   "zencash",
-  "vertcoin",
-  "peercoin",
-  "viacoin",
   "bitcoin_testnet",
-  "ethereum_ropsten",
-  "ethereum_goerli",
   "ethereum_sepolia",
   "ethereum_holesky",
   "elrond",
@@ -102,13 +97,11 @@ setSupportedCurrencies([
   "epic_cash_floonet",
   "near",
   "optimism",
-  "optimism_goerli",
+  "optimism_sepolia",
   "arbitrum",
-  "arbitrum_goerli",
+  "arbitrum_sepolia",
   "rsk",
   "bittorrent",
-  "kava_evm",
-  "evmos_evm",
   "energy_web",
   "astar",
   "metis",
@@ -122,7 +115,7 @@ setSupportedCurrencies([
   "polygon_zk_evm",
   "polygon_zk_evm_testnet",
   "base",
-  "base_goerli",
+  "base_sepolia",
   "stacks",
   "telos_evm",
   "coreum",
@@ -131,7 +124,11 @@ setSupportedCurrencies([
   "neon_evm",
   "lukso",
   "linea",
-  "linea_goerli",
+  "linea_sepolia",
+  "blast",
+  "blast_sepolia",
+  "scroll",
+  "scroll_sepolia",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);

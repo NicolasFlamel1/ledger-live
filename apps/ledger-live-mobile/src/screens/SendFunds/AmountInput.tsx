@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { useSendAmount } from "@ledgerhq/live-common/countervalues/react";
+import { useSendAmount } from "@ledgerhq/live-countervalues-react";
 import { useTranslation } from "react-i18next";
 import { track } from "~/analytics";
 import { counterValueCurrencySelector } from "~/reducers/settings";
@@ -11,6 +11,7 @@ import LText from "~/components/LText/index";
 import CounterValuesSeparator from "./CounterValuesSeparator";
 import CurrencyInput from "~/components/CurrencyInput";
 import TranslatedError from "~/components/TranslatedError";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;
@@ -34,7 +35,8 @@ export default function AmountInput({
 }: Props) {
   const { t } = useTranslation();
   const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const { cryptoUnit, fiatAmount, fiatUnit, calculateCryptoAmount } = useSendAmount({
+  const cryptoUnit = useAccountUnit(account);
+  const { fiatAmount, fiatUnit, calculateCryptoAmount } = useSendAmount({
     account,
     fiatCurrency,
     cryptoAmount,

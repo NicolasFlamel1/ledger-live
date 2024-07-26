@@ -10,12 +10,10 @@ import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
-import { useCountervaluesExport } from "@ledgerhq/live-common/countervalues/react";
-import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
-import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
-import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-
-import { isEqual } from "lodash";
+import { useCountervaluesExport } from "@ledgerhq/live-countervalues-react";
+import { pairId } from "@ledgerhq/live-countervalues/helpers";
+import "./config/configInit";
+import isEqual from "lodash/isEqual";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import Config from "react-native-config";
 import { LogLevel, PerformanceProfiler, RenderPassReport } from "@shopify/react-native-performance";
@@ -29,43 +27,42 @@ import {
   saveSettings,
   saveCountervalues,
   savePostOnboardingState,
+  saveMarketState,
 } from "./db";
-import { exportSelector as settingsExportSelector, osThemeSelector } from "~/reducers/settings";
+import {
+  exportSelector as settingsExportSelector,
+  osThemeSelector,
+  hasSeenAnalyticsOptInPromptSelector,
+  hasCompletedOnboardingSelector,
+} from "~/reducers/settings";
 import { accountsSelector, exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { exportSelector as bleSelector } from "~/reducers/ble";
 import LocaleProvider, { i18n } from "~/context/Locale";
 import RebootProvider from "~/context/Reboot";
-import ButtonUseTouchableContext from "~/context/ButtonUseTouchableContext";
 import AuthPass from "~/context/AuthPass";
 import LedgerStoreProvider from "~/context/LedgerStore";
+import { store } from "~/context/store";
 import LoadingApp from "~/components/LoadingApp";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
 import DebugTheme from "~/components/DebugTheme";
-import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import useDBSaveEffect from "~/components/DBSave";
 import useAppStateListener from "~/components/useAppStateListener";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
-import { OnboardingContextProvider } from "~/screens/Onboarding/onboardingContext";
 
 import SegmentSetup from "~/analytics/SegmentSetup";
 import HookSentry from "~/components/HookSentry";
 import HookNotifications from "~/notifications/HookNotifications";
 import RootNavigator from "~/components/RootNavigator";
 import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
-import CounterValuesProvider from "~/components/CounterValuesProvider";
 import type { State } from "~/reducers/types";
 import { useTrackingPairs } from "~/actions/general";
 import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHeader";
 import Modals from "~/screens/Modals";
-import NotificationsProvider from "~/screens/NotificationCenter/NotificationsProvider";
-import SnackbarContainer from "~/screens/NotificationCenter/Snackbar/SnackbarContainer";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
 import { FirebaseRemoteConfigProvider } from "~/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
-import MarketDataProvider from "~/screens/Market/MarketDataProviderWrapper";
 import AdjustSetup from "~/components/AdjustSetup";
-import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
@@ -74,7 +71,7 @@ import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
 import StyleProvider from "./StyleProvider";
 import { performanceReportSubject } from "~/components/PerformanceConsole/usePerformanceReportsLog";
-import { setOsTheme } from "~/actions/settings";
+import { setAnalytics, setOsTheme, setPersonalizedRecommendations } from "~/actions/settings";
 import TransactionsAlerts from "~/components/TransactionsAlerts";
 import {
   useFetchCurrencyAll,
@@ -82,11 +79,13 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
-import { LiveConfig } from "@ledgerhq/live-config/featureFlags/index";
-import VersionNumber from "react-native-version-number";
-import { Platform } from "react-native";
+import { getFeature, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
+import AppProviders from "./AppProviders";
+import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import QueuedDrawersContextProvider from "~/newArch/components/QueuedDrawer/QueuedDrawersContextProvider";
+import { exportMarketSelector } from "./reducers/market";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -98,27 +97,43 @@ checkLibs({
   log,
   Transport,
 });
-// useScreens();
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
 });
 
-LiveConfig.init({
-  appVersion: VersionNumber.appVersion,
-  platform: Platform.OS,
-  environment: process.env.NODE_ENV ?? "development",
-});
-
 function App() {
   const accounts = useSelector(accountsSelector);
+  const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (
+      !analyticsFF?.enabled ||
+      (hasCompletedOnboarding && !analyticsFF?.params?.entryPoints.includes("Portfolio")) ||
+      hasSeenAnalyticsOptInPrompt
+    )
+      return;
+    dispatch(setAnalytics(false));
+    dispatch(setPersonalizedRecommendations(false));
+  }, [
+    analyticsFF?.enabled,
+    analyticsFF?.params?.entryPoints,
+    dispatch,
+    hasSeenAnalyticsOptInPrompt,
+    hasCompletedOnboarding,
+  ]);
 
   useAccountsWithFundsListener(accounts, updateIdentify);
   useAppStateListener();
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useListenToHidDevices();
+  useAutoDismissPostOnboardingEntryPoint();
 
   const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
   const getAccountsChanged = useCallback(
@@ -186,6 +201,13 @@ function App() {
     throttle: 500,
     getChangesStats: getPostOnboardingStateChanged,
     lense: postOnboardingSelector,
+  });
+
+  useDBSaveEffect({
+    save: saveMarketState,
+    throttle: 500,
+    getChangesStats: (a, b) => a.market !== b.market,
+    lense: exportMarketSelector,
   });
 
   return (
@@ -279,7 +301,7 @@ export default class Root extends Component {
   render() {
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
-        <LedgerStoreProvider onInitFinished={this.onInitFinished}>
+        <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
           {(ready, initialCountervalues) =>
             ready ? (
               <>
@@ -290,48 +312,33 @@ export default class Root extends Component {
                 <HookNotifications />
                 <HookDynamicContentCards />
                 <TermsAndConditionMigrateLegacyData />
-                <PlatformAppProviderWrapper>
-                  <FirebaseRemoteConfigProvider>
-                    <FirebaseFeatureFlagsProvider>
-                      <SafeAreaProvider>
-                        <PerformanceProvider>
-                          <StorylyProvider>
-                            <StylesProvider>
-                              <StyledStatusBar />
-                              <NavBarColorHandler />
-                              <I18nextProvider i18n={i18n}>
-                                <LocaleProvider>
-                                  <AuthPass>
-                                    <BridgeSyncProvider>
-                                      <CounterValuesProvider initialState={initialCountervalues}>
-                                        <ButtonUseTouchableContext.Provider value={true}>
-                                          <OnboardingContextProvider>
-                                            <PostOnboardingProviderWrapped>
-                                              <ToastProvider>
-                                                <NotificationsProvider>
-                                                  <SnackbarContainer />
-                                                  <NftMetadataProvider>
-                                                    <MarketDataProvider>
-                                                      <App />
-                                                    </MarketDataProvider>
-                                                  </NftMetadataProvider>
-                                                </NotificationsProvider>
-                                              </ToastProvider>
-                                            </PostOnboardingProviderWrapped>
-                                          </OnboardingContextProvider>
-                                        </ButtonUseTouchableContext.Provider>
-                                      </CounterValuesProvider>
-                                    </BridgeSyncProvider>
-                                  </AuthPass>
-                                </LocaleProvider>
-                              </I18nextProvider>
-                            </StylesProvider>
-                          </StorylyProvider>
-                        </PerformanceProvider>
-                      </SafeAreaProvider>
-                    </FirebaseFeatureFlagsProvider>
-                  </FirebaseRemoteConfigProvider>
-                </PlatformAppProviderWrapper>
+                <QueuedDrawersContextProvider>
+                  <I18nextProvider i18n={i18n}>
+                    <LocaleProvider>
+                      <PlatformAppProviderWrapper>
+                        <FirebaseRemoteConfigProvider>
+                          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                            <SafeAreaProvider>
+                              <PerformanceProvider>
+                                <StorylyProvider>
+                                  <StylesProvider>
+                                    <StyledStatusBar />
+                                    <NavBarColorHandler />
+                                    <AuthPass>
+                                      <AppProviders initialCountervalues={initialCountervalues}>
+                                        <App />
+                                      </AppProviders>
+                                    </AuthPass>
+                                  </StylesProvider>
+                                </StorylyProvider>
+                              </PerformanceProvider>
+                            </SafeAreaProvider>
+                          </FirebaseFeatureFlagsProvider>
+                        </FirebaseRemoteConfigProvider>
+                      </PlatformAppProviderWrapper>
+                    </LocaleProvider>
+                  </I18nextProvider>
+                </QueuedDrawersContextProvider>
               </>
             ) : (
               <LoadingApp />

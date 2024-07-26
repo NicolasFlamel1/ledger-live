@@ -147,12 +147,7 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2}>
       <Tooltip content={t("stars.tooltip")}>
-        <Star
-          accountId={account.id}
-          parentId={account.type !== "Account" ? account.parentId : undefined}
-          yellow
-          rounded
-        />
+        <Star accountId={account.id} yellow rounded />
       </Tooltip>
       {isWalletConnectActionDisplayable ? (
         <Tooltip content={t("walletconnect.titleAccount")}>
@@ -226,7 +221,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const onBuySell = useCallback(
     (mode = "buy") => {
       setTrackingSource("account header actions");
-      track("button_clicked", {
+      track("button_clicked2", {
         button: mode,
         ...buttonSharedTrackingFields,
       });
@@ -243,7 +238,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   );
 
   const onSwap = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "swap",
       ...buttonSharedTrackingFields,
       ...swapDefaultTrack,
@@ -260,7 +255,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   }, [currency, swapDefaultTrack, history, account, parentAccount, buttonSharedTrackingFields]);
 
   const onSend = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "send",
       ...buttonSharedTrackingFields,
     });
@@ -271,7 +266,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 
   const onReceive = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "receive",
       ...buttonSharedTrackingFields,
     });

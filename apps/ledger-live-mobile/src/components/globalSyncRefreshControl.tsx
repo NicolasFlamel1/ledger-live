@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { RefreshControl, RefreshControlProps } from "react-native";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
-import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
+import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import { SYNC_DELAY } from "~/utils/constants";
+import { track } from "~/analytics";
 
 type Props = {
   error?: Error;
@@ -28,6 +29,7 @@ export default <P,>(
         reason: "user-pull-to-refresh",
       });
       setRefreshing(true);
+      track("buttonClicked", { button: "pull to refresh" });
     }
 
     useEffect(() => {

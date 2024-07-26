@@ -1,5 +1,3 @@
-import bitcoin from "../families/bitcoin/specs";
-import cardano from "../families/cardano/specs";
 import casper from "../families/casper/specs";
 import celo from "../families/celo/specs";
 import cosmos from "../families/cosmos/specs";
@@ -9,21 +7,21 @@ import filecoin from "../families/filecoin/specs";
 import hedera from "../families/hedera/specs";
 import internet_computer from "../families/internet_computer/specs";
 import mimblewimble_coin from "../families/mimblewimble_coin/specs";
-import near from "../families/near/specs";
-import ripple from "../families/ripple/specs";
-import solana from "../families/solana/specs";
 import stacks from "../families/stacks/specs";
-import stellar from "../families/stellar/specs";
-import tezos from "../families/tezos/specs";
-import tron from "../families/tron/specs";
 import vechain from "../families/vechain/specs";
 import algorand from "@ledgerhq/coin-algorand/specs";
+import bitcoin from "@ledgerhq/coin-bitcoin/specs";
+import cardano from "@ledgerhq/coin-cardano/specs";
 import evm from "@ledgerhq/coin-evm/specs";
+import near from "@ledgerhq/coin-near/specs";
 import polkadot from "@ledgerhq/coin-polkadot/specs";
+import solana from "@ledgerhq/coin-solana/specs";
+import stellar from "@ledgerhq/coin-stellar/specs";
+import tezos from "@ledgerhq/coin-tezos/specs";
+import tron from "@ledgerhq/coin-tron/specs";
+import xrp from "@ledgerhq/coin-xrp/specs";
 
 export default {
-  bitcoin,
-  cardano,
   casper,
   celo,
   cosmos,
@@ -33,15 +31,17 @@ export default {
   hedera,
   internet_computer,
   mimblewimble_coin,
-  near,
-  ripple,
-  solana,
   stacks,
+  vechain,
+  algorand,
+  bitcoin,
+  cardano,
+  evm,
+  near,
+  polkadot,
+  solana,
   stellar,
   tezos,
   tron,
-  vechain,
-  algorand,
-  evm,
-  polkadot,
+  xrp,
 };

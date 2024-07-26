@@ -46,6 +46,8 @@ export const urls = {
     "https://www.ledger.com/pages/ledger-nano-x#utm_source=Ledger%20Live%20Desktop%20App&utm_medium=Ledger%20Live&utm_campaign=Ledger%20Live%20Desktop%20-%20Banner%20LNX",
   // Ledger support
   faq: "https://support.ledger.com/hc/categories/4404369571601-Support?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+  chatbot:
+    "https://live-chat-static.sprinklr.com/test-html/index.html?appId=633307d2cd91267be7d0eea7_app_300078095&env=prod3&skin=MODERN&variant=PAGE&scope=CONVERSATION",
   ledgerStatus: "https://status.ledger.com/",
   syncErrors:
     "https://support.ledger.com/hc/articles/360012207759?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_syncerror",
@@ -68,11 +70,14 @@ export const urls = {
   whatIsARecoveryPhrase: "https://www.ledger.com/academy/crypto/what-is-a-recovery-phrase",
   feesMoreInfo: "https://support.ledger.com/hc/articles/360021039173-Choose-network-fees?docs=true",
   feesEIP1559MoreInfo: "https://support.ledger.com/hc/articles/6018110754845?docs=true",
+  feesTron: "https://support.ledger.com/hc/en-us/articles/6331588714141",
   recipientAddressInfo:
     "https://support.ledger.com/hc/articles/4404389453841-Receive-crypto-assets?docs=true",
   managerAppLearnMore: "https://support.ledger.com/hc/categories/4404376139409?docs=true",
   privacyPolicy:
     "https://www.ledger.com/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+  trackingPolicy:
+    "https://shop.ledger.com/pages/ledger-live-tracking-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
   troubleshootingUSB:
     "https://support.ledger.com/hc/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error",
   troubleshootingCrash:
@@ -164,6 +169,11 @@ export const urls = {
         main: "https://criptointercambio.com/",
         tos: "https://criptointercambio.com/terms-of-use",
         support: "https://criptointercambio.com/en/about",
+      },
+      moonpay: {
+        main: "https://www.moonpay.com/",
+        tos: "https://www.moonpay.com/legal/terms_of_use",
+        support: "https://support.moonpay.com",
       },
     },
   },

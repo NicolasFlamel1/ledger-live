@@ -1,5 +1,6 @@
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Flex } from "@ledgerhq/native-ui";
+import { Linking } from "react-native";
 import { Feature_Storyly, StorylyInstanceType } from "@ledgerhq/types-live";
 import React, { createContext, useState, useContext, ReactNode, useRef, useEffect } from "react";
 import { Storyly } from "storyly-react-native";
@@ -29,10 +30,8 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
 
   const storylyRef = useRef<Storyly>(null);
 
-  const {
-    // @ts-expect-error TYPINGS
-    params: { stories },
-  } = useFeature("storyly") || {};
+  const { params } = useFeature("storyly") || {};
+  const stories = params?.stories;
 
   useEffect(() => {
     if (url) {
@@ -62,7 +61,13 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
   };
 
   const handleEvent = (e: Storyly.StoryEvent) => {
-    if (e.event === "StoryGroupClosed" || e.event === "StoryGroupCompleted") clear();
+    if (["StoryGroupClosed", "StoryGroupCompleted", "StoryPaused"].includes(e.event)) {
+      clear();
+    }
+    if (e.event === "StoryCTAClicked" && e?.story?.media?.actionUrl) {
+      Linking.openURL(e.story.media.actionUrl);
+      clear();
+    }
   };
 
   return (

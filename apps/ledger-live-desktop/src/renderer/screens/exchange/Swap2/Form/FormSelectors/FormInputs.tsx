@@ -48,8 +48,11 @@ const RoundButton = styled(Button)`
 const Main = styled.section`
   display: flex;
   flex-direction: column;
-  row-gap: 12px;
   margin-bottom: 5px;
+  row-gap: 5px;
+  @media screen and (min-height: 800px) {
+    row-gap: 12px;
+  }
 `;
 
 function SwapButton({ onClick, disabled }: SwapButtonProps): JSX.Element {
@@ -87,7 +90,7 @@ export default function FormInputs({
 }: FormInputsProps) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const reverseSwapAndTrack = () => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "switch",
       page: "Page Swap Form",
       ...swapDefaultTrack,

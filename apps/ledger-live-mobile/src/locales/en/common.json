@@ -94,6 +94,7 @@
     "comingSoon": "Coming soon",
     "restart": "Restart",
     "loadMore": "Load more",
+    "selectAccount": "Select an account",
     "patterns": {
       "id": "ID {{ value }}",
       "times": "x{{ value }}"
@@ -126,6 +127,9 @@
       "title": "Sorry, Bluetooth is disabled",
       "description": "Please enable Bluetooth in your phone settings. ({{state}} state)"
     },
+    "BitcoinInfrastructureError": {
+      "title": "We are experiencing an issue with our Bitcoin infrastructure. Please try again later."
+    },
     "CantOpenDevice": {
       "title": "Sorry, connection failed",
       "description": "Your Ledger device must be unlocked and in range to use Bluetooth."
@@ -144,7 +148,7 @@
       }
     },
     "ConnectManagerTimeout": {
-      "title": "Sorry, My Ledger connection failed",
+      "title": "Sorry, secure connection with Ledger failed",
       "description": {
         "ios": {
           "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
@@ -328,8 +332,8 @@
       "description": "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them."
     },
     "LatestFirmwareVersionRequired": {
-      "title": "Device update required on desktop",
-      "description": "Please update your Nano X firmware on Ledger Live Desktop"
+      "title": "Update Device Firmware",
+      "description": "Please update your device firmware to the latest version to access this feature"
     },
     "GenuineCheckFailed": {
       "title": "Device authentication failed",
@@ -340,12 +344,12 @@
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "ImageCommitRefusedOnDevice": {
-      "title": "Lock screen picture discarded on Ledger Stax",
+      "title": "Lock screen picture discarded on {{productName}}",
       "description": "If this image wasn't the right fit, you can try again with another image.",
       "primaryCTA": "Upload another picture"
     },
     "ImageLoadRefusedOnDevice": {
-      "title": "Loading of lock screen picture cancelled on Ledger Stax",
+      "title": "Loading of lock screen picture cancelled on {{productName}}",
       "description": "If this image wasn't the right fit, you can try again with another image.",
       "primaryCTA": "Upload another picture"
     },
@@ -367,6 +371,9 @@
     },
     "InvalidRecipient": {
       "title": "Invalid recipient"
+    },
+    "InvalidExplorerResponse": {
+      "title": "Invalid response from {{currencyName}} explorer"
     },
     "LanguageInstallRefusedOnDevice": {
       "title": "Language installation refused on device",
@@ -487,12 +494,16 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
+    "NotEnoughBalanceSwap": {
+      "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
+      "description": "Please make sure the account has enough funds."
+    },
     "NoSuchAppOnProvider": {
       "title": "The {{appName}} app cannot be found for your specific configuration.",
       "description": "Try reinstalling the app from My Ledger"
     },
     "NotEnoughGas": {
-      "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>",
+      "title": "You need {{fees}} {{ticker}} in your account to pay for transaction fees on the {{cryptoName}} network.  <link0>Buy {{ticker}}</link0> or deposit more into your account.",
       "description": "Please send some coins to your account to pay for token transactions."
     },
     "NotEnoughGasSwap": {
@@ -622,8 +633,8 @@
       "primaryCTA": "Open My Ledger"
     },
     "UserRefusedAllowManager": {
-      "title": "Manager disabled on device",
-      "description": "Please allow the Manager on your device, then try again."
+      "title": "Secure connection denied on the device",
+      "description": "Please allow the secure connection on your device and retry."
     },
     "UserRefusedAddress": {
       "title": "Receive address rejected",
@@ -992,6 +1003,10 @@
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
     },
+    "SequenceNumberError": {
+      "title": "Sequence number error",
+      "description": "Please close the window and try again later"
+    },
     "TezosUnrevealedAccount": {
       "title": "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
     }
@@ -1011,6 +1026,10 @@
     "noConnectionError": {
       "title": "No connection",
       "description": "It seems you don't have access to the Internet. Please check your connection and try again."
+    },
+    "noAccounts": {
+      "title": "You need an account to access this app.",
+      "add": "Add Account"
     }
   },
   "location": {
@@ -1331,6 +1350,9 @@
       "referralProgram": {
         "title": "Refer a friend",
         "desc": "When your friend buys a Ledger, you both earn $20 of BTC."
+      },
+      "filter": {
+        "all": "all"
       }
     },
     "comingSoon": "Coming soon",
@@ -1403,7 +1425,8 @@
       "title": "Welcome back",
       "subtitle": "Select how you’d like to access your wallet:",
       "connect": "Connect your Ledger",
-      "sync": "Sync with Ledger Live desktop"
+      "sync": "Sync with Ledger Live desktop",
+      "walletSync": "Sync with another Ledger Live app"
     },
     "discoverLive": {
       "exploreWithoutADevice": "Explore without a device",
@@ -2045,9 +2068,8 @@
   "earlySecurityCheck": {
     "title": "Genuine Check and OS update check",
     "idle": {
-      "description": "This makes sure your Ledger Stax is an official Ledger.",
       "learnMore": "Learn more about Genuine Check",
-      "checkCta": "Check Ledger Stax"
+      "checkCta": "Check {{ productName }}"
     },
     "completed": {
       "continueCta": "Continue to setup"
@@ -2070,7 +2092,7 @@
       }
     },
     "genuineCheckNonGenuineDrawer": {
-      "title": "This Ledger Stax failed the Genuine Check",
+      "title": "This {{ productName }} failed the Genuine Check",
       "description": "This {{productName}} is not safe to use. Please contact Ledger Support.",
       "supportCta": "Contact Ledger Support"
     },
@@ -2118,12 +2140,12 @@
       "refused": {
         "title": "OS version {{firmwareVersion}} is available",
         "description": "We recommend performing this update to benefit from the latest security and functionality.",
-        "updateCta": "Update Ledger Stax",
+        "updateCta": "Update {{ productName }}",
         "skipCta": "Skip update"
       },
       "inactive": {
         "title": "OS update check",
-        "description": "This checks if your Ledger Stax Operating System is up to date or not. "
+        "description": "This checks if your {{productName}} Operating System is up to date or not. "
       }
     },
     "firmwareUpdateAvailableDrawer": {
@@ -2225,19 +2247,22 @@
       "restoreChoiceRecoverTitle": "Restore using Ledger Recover",
       "restoreChoiceRecoverDescription": "If you’re subscribed to Ledger Recover, log in to your subscription to initiate the restore process for the backup for your Secret Recovery Phrase."
     },
-    "softwareChecksSteps": {
-      "title": "Hardware and Software checks",
-      "description": "Check that your device is safe to use and has the latest security features.",
-      "doneTitle": "{{productName}} is genuine and up to date",
-      "genuineCheckRequestDrawer": {
-        "iconText": "Genuine Check",
-        "title": "This check assures that your Ledger Stax is an official Ledger.",
-        "checkCta": "Start Genuine Check"
+    "backup": {
+      "title": "Backup for your Secret Recovery Phrase",
+      "description": "With a digital encrypted backup, restore access to your wallet without your Secret Recovery Phrase.\n\nChoose if you’d like a digital backup:",
+      "backupChoice": {
+        "title": "I want a digital backup",
+        "titleSelected": "Ledger Recover",
+        "tag": "Popular",
+        "description": "Subscribe to Ledger Recover for $9.99 per month. Start for free. Cancel anytime!",
+        "tryCta": "Try it for free",
+        "redeemCodeCta": "I have a redeem code",
+        "howItWorksCta": "I want to know more"
       },
-      "updateAvailableDrawer": {
-        "title": "New software found",
-        "description": "To access the latest security features, we highly recommend updating your {{productName}}",
-        "updateCta": "Update"
+      "manualBackup": {
+        "title": "No, I’m good with paper",
+        "description": "Without a digital backup, the Recovery Sheet is your only way to restore wallet access. Don’t lose it.",
+        "cta": "I understand"
       }
     },
     "appsStep": {
@@ -2261,15 +2286,7 @@
     "discover": "Discover",
     "nanoX": "Nano X",
     "market": "Market",
-    "earn": "Earn",
-    "learn": "Learn"
-  },
-  "learn": {
-    "pageTitle": "learn",
-    "sectionShows": "Shows",
-    "sectionVideo": "Video",
-    "sectionPodcast": "Podcast",
-    "sectionArticles": "Articles"
+    "earn": "Earn"
   },
   "portfolio": {
     "totalBalance": "Total balance",
@@ -2319,7 +2336,13 @@
     "marketPriceSection": {
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
-      "currencyPriceChange": "Last 24h change"
+      "currencyPriceChange": {
+        "day": "Last 24h change",
+        "week": "Last 7 days change",
+        "month": "Last 30 days change",
+        "year": "Last year change",
+        "all": "Last year change"
+      }
     },
     "quickActions": {
       "buy": "Buy",
@@ -2350,11 +2373,27 @@
     "description": "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add": {
       "title": "With your Ledger",
-      "description": "Create or import asset with your Ledger"
+      "description": "Create or import an account for your asset with your Ledger"
     },
     "import": {
       "title": "Import from desktop",
       "description": "Import asset from Ledger Live Desktop"
+    },
+    "drawer": {
+      "drawerTitleHasAccount": "Add another account",
+      "drawerSubTitle": "Add your assets using your Ledger, or import them directly from your Ledger Live Desktop app.",
+      "import": {
+        "title": "Import from desktop",
+        "description": "Import asset from Ledger Live Desktop"
+      },
+      "add": {
+        "title": "Add with your Ledger",
+        "description": "Create or import your assets using your Ledger device"
+      },
+      "walletSync": {
+        "title": "Import via another Ledger Live app",
+        "description": "Activate Ledger Sync"
+      }
     }
   },
   "byteSize": {
@@ -2473,6 +2512,7 @@
       "delegated": "Delegated ({{amount}})",
       "delegatedTo": "Delegated to",
       "delegatedAmount": "Delegated amount",
+      "deposit": "Deposit",
       "redelegated": "Redelegated ({{amount}})",
       "redelegatedFrom": "Redelegated from",
       "redelegatedTo": "Redelegated to",
@@ -2528,6 +2568,10 @@
         "description2": "Developers from anywhere in the world can integrate with our Ledger Live",
         "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
       }
+    },
+    "willBedeprecatedBanner": {
+      "title": "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
+      "contactSupport": "Contact support"
     },
     "tokens": {
       "contractAddress": "Contract address",
@@ -2596,10 +2640,6 @@
       },
       "currency": {
         "title": "Currency"
-      },
-      "endpointConfig": {
-        "title": "Node",
-        "desc": "The API node to use"
       },
       "delete": {
         "title": "Remove account from the Portfolio",
@@ -2750,6 +2790,7 @@
     "moreAssets": "Add more"
   },
   "help": {
+    "chatbot": "Ledger Chatbot",
     "gettingStarted": {
       "title": "Getting started",
       "desc": "Start here"
@@ -2791,6 +2832,8 @@
       "languageDesc": "Set the language displayed in Ledger Live.",
       "dateFormat": "Date format",
       "dateFormatDesc": "Set the date format for Ledger Live",
+      "walletSync": "Ledger Sync",
+      "walletSyncDesc": "Simply secure your app data and synchronize multiple Ledger Live instances.",
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "App lock",
@@ -2815,7 +2858,9 @@
       "developerMode": "Developer mode",
       "developerModeDesc": "Show developer apps in My Ledger and enable Testnet apps.",
       "analytics": "Analytics",
-      "analyticsDesc": "Enable analytics to help Ledger improve user experience.",
+      "analyticsDesc": "Enable Ledger to track app usage data to help measure Ledger Live’s performance and enhance both the app and your experience.",
+      "personalizedRecommendations": "Personalized experience",
+      "personalizedRecommendationsDesc": "Enable Ledger to track app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
       "analyticsModal": {
         "title": "Share analytics",
         "desc": "Enable analytics to help Ledger improve user experience",
@@ -2922,13 +2967,9 @@
         "title": "Announcements",
         "desc": "Receive important Ledger Live updates"
       },
-      "recommendations": {
-        "title": "Recommendations",
-        "desc": "Enrich your experience with personalized recommendations and special offers"
-      },
       "largeMover": {
         "title": "Large Mover",
-        "desc": "You'll be notified of important price movements for BTC and ETH"
+        "desc": "You’ll be notified of important price movements if you own BTC, ETH, SOL, ADA or XRP"
       },
       "transactionsAlerts": {
         "title": "Transaction Alerts (Beta)",
@@ -3126,7 +3167,8 @@
       "addAccount": {
         "title": "Checking for an account...",
         "subtitle": "Checking if you already have an account for {{currencyName}} on the blockchain.",
-        "foundAccounts": "{{count}} accounts found",
+        "foundAccount": "{{count}} account found",
+        "foundAccount_plural": "{{count}} accounts found",
         "stopSynchronization": "Stop synchronization",
         "addingAccount": "No accounts found. Creating a new account for {{currencyName}}..."
       },
@@ -3196,7 +3238,7 @@
     },
     "stake": {
       "title": "Stake",
-      "description": "Grow your crypto holdings."
+      "description": "Stake your crypto holdings."
     },
     "swap": {
       "title": "Swap",
@@ -3209,9 +3251,6 @@
         "title": "Welcome to Swap",
         "whatIsSwap": "What is Swap?",
         "disclaimer": "Exchange crypto directly from your Ledger device. This service is not available in some countries, including the US."
-      },
-      "main": {
-        "header": "Swap"
       },
       "notAvailable": {
         "title": "Service temporarily unavailable, or not available in your country"
@@ -3917,30 +3956,9 @@
     "tokens": {
       "title": "Add token",
       "createParentCurrencyAccount": "Add {{parrentCurrencyName}} account",
-      "erc20": {
-        "title": "Add token",
-        "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly in an Ethereum account.",
-        "learnMore": "Learn more about ERC20"
-      },
-      "trc10": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is a TRC10 Token.\nYou can receive tokens directly in a Tron account.",
-        "learnMore": "Learn more about TRC10"
-      },
-      "trc20": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
-        "learnMore": "Learn more about TRC20"
-      },
-      "bep20": {
-        "title": "Add Token",
-        "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
-        "learnMore": "Learn more about BEP-20"
-      },
-      "vip180": {
-        "title": "Add token",
-        "disclaimer": "{{tokenName}} is a VIP180 Token.\nYou can receive tokens directly in a VET account.",
-        "learnMore": "Learn more about VIP180"
+      "generic": {
+        "disclaimer": "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on an {{currency}} account.",
+        "learnMore": "Learn more about {{tokenType}}"
       }
     },
     "showMoreChainType": "More address types",
@@ -3969,9 +3987,9 @@
     "stayInTheAppPlz": "Stay in the Ledger Live app and keep your Ledger nearby.",
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
-    "allowManagerPermission": "Allow Ledger Manager on your {{productName}}",
+    "allowManagerPermission": "Allow a secure connection with Ledger",
     "allowRenaming": "Allow renaming on your {{productName}}",
-    "allowRemoveCustomLockscreen": "Confirm removal of image on your Ledger Stax",
+    "allowRemoveCustomLockscreen": "Confirm removal of image on your {{productName}}",
     "allowSecureConnection": "Allow a secure connection with Ledger",
     "loading": "Loading...",
     "turnOnAndUnlockDevice": "Switch on and unlock your device",
@@ -4352,8 +4370,8 @@
     "viewUpdateChangelog": "View update changelog",
     "waitForFirmwareUpdate": "Wait for the firmware update to finish on your device",
     "waitForInstallationToFinish": "Wait for installation to finish on your {{deviceName}}",
-    "staxBatteryLow": "Ledger Stax battery too low to update",
-    "staxBatteryLowDescription": "To start the OS update, a minimum of {{lowBatteryPercentage}}% charge is needed, or your Ledger Stax must be charging.",
+    "batteryLow": "{{productName}} battery too low to update",
+    "batteryLowDescription": "To start the OS update, a minimum of {{lowBatteryPercentage}}% charge is needed, or your {{productName}} must be charging.",
     "updateCancelled": "OS update install cancelled on {{deviceName}}",
     "updateCancelledDescription": "If this was a mistake, restart the update.",
     "updateNotYetComplete": "OS update is in progress",
@@ -4397,7 +4415,8 @@
       "installUpdate": {
         "titleInactive": "Install update",
         "titleActive": "Installing update",
-        "description": "{{deviceName}} will restart multiple times.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished."
+        "description": "{{deviceName}} will restart multiple times.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished.",
+        "descriptionNanoXBle": "{{deviceName}} will restart multiple times.\n\nIf the device powers off and does not automatically restart, you will need to power it on yourself.\n\nTo complete the update, unlock {{deviceName}} with your PIN after installation has finished."
       },
       "restoreSettings": {
         "earlySecurityCheck": {
@@ -4428,6 +4447,14 @@
       "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
       "pleaseConnectUsbTitle": "USB cable needed",
       "pleaseConnectUsbDescription": "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+    },
+    "updateStatusErrors": {
+      "errors": {
+        "TimeoutError": {
+          "title": "Device disconnected",
+          "description": "The update was unable to continue because we lost connection to {{deviceName}}"
+        }
+      }
     },
     "batteryStatusErrors": {
       "errors": {
@@ -6240,6 +6267,7 @@
       "subtitle": "Explore Web3 fully integrated with Ledger",
       "section": {
         "recentlyUsed": "Recently Used",
+        "locallyLoaded": "Locally Loaded",
         "categories": "Categories",
         "clearAll": "Clear All"
       },
@@ -6337,9 +6365,10 @@
       },
       "order": {
         "topGainers": "Top gainers",
-        "market_cap": "Rank",
-        "market_cap_asc": "Rank (Market cap) asc.",
-        "market_cap_desc": "Rank (Market cap) desc."
+        "topLosers": "Top losers",
+        "marketCap": "Rank",
+        "asc": "Rank (Market cap) asc.",
+        "desc": "Rank (Market cap) desc."
       },
       "currency": "Currency",
       "time": "Time",
@@ -6409,7 +6438,7 @@
     "designedForStax": {
       "title": "<0>Designed for</0><1>Ledger</1><2>Stax</2>",
       "drawer": {
-        "description": "This NFT contains an additional picture of the NFT, specifically designed for Ledger Stax's E Ink Screen.\n\nThis picture will be used when you set this NFT as your lock screen.",
+        "description": "This NFT contains an additional picture of the NFT, specifically designed for Ledger Stax's E\u00a0Ink\u00a0Screen.\n\nThis picture will be used when you set this NFT as your lock screen.",
         "cta": "Got it"
       }
     },
@@ -6485,80 +6514,61 @@
     "commitRequested": "Like what you see?\nKeep it!",
     "confirmPicture": "Confirm on {{productName}}",
     "landingPage": {
-      "title": "Choose any digital art or photo.\nCustomize your Ledger Stax.\nMake it yours.",
+      "title": "Choose any digital art or photo.\nCustomize your {{productName}}.\nMake it yours.",
       "choosePicture": "Choose a picture"
     },
     "confirmCrop": "Confirm crop",
     "confirmContrast": "Confirm contrast",
-    "nftEntryPointButtonLabel": "Set as Ledger Stax lockscreen picture",
+    "nftEntryPointButtonLabel": "Set as lockscreen picture",
     "customImage": "Custom picture",
     "doThisLater": "Maybe later",
     "preview": {
       "title": "Preview",
       "loading": "Loading preview",
       "setPicture": "Set as lock screen",
-      "editPicture": "Edit picture"
+      "editPicture": "Edit picture",
+      "pickDeviceModel": "Choose a device"
     },
     "nftGallery": {
       "title": "My NFTs"
     }
   },
-  "claimNft": {
-    "welcomePage": {
-      "title": "Free access to the Earth's most secure NFT marketplace",
-      "description": {
-        "title": "Ledger Infinity Pass gives you access to:",
-        "1": "First dibs on the latest NFT drops",
-        "2": "The most secure NFT marketplace ever",
-        "3": "A free NFT for you to claim"
-      },
-      "claimButton": "Claim Ledger Market Pass",
-      "backButton": "I've already claimed my Market Pass"
-    },
-    "qrScan": {
-      "title": "Scan QR code on your Ledger Market Pass",
-      "description": {
-        "1": "You will find your exclusive Ledger Market Pass in the box of your Ledger Stax.\n\nStart by positioning the QR code on the back of the Pass in the frame. Use a well lit area and a simple light background."
-      }
-    }
-  },
   "postOnboarding": {
     "hub": {
-      "title": "Next up, use your {{productName}} to:",
-      "allDoneTitle": "and that’s a wrap!",
+      "title": "Next up, use your {{productName}} to...",
+      "allDoneTitle": "You're all set! Keep going and explore your portfolio",
       "skip": "I’ll do this later",
-      "viewWallet": "View my wallet"
+      "viewWallet": "Explore my portfolio"
     },
     "entryPointCard": {
       "title": "What's next for your {{productName}}?",
-      "description": "Claim the Infinity NFT, customize its lock screen, or transfer your assets from other exchanges.",
+      "description": "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
       "buttonLabel": "See what's next"
     },
     "actions": {
-      "customImage": {
-        "title": "Set a lock screen picture",
-        "titleCompleted": "Lock screen picture set",
-        "description": "Choose any digital art or picture to set as the lock screen.",
-        "popupLabel": "Lockscreen set"
-      },
-      "claimNft": {
-        "title": "Claim the Infinity NFT",
-        "titleCompleted": "Infinity NFT claimed",
-        "description": "This NFT gets you access to [ Ledger ] Market, our NFT marketplace.",
-        "popupLabel": "NFT claimed",
-        "tagLabel": "Gift"
-      },
       "assetsTransfer": {
         "title": "Transfer your assets to Ledger",
         "titleCompleted": "Assets transferred to Ledger",
-        "description": "Easily transfer assets from Coinbase or any other exchange or wallet.",
+        "description": "From any exchange or wallet, directly to your Ledger.",
         "popupLabel": "Assets transferred"
       },
       "buyCrypto": {
         "title": "Buy Crypto",
-        "titleCompleted": "Assets transferred to Ledger",
-        "description": "Choose from 500+ coins and the best quotes from buy-providers, tailored to your preferences.",
+        "titleCompleted": "Crypto bought",
+        "description": "Choose from 500+ coins and the best quotes, tailored to your preferences.",
         "popupLabel": "Crypto bought"
+      },
+      "customImage": {
+        "title": "Customize the lock screen",
+        "titleCompleted": "Lock screen customized",
+        "description": "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
+        "popupLabel": "Lock screen customized successfully"
+      },
+      "recover": {
+        "title": "Subscribe to Ledger Recover",
+        "titleCompleted": "Subscribed to Ledger Recover",
+        "description": "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "popupLabel": "Successfully subscribed to Ledger Recover"
       }
     }
   },
@@ -6645,24 +6655,35 @@
     "ethereum": {
       "title": "Grow your ETH holdings",
       "subTitle": "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
+      "tagMinimum": "Requires {{min}} ETH",
       "close": "Close",
       "providers": {
-        "lido": {
-          "title": "Earn with Lido",
-          "description": "Stake your Ethereum with Lido and earn rewards daily. No minimum ETH is required. No lock-up period.",
-          "supportLink": "Learn more about Lido"
-        },
-        "kiln": {
-          "title": "Kiln dedicated staking",
-          "tag": "Requires 32 ETH",
-          "description": "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
-          "supportLink": "Learn more about Kiln validator"
-        },
         "kiln_pooling": {
           "title": "Kiln staking pool",
-          "description": "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
-          "supportLink": "Learn more about Kiln pooling",
-          "tag": "No minimum"
+          "description": "Stake with no minimum. Earn auto-compounded rewards with no lock-up period.",
+          "supportLink": "Learn more about Kiln pooling"
+        },
+        "stader-eth": {
+          "title": "Stader Labs",
+          "description": "Stake with no minimum. Earn auto-compounded rewards with access to instant liquidity.",
+          "supportLink": "Learn more about Stader"
+        },
+        "lido": {
+          "title": "Lido",
+          "description": "Stake any amount of ETH for instant liquidity and daily rewards.",
+          "supportLink": "Learn more about Lido"
+        },
+        "figment": {
+          "title": "Figment",
+          "tag": "Requires 32 ETH",
+          "description": "Stake over 32 ETH on dedicated validators and get rewards automatically sent to your account.",
+          "supportLink": "Learn more about Figment"
+        },
+        "kiln": {
+          "title": "Kiln solo staking",
+          "tag": "Requires 32 ETH",
+          "description": "Stake over 32 ETH on dedicated validators and easily claim rewards.",
+          "supportLink": "Learn more about Kiln"
         }
       }
     },
@@ -6677,7 +6698,6 @@
         },
         "swap": {
           "title": "Swap",
-          "label": "Popular",
           "body": "Convert crypto to crypto securely"
         },
         "receive": {
@@ -6689,6 +6709,102 @@
     "getFundsModal": {
       "text": "Get {{coin}} to stake",
       "description": "Buy, swap or receive crypto directly to your Ledger using Ledger Live."
+    }
+  },
+  "analyticsOptIn": {
+    "variantA": {
+      "main": {
+        "title": "Help us improve and personalize your experience",
+        "subtitle": "Sharing your Ledger Live data helps us understand your preferences and show content that's relevant to you.",
+        "content": {
+          "able": {
+            "title": "With your consent, Ledger will be able to track data about how you use Ledger Live (including page visits and clicks):",
+            "diagAndUsage": "To measure the performance of Ledger Live and enhance both the app and your experience (Analytics).",
+            "personnalizationData": "To provide you with personalized recommendations and content tailored to your preferences, as well as to help us measure the effectiveness of our marketing campaigns (Personalization)."
+          },
+          "unable": {
+            "title": "Ledger Live will never track information regarding:",
+            "adresses": "Your assets.",
+            "balance": "Your portfolio.",
+            "personnalInfos": "Your personal identifying information (such as your name or your email address)."
+          },
+          "moreOptions": "Manage your preferences",
+          "ctas": {
+            "refuse": "Refuse all",
+            "accept": "Accept all"
+          },
+          "infoText": {
+            "info": "You can revoke your consent any time in the app settings.",
+            "link": "Learn more about our Tracking Policy"
+          }
+        }
+      },
+      "details": {
+        "title": "Manage your preferences",
+        "analytics": {
+          "title": "Analytics",
+          "description": "To measure Ledger Live’s performance and improve both the app and your experience, we share usage data, including page visits and clicks."
+        },
+        "personalizedExp": {
+          "title": "Personalization",
+          "description": "To receive personalized recommendations and content that match your preferences and to help us measure the performance of our marketing campaigns, we share app usage data, including clicks, page visits, and conversion data."
+        },
+        "ctas": {
+          "notNow": "Not now",
+          "accept": "Accept",
+          "acceptAll": "Accept All",
+          "confirm": "Share"
+        },
+        "infoText": {
+          "info": "You can revoke your consent any time in the app settings.",
+          "link": "Learn more about our Tracking Policy"
+        }
+      }
+    },
+    "variantB": {
+      "main": {
+        "title": "Let's improve Ledger Live together",
+        "description": "Sharing your Ledger Live analytics data helps us understand how people use Ledger Live, fix bugs, and offer an improved user experience.",
+        "bulletPoints": {
+          "1": "Analytics data includes page visits, clicks.",
+          "2": "We won’t collect or see any information regarding your balance, accounts, and portfolio.",
+          "3": "Analytics are completely anonymous. We can’t see or collect your personal information."
+        },
+        "ctas": {
+          "refuse": "Refuse",
+          "share": "Share"
+        },
+        "infoText": {
+          "info": "You can revoke your consent any time in the app settings.",
+          "link": "Learn more about our Tracking Policy"
+        }
+      },
+      "details": {
+        "title": "Get a personalized experience",
+        "description": "Sharing your Ledger Live personalization data lets us display content that matches your preferences.",
+        "bulletPoints": {
+          "1": "Personalization data includes conversion data, clicks, page visits.",
+          "2": "We cannot track or collect any of your personal or portfolio information."
+        },
+        "ctas": {
+          "refuse": "Refuse",
+          "allow": "Allow"
+        },
+        "infoText": {
+          "info": "You can revoke your consent any time in the app settings.",
+          "link": "Learn more about our Tracking Policy"
+        }
+      }
+    }
+  },
+  "walletSync": {
+    "activation": {
+      "screen": {
+        "title": "Sync your accounts across all platforms",
+        "description": "Your Ledger will generate an encryption key, ensuring your data remains private and retrievable only by you.",
+        "mainCta": "Sync your accounts",
+        "secondCta": "Already created a key?"
+      }
     }
   }
 }

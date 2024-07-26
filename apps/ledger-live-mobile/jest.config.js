@@ -5,14 +5,19 @@ const transformIncludePatterns = [
   "@react-native/polyfills",
   "(jest-)?react-native",
   "@react-native(-community)?",
+  "@react-navigation",
   "rn-range-slider",
   "react-native-reanimated",
   "react-native-modal",
   "react-native-animatable",
   "@sentry/react-native",
+  "@hashgraph/sdk",
   "react-native-startup-time",
   "@segment/analytics-react-native",
   "uuid",
+  "react-native-ble-plx",
+  "react-native-android-location-services-dialog-box",
+  "react-native-vector-icons",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
@@ -20,7 +25,10 @@ module.exports = {
   verbose: true,
   preset: "react-native",
   modulePaths: [compilerOptions.baseUrl],
-  setupFilesAfterEnv: ["@testing-library/jest-native/extend-expect", "./jest-setup.js"],
+  setupFilesAfterEnv: [
+    "./node_modules/react-native-gesture-handler/jestSetup.js",
+    "./__tests__/jest-setup.js",
+  ],
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
     "^.+\\.(t)sx?$": [
@@ -38,20 +46,16 @@ module.exports = {
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
   moduleDirectories: ["node_modules"],
-  collectCoverageFrom: [
-    "src/**/*.{ts,tsx}",
-    "!src/**/*.test.{ts,tsx}",
-    "!src/**/*.spec.{ts,tsx}",
-    "!src/__tests__/*.{ts,tsx}",
-    "!src/__mocks__/*.{ts,tsx}",
-  ],
+  collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/**/*.spec.{ts,tsx}"],
   coverageReporters: ["json", "lcov", "json-summary"],
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths),
+    "^react$": "<rootDir>/node_modules/react",
+    "^react/(.*)$": "<rootDir>/node_modules/react/$1",
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",
     "^react-native$": "<rootDir>/node_modules/react-native",
-    "^victory-native$": "victory",
     "styled-components":
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
+    "^react-redux": "<rootDir>/node_modules/react-redux",
   },
 };

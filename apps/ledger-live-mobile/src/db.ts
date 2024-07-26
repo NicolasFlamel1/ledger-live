@@ -5,13 +5,13 @@ import type {
   CounterValuesStateRaw,
   RateMapRaw,
   CounterValuesStatus,
-} from "@ledgerhq/live-common/countervalues/types";
+} from "@ledgerhq/live-countervalues/types";
 import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { Dispatch, SetStateAction } from "react";
 import store from "./logic/storeWrapper";
 import type { User } from "./types/store";
-import type { BleState, ProtectState, SettingsState } from "./reducers/types";
+import type { BleState, MarketState, ProtectState, SettingsState } from "./reducers/types";
 
 export type Notifications = {
   announcements: Announcement[];
@@ -45,6 +45,7 @@ export async function getSettings(): Promise<Partial<SettingsState>> {
 export async function saveSettings(obj: Partial<SettingsState>): Promise<void> {
   await store.save("settings", obj);
 }
+
 export async function getWCSession(): Promise<unknown> {
   const wcsession = await store.get("wcsession");
   return wcsession;
@@ -263,6 +264,14 @@ export function getPostOnboardingState(): Promise<PostOnboardingState> {
 
 export async function savePostOnboardingState(obj: PostOnboardingState): Promise<void> {
   await store.save("postOnboarding", obj);
+}
+
+export function getMarketState(): Promise<MarketState> {
+  return store.get("market") as Promise<MarketState>;
+}
+
+export async function saveMarketState(obj: MarketState): Promise<void> {
+  await store.save("market", obj);
 }
 
 export async function getProtect(): Promise<ProtectState> {

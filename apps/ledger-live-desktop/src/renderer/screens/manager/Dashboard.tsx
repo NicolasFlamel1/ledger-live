@@ -1,12 +1,12 @@
 import React, { useMemo, useState, useEffect, useRef, useContext } from "react";
 import { useSelector } from "react-redux";
-import manager from "@ledgerhq/live-common/manager/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { execWithTransport } from "@ledgerhq/live-common/apps/hw";
+import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { App, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { AppOp, ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { distribute, initState } from "@ledgerhq/live-common/apps/logic";
 import { mockExecWithInstalledContext } from "@ledgerhq/live-common/apps/mock";
+import { getLatestFirmwareForDeviceUseCase } from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceDashboard from "./DeviceDashboard";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -45,7 +45,7 @@ const Dashboard = ({
   const params = new URLSearchParams(search || "");
   const openFirmwareUpdate = params.get("firmwareUpdate") === "true";
   useEffect(() => {
-    manager.getLatestFirmwareForDevice(deviceInfo).then(setFirmware, setFirmwareError);
+    getLatestFirmwareForDeviceUseCase(deviceInfo).then(setFirmware, setFirmwareError);
   }, [deviceInfo]);
 
   // on disconnect, go back to connect
@@ -67,9 +67,9 @@ const Dashboard = ({
     // - If a disconnection happens during a reset prevention period
     //   and the drawer is currently closed
     if (!currentDevice || deviceChangedWhenResetPrevented.current) {
-      onReset([]);
+      onReset(appsToRestore);
     }
-  }, [onReset, preventResetOnDeviceChange, currentDevice, drawerState.open]);
+  }, [appsToRestore, onReset, preventResetOnDeviceChange, currentDevice, drawerState.open]);
   const exec = useMemo(
     () =>
       getEnv("MOCK")

@@ -1,28 +1,35 @@
 import type { CryptoCurrency, ExplorerView } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount, Account, Operation } from "@ledgerhq/types-live";
 import type { MimbleWimbleCoinOperationExtra } from "./families/mimblewimble_coin/types";
-export const getDefaultExplorerView = (currency: CryptoCurrency): ExplorerView | null | undefined =>
-  currency.explorerViews[0];
+
+export const getDefaultExplorerView = (currency: CryptoCurrency): ExplorerView | undefined => {
+  return currency.explorerViews ? currency.explorerViews[0] : undefined;
+};
+
 export const getTransactionExplorer = (
-  explorerView: ExplorerView | null | undefined,
+  explorerView: ExplorerView | undefined,
   txHash: string,
-): string | null | undefined =>
-  explorerView && explorerView.tx && explorerView.tx.replace("$hash", txHash);
+): string | undefined => {
+  return explorerView?.tx?.replace("$hash", txHash);
+};
+
 export const getAddressExplorer = (
-  explorerView: ExplorerView | null | undefined,
+  explorerView: ExplorerView | undefined,
   address: string,
-): string | null | undefined =>
-  explorerView && explorerView.address && explorerView.address.replace("$address", address);
+): string | undefined => {
+  return explorerView?.address?.replace("$address", address);
+};
+
 export const getAccountContractExplorer = (
-  explorerView: ExplorerView | null | undefined,
+  explorerView: ExplorerView | undefined,
   account: TokenAccount,
   parentAccount: Account,
-): string | null | undefined =>
-  explorerView &&
-  explorerView.token &&
-  explorerView.token
-    .replace("$contractAddress", account.token.contractAddress)
+): string | undefined => {
+  return explorerView?.token
+    ?.replace("$contractAddress", account.token.contractAddress)
     .replace("$address", parentAccount.freshAddress);
+};
+
 export const getOperationExplorer = (
   currency: CryptoCurrency,
   operation: Operation,
@@ -40,8 +47,10 @@ export const getOperationExplorer = (
         )) as string | null | undefined;
   }
 };
+
 export const getStakePoolExplorer = (
-  explorerView: ExplorerView | null | undefined,
+  explorerView: ExplorerView | undefined,
   poolId: string,
-): string | null | undefined =>
-  explorerView && explorerView.stakePool && explorerView.stakePool.replace("$poolId", poolId);
+): string | undefined => {
+  return explorerView?.stakePool?.replace("$poolId", poolId);
+};

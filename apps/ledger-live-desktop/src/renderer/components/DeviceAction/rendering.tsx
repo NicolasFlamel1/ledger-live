@@ -9,7 +9,7 @@ import styled from "styled-components";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   WrongDeviceForAccount,
@@ -17,15 +17,14 @@ import {
   LockedDeviceError,
   FirmwareNotRecognized,
 } from "@ledgerhq/errors";
-import { LatestFirmwareVersionRequired, DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
+import {
+  LatestFirmwareVersionRequired,
+  DeviceNotOnboarded,
+  TransactionRefusedOnDevice,
+} from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import {
-  getAccountUnit,
-  getMainAccount,
-  getAccountName,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { closeAllModal } from "~/renderer/actions/modals";
 import Animation from "~/renderer/animations";
 import Button from "~/renderer/components/Button";
@@ -61,12 +60,15 @@ import {
 import { LockAltMedium } from "@ledgerhq/react-ui/assets/icons";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
-import FramedImage from "../CustomImage/FramedImage";
 import { Account } from "@ledgerhq/types-live";
 import { openURL } from "~/renderer/linking";
 import Installing from "~/renderer/modals/UpdateFirmwareModal/Installing";
 import { ErrorBody } from "../ErrorBody";
 import LinkWithExternalIcon from "../LinkWithExternalIcon";
+import { closePlatformAppDrawer } from "~/renderer/actions/UI";
+import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
+import { SettingsState, currencySettingsLocaleSelector } from "~/renderer/reducers/settings";
+import { WalletState, accountNameSelector } from "@ledgerhq/live-wallet/store";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -114,8 +116,8 @@ const Logo = styled.div<{ warning?: boolean; info?: boolean }>`
     p.info
       ? p.theme.colors.palette.primary.main
       : p.warning
-      ? p.theme.colors.warning
-      : p.theme.colors.alertRed};
+        ? p.theme.colors.warning
+        : p.theme.colors.alertRed};
 `;
 
 export const Header = styled.div`
@@ -254,6 +256,7 @@ export const renderVerifyUnwrapped = ({
 
 const OpenManagerBtn = ({
   closeAllModal,
+  closePlatformAppDrawer,
   appName,
   updateApp,
   firmwareUpdate,
@@ -261,6 +264,7 @@ const OpenManagerBtn = ({
   ml = 0,
 }: {
   closeAllModal: () => void;
+  closePlatformAppDrawer: () => void;
   appName?: string;
   updateApp?: boolean;
   firmwareUpdate?: boolean;
@@ -283,8 +287,17 @@ const OpenManagerBtn = ({
       search: search ? `?${search}` : "",
     });
     closeAllModal();
+    closePlatformAppDrawer();
     setDrawer(undefined);
-  }, [updateApp, firmwareUpdate, appName, history, closeAllModal, setDrawer]);
+  }, [
+    updateApp,
+    firmwareUpdate,
+    appName,
+    history,
+    closeAllModal,
+    closePlatformAppDrawer,
+    setDrawer,
+  ]);
 
   return (
     <Button mt={mt} ml={ml} primary onClick={onClick}>
@@ -312,7 +325,10 @@ const OpenOnboardingBtn = () => {
   );
 };
 
-const OpenManagerButton = connect(null, { closeAllModal })(OpenManagerBtn);
+const OpenManagerButton = connect(null, {
+  closeAllModal,
+  closePlatformAppDrawer,
+})(OpenManagerBtn);
 
 export const renderRequiresAppInstallation = ({ appNames }: { appNames: string[] }) => {
   const appNamesCSV = appNames.join(", ");
@@ -496,7 +512,10 @@ export const renderAllowRemoveCustomLockscreen = ({
     </AnimationWrapper>
     <Footer>
       <Title>
-        <Trans i18nKey="removeCustomLockscreen.confirmation" />
+        <Trans
+          i18nKey="removeCustomLockscreen.confirmation"
+          values={{ productName: getDeviceModel(modelId).productName }}
+        />
       </Title>
     </Footer>
   </Wrapper>
@@ -564,9 +583,9 @@ export const renderWarningOutdated = ({
   </Wrapper>
 );
 
-// Quick fix: the error LockedDeviceError should be catched
+// Quick fix: the tmpError LockedDeviceError should be catched
 // inside all the device actions and mapped to an event of type "lockedDevice".
-// With this fix, we can catch all the device action error that were not catched upstream.
+// With this fix, we can catch all the device action tmpError that were not catched upstream.
 // If LockedDeviceError is thrown from outside a device action and renderError was not called
 // it is still handled by GenericErrorView.
 export const renderLockedDeviceError = ({
@@ -716,18 +735,23 @@ export const renderError = ({
   withDescription?: boolean;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
+  let tmpError = error;
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
   // can be used directly by other component
-  if (error instanceof LockedDeviceError) {
+  if (tmpError instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device, inlineRetry });
-  } else if (error instanceof DeviceNotOnboarded) {
+  } else if (tmpError instanceof DeviceNotOnboarded) {
     return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
-  } else if (error instanceof FirmwareNotRecognized) {
+  } else if (tmpError instanceof FirmwareNotRecognized) {
     return <FirmwareNotRecognizedErrorComponent onRetry={onRetry} />;
+  } else if (tmpError instanceof CompleteExchangeError) {
+    if (tmpError.message === "User refused") {
+      tmpError = new TransactionRefusedOnDevice();
+    }
   }
 
   // if no supportLink is provided, we fallback on the related url linked to
-  // error name, if any
+  // tmpError name, if any
   const supportLinkUrl = supportLink ?? urls.errors[error?.name];
 
   return (
@@ -742,16 +766,16 @@ export const renderError = ({
                 </Logo>
               )
         }
-        title={<TranslatedError error={error as unknown as Error} noLink />}
+        title={<TranslatedError error={tmpError as unknown as Error} noLink />}
         description={
           withDescription && (
-            <TranslatedError error={error as unknown as Error} field="description" />
+            <TranslatedError error={tmpError as unknown as Error} field="description" />
           )
         }
         list={
           list ? (
             <ol style={{ textAlign: "justify" }}>
-              <TranslatedError error={error as unknown as Error} field="list" />
+              <TranslatedError error={tmpError as unknown as Error} field="list" />
             </ol>
           ) : undefined
         }
@@ -760,8 +784,8 @@ export const renderError = ({
         {managerAppName || requireFirmwareUpdate ? (
           <OpenManagerButton
             appName={managerAppName}
-            updateApp={error instanceof UpdateYourApp}
-            firmwareUpdate={error instanceof LatestFirmwareVersionRequired}
+            updateApp={tmpError instanceof UpdateYourApp}
+            firmwareUpdate={tmpError instanceof LatestFirmwareVersionRequired}
           />
         ) : (
           <>
@@ -801,15 +825,13 @@ export const renderError = ({
 export const renderInWrongAppForAccount = ({
   t,
   onRetry,
-  accountName,
 }: {
   t: TFunction;
   onRetry?: (() => void) | null | undefined;
-  accountName: string;
 }) =>
   renderError({
     t,
-    error: new WrongDeviceForAccount("", { accountName }),
+    error: new WrongDeviceForAccount(""),
     withExportLogs: true,
     onRetry,
   });
@@ -923,27 +945,49 @@ export const renderSwapDeviceConfirmation = ({
   amountExpectedTo,
   estimatedFees,
   swapDefaultTrack,
+  stateSettings,
+  walletState,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
   transaction: Transaction;
   exchangeRate: ExchangeRate;
-  exchange: Exchange;
+  exchange: ExchangeSwap;
   amountExpectedTo?: string;
   estimatedFees?: string;
   swapDefaultTrack: Record<string, string | boolean>;
+  stateSettings: SettingsState;
+  walletState: WalletState;
 }) => {
-  const [sourceAccountName, sourceAccountCurrency] = [
-    getAccountName(exchange.fromAccount),
-    getAccountCurrency(exchange.fromAccount),
-  ];
-  const [targetAccountName, targetAccountCurrency] = [
-    getAccountName(exchange.toAccount),
-    getAccountCurrency(exchange.toAccount),
-  ];
+  const sourceAccountCurrency = getAccountCurrency(exchange.fromAccount);
+  const targetAccountCurrency = getAccountCurrency(exchange.toAccount);
+  const sourceAccountName =
+    accountNameSelector(walletState, {
+      accountId: exchange.fromAccount.id,
+    }) ?? sourceAccountCurrency.name;
+
+  // If account exists already then grab the name set.
+  // However if account has not yet been set then use the
+  // crypto/token currency name as the target account.
+  const targetAccountName =
+    accountNameSelector(walletState, {
+      accountId: exchange.toAccount.id,
+    }) ?? targetAccountCurrency.name;
+
   const providerName = getProviderName(exchangeRate.provider);
   const noticeType = getNoticeType(exchangeRate.provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
+
+  const unitFromExchange = currencySettingsLocaleSelector(
+    stateSettings,
+    sourceAccountCurrency,
+  ).unit;
+  const unitToExchange = currencySettingsLocaleSelector(stateSettings, targetAccountCurrency).unit;
+  const unitMainAccount = currencySettingsLocaleSelector(
+    stateSettings,
+    getMainAccount(exchange.fromAccount, exchange.fromParentAccount).currency,
+  ).unit;
+
   return (
     <>
       <ConfirmWrapper>
@@ -968,7 +1012,7 @@ export const renderSwapDeviceConfirmation = ({
             {
               amountSent: (
                 <CurrencyUnitValue
-                  unit={getAccountUnit(exchange.fromAccount)}
+                  unit={unitFromExchange}
                   value={transaction.amount}
                   disableRounding
                   showCode
@@ -976,7 +1020,7 @@ export const renderSwapDeviceConfirmation = ({
               ),
               amountReceived: (
                 <CurrencyUnitValue
-                  unit={getAccountUnit(exchange.toAccount)}
+                  unit={unitToExchange}
                   value={amountExpectedTo ? BigNumber(amountExpectedTo) : exchangeRate.toAmount}
                   disableRounding
                   showCode
@@ -990,9 +1034,7 @@ export const renderSwapDeviceConfirmation = ({
               ),
               fees: (
                 <CurrencyUnitValue
-                  unit={getAccountUnit(
-                    getMainAccount(exchange.fromAccount, exchange.fromParentAccount),
-                  )}
+                  unit={unitMainAccount}
                   value={BigNumber(estimatedFees || 0)}
                   disableRounding
                   showCode
@@ -1089,123 +1131,3 @@ export const renderBootloaderStep = ({ onAutoRepair }: { onAutoRepair: () => voi
     </Button>
   </Wrapper>
 );
-
-export const renderImageLoadRequested = ({
-  t,
-  device,
-  restore,
-  type,
-}: {
-  t: TFunction;
-  device: Device;
-  restore: boolean;
-  type: Theme["theme"];
-}) => {
-  return (
-    <Flex
-      flex={1}
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      data-test-id="device-action-image-load-requested"
-    >
-      <DeviceBlocker />
-      <AnimationWrapper>
-        <Animation animation={getDeviceAnimation(device.modelId, type, "allowManager")} />
-      </AnimationWrapper>
-      <Flex justifyContent="center" mt={2}>
-        <Title>
-          {t(
-            restore
-              ? "customImage.steps.transfer.allowConfirmPreview"
-              : "customImage.steps.transfer.allowPreview",
-          )}
-        </Title>
-      </Flex>
-    </Flex>
-  );
-};
-
-export const renderLoadingImage = ({
-  t,
-  device,
-  progress,
-  source,
-}: {
-  t: TFunction;
-  progress?: number;
-  device: Device;
-  source?: string | undefined;
-}) => {
-  return (
-    <Flex
-      flex={1}
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      data-test-id={`device-action-image-loading-${progress}`}
-    >
-      <AnimationWrapper>
-        <FramedImage source={source} loadingProgress={progress} />
-      </AnimationWrapper>
-      <Flex justifyContent="center" mt={2}>
-        <Title>
-          {t(
-            progress && progress > 0.9
-              ? "customImage.steps.transfer.voila"
-              : "customImage.steps.transfer.loadingPicture",
-            {
-              productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-            },
-          )}
-        </Title>
-      </Flex>
-    </Flex>
-  );
-};
-
-export const renderImageCommitRequested = ({
-  t,
-  device,
-  source,
-  restore,
-  type,
-}: {
-  t: TFunction;
-  device: Device;
-  source?: string | undefined;
-  restore: boolean;
-  type: Theme["theme"];
-}) => {
-  return (
-    <Flex
-      flex={1}
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      data-test-id="device-action-image-commit-requested"
-    >
-      <DeviceBlocker />
-      <AnimationWrapper>
-        <FramedImage
-          source={source}
-          background={
-            <Animation animation={getDeviceAnimation(device.modelId, type, "confirmLockscreen")} />
-          }
-        />
-      </AnimationWrapper>
-      <Flex justifyContent="center" mt={2}>
-        <Title mb={!restore ? "-24px" : undefined}>
-          {t(
-            restore
-              ? "customImage.steps.transfer.confirmRestorePicture"
-              : "customImage.steps.transfer.confirmPicture",
-            {
-              productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-            },
-          )}
-        </Title>
-      </Flex>
-    </Flex>
-  );
-};

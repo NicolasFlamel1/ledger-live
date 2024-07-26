@@ -1,4 +1,5 @@
 import { Size } from "~/contentCards/cards/vertical/types";
+import { WidthFactor } from "~/contentCards/layouts/types";
 import {
   BrazeContentCard,
   AssetContentCard,
@@ -13,6 +14,8 @@ import {
   HorizontalContentCard,
   ContentCardsLayout,
   VerticalContentCard,
+  HeroContentCard,
+  AllLocations,
 } from "~/dynamicContent/types";
 
 export const getMobileContentCards = (array: BrazeContentCard[]) =>
@@ -39,11 +42,20 @@ export const compareCards = (a: ContentCardCommonProperties, b: ContentCardCommo
 
 export const filterCategoriesByLocation = (
   categories: CategoryContentCard[],
-  locationId: ContentCardLocation,
+  locationId: AllLocations,
 ) => {
   const categoriesToDisplay = categories.filter(category => category.location === locationId);
 
   return categoriesToDisplay;
+};
+
+export const filterCardsThatHaveBeenDismissed = (
+  cards: BrazeContentCard[],
+  dismissedContentCardsIds: string[],
+) => {
+  const filteredCards = cards.filter(card => !dismissedContentCardsIds.includes(card.id));
+
+  return filteredCards;
 };
 
 export const formatCategories = (
@@ -76,7 +88,8 @@ export const mapAsCategoryContentCard = (card: BrazeContentCard): CategoryConten
   description: card.extras.description,
   link: card.extras.link,
   cta: card.extras.cta,
-  isDismissable: Boolean(card.extras.isDismissable && card.extras.isDismissable === "true"),
+  isDismissable: Boolean(card.extras?.isDismissable === "true"),
+  hasPagination: Boolean(card.extras?.hasPagination === "true"),
 });
 
 export const mapAsWalletContentCard = (card: BrazeContentCard): WalletContentCard => ({
@@ -133,6 +146,7 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard): Notificati
 });
 
 export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalContentCard => ({
+  type: ContentCardsType.action,
   id: card.id,
   tag: card.extras.tag,
   title: card.extras.title,
@@ -142,16 +156,41 @@ export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalCo
   createdAt: card.created,
   viewed: card.viewed,
   order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  gridWidthFactor: WidthFactor.Full,
 });
 
-const mapAsSquareContentCard = (card: BrazeContentCard, size: Size): VerticalContentCard => ({
+const mapAsSquareContentCard = (
+  card: BrazeContentCard,
+  size: Size,
+  type: ContentCardsType,
+  carouselWidthFactor: WidthFactor,
+  gridWidthFactor: WidthFactor,
+): VerticalContentCard => ({
+  type,
   id: card.id,
   tag: card.extras.tag,
   title: card.extras.title,
   description: card.extras.description,
   image: card.extras.image,
   price: card.extras.subtitle,
+  cta: card.extras.cta,
   size,
+  link: card.extras.link,
+  createdAt: card.created,
+  viewed: card.viewed,
+  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  carouselWidthFactor,
+  gridWidthFactor,
+  filledImage: Boolean(card.extras.filledImage),
+});
+
+export const mapAsHeroContentCard = (card: BrazeContentCard): HeroContentCard => ({
+  type: ContentCardsType.hero,
+  id: card.id,
+  tag: card.extras.tag,
+  title: card.extras.title,
+  image: card.extras.image,
+  cta: card.extras.cta,
   link: card.extras.link,
   createdAt: card.created,
   viewed: card.viewed,
@@ -159,10 +198,22 @@ const mapAsSquareContentCard = (card: BrazeContentCard, size: Size): VerticalCon
 });
 
 export const mapAsSmallSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
-  mapAsSquareContentCard(card, "S");
+  mapAsSquareContentCard(
+    card,
+    "S",
+    ContentCardsType.smallSquare,
+    WidthFactor.Half,
+    WidthFactor.Half,
+  );
 
 export const mapAsMediumSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
-  mapAsSquareContentCard(card, "M");
+  mapAsSquareContentCard(
+    card,
+    "M",
+    ContentCardsType.mediumSquare,
+    WidthFactor.ThreeQuarters,
+    WidthFactor.Half,
+  );
 
 export const mapAsBigSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
-  mapAsSquareContentCard(card, "L");
+  mapAsSquareContentCard(card, "L", ContentCardsType.bigSquare, WidthFactor.Full, WidthFactor.Full);

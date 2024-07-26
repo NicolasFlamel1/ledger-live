@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo, forwardRef } from "react";
 import { useSelector } from "react-redux";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Linking, StyleSheet, View } from "react-native";
 import { WebView as RNWebView, WebViewMessageEvent } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
@@ -34,8 +34,8 @@ import {
   useListPlatformCurrencies,
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
-import BigNumber from "bignumber.js";
-import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
+import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
+import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { NavigatorName, ScreenName } from "~/const";
 import { broadcastSignedTx } from "~/logic/screenTransactionHooks";
@@ -47,6 +47,8 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { walletSelector } from "~/reducers/wallet";
+import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 
 function renderLoading() {
   return (
@@ -59,23 +61,14 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
     const tracking = useMemo(
       () =>
-        trackingWrapper(
-          (
-            eventName: string,
-            properties?: Record<string, unknown> | null,
-            mandatory?: boolean | null,
-          ) =>
-            track(
-              eventName,
-              {
-                ...properties,
-                flowInitiatedFrom:
-                  currentRouteNameRef.current === "Platform Catalog"
-                    ? "Discover"
-                    : currentRouteNameRef.current,
-              },
-              mandatory,
-            ),
+        trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>
+          track(eventName, {
+            ...properties,
+            flowInitiatedFrom:
+              currentRouteNameRef.current === "Platform Catalog"
+                ? "Discover"
+                : currentRouteNameRef.current,
+          }),
         ),
       [],
     );
@@ -89,13 +82,15 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       onStateChange,
     );
 
+    const walletState = useSelector(walletSelector);
+
     const accounts = useSelector(flattenAccountsSelector);
     const navigation =
       useNavigation<
         RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>
       >();
     const [device, setDevice] = useState<Device>();
-    const listAccounts = useListPlatformAccounts(accounts);
+    const listAccounts = useListPlatformAccounts(walletState, accounts);
     const listPlatformCurrencies = useListPlatformCurrencies();
 
     const requestAccount = useCallback(
@@ -153,7 +148,11 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
           const onSuccess = (account: AccountLike, parentAccount?: Account) => {
             tracking.platformRequestAccountSuccess(manifest);
-            resolve(serializePlatformAccount(accountToPlatformAccount(account, parentAccount)));
+            resolve(
+              serializePlatformAccount(
+                accountToPlatformAccount(walletState, account, parentAccount),
+              ),
+            );
           };
 
           const onClose = () => {
@@ -194,12 +193,13 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             });
           }
         }),
-      [manifest, accounts, navigation, tracking],
+      [manifest, accounts, walletState, navigation, tracking],
     );
 
     const receiveOnAccount = useCallback(
       ({ accountId }: { accountId: string }) =>
         receiveOnAccountLogic(
+          walletState,
           { manifest, accounts, tracking },
           accountId,
           (account, parentAccount, accountAddress) =>
@@ -223,7 +223,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               });
             }),
         ),
-      [manifest, accounts, navigation, tracking],
+      [walletState, manifest, accounts, navigation, tracking],
     );
 
     const signTransaction = useCallback(
@@ -248,11 +248,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           accountId,
           transaction,
           (account, parentAccount, { liveTx }) => {
-            const tx = prepareSignTransaction(
-              account,
-              parentAccount,
-              liveTx as Partial<Transaction & { gasLimit: BigNumber }>,
-            );
+            const tx = prepareSignTransaction(account, parentAccount, liveTx);
 
             return new Promise((resolve, reject) => {
               navigation.navigate(NavigatorName.SignTransaction, {
@@ -332,7 +328,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     );
 
     const startExchange = useCallback(
-      ({ exchangeType }: { exchangeType: number }) => {
+      ({ exchangeType, provider }: { exchangeType: number; provider?: string }) => {
         tracking.platformStartExchangeRequested(manifest);
 
         return new Promise((resolve, reject) => {
@@ -341,21 +337,18 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             params: {
               request: {
                 exchangeType,
+                provider,
               },
-              onResult: (result: {
-                startExchangeResult?: string;
-                startExchangeError?: Error;
-                device?: Device;
-              }) => {
+              onResult: result => {
                 if (result.startExchangeError) {
                   tracking.platformStartExchangeFail(manifest);
-                  reject(result.startExchangeError);
+                  reject(result.startExchangeError.error);
                 }
 
                 if (result.startExchangeResult) {
                   tracking.platformStartExchangeSuccess(manifest);
                   setDevice(result.device);
-                  resolve(result.startExchangeResult);
+                  resolve(result.startExchangeResult.nonce);
                 }
 
                 const n =
@@ -512,11 +505,24 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       tracking.platformLoadFail(manifest);
     }, [manifest, tracking]);
 
+    const onOpenWindow = useCallback((event: WebViewOpenWindowEvent) => {
+      const { targetUrl } = event.nativeEvent;
+      Linking.canOpenURL(targetUrl).then(supported => {
+        if (supported) {
+          Linking.openURL(targetUrl);
+        } else {
+          console.error(`Don't know how to open URI: ${targetUrl}`);
+        }
+      });
+    }, []);
+
     useEffect(() => {
       tracking.platformLoad(manifest);
     }, [manifest, tracking]);
 
-    const javaScriptCanOpenWindowsAutomatically = manifest.id === DEFAULT_MULTIBUY_APP_ID;
+    const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
+
+    const javaScriptCanOpenWindowsAutomatically = internalAppIds.includes(manifest.id);
 
     return (
       <RNWebView
@@ -530,6 +536,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         allowsInlineMediaPlayback
         onMessage={handleMessage}
         onError={handleError}
+        onOpenWindow={onOpenWindow}
         overScrollMode="content"
         bounces={false}
         mediaPlaybackRequiresUserAction={false}
@@ -537,6 +544,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         scrollEnabled={true}
         style={styles.webview}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
+        webviewDebuggingEnabled={__DEV__}
         {...webviewProps}
       />
     );

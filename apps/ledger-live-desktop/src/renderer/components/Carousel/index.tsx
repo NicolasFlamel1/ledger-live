@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useTransition, animated } from "react-spring";
 import IconArrowRight from "~/renderer/icons/ArrowRight";
@@ -179,9 +179,10 @@ const Carousel = ({
     track("contentcard_dismissed", {
       card: slides[index].id,
       page: "Portfolio",
+      type: "portfolio_carousel",
     });
     dismissCard(index);
-    changeVisibleSlide((index + 1) % slides.length);
+    changeVisibleSlide(0);
   }, [index, slides, dismissCard, changeVisibleSlide]);
 
   const onNext = useCallback(() => {
@@ -190,6 +191,7 @@ const Carousel = ({
     track("contentcards_slide", {
       button: "next",
       page: "Portfolio",
+      type: "portfolio_carousel",
     });
   }, [index, slides.length, changeVisibleSlide]);
 
@@ -199,8 +201,11 @@ const Carousel = ({
     track("contentcards_slide", {
       button: "previous",
       page: "Portfolio",
+      type: "portfolio_carousel",
     });
   }, [index, slides.length, changeVisibleSlide]);
+
+  const canceled = useMemo(() => slides.length === 1, [slides.length]);
 
   if (!slides.length) {
     // No slides or dismissed, no problem
@@ -215,15 +220,12 @@ const Carousel = ({
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {slides.length > 1 ? (
-        <ProgressBarWrapper>
-          <TimeBasedProgressBar onComplete={onNext} duration={speed} paused={paused} />
-        </ProgressBarWrapper>
-      ) : null}
+      <ProgressBarWrapper>
+        <TimeBasedProgressBar onComplete={onNext} duration={speed} paused={paused || canceled} />
+      </ProgressBarWrapper>
       <Slides>
         {transitions.map(({ item, props, key }) => {
           if (!slides?.[item]) return null;
-
           const { Component } = slides[item];
           return (
             <animated.div key={key} style={{ ...props }}>

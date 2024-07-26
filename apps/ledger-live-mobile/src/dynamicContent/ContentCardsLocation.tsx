@@ -3,9 +3,9 @@ import { FlatList, ListRenderItem } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import type { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import useDynamicContent from "./useDynamicContent";
-import { BrazeContentCard, CategoryContentCard, ContentCardLocation } from "./types";
+import { AllLocations, BrazeContentCard, CategoryContentCard } from "./types";
 import ContentCardsCategory from "./ContentCardsCategory";
-import { FeatureToggle } from "@ledgerhq/live-config/lib/featureFlags/index";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { filterCategoriesByLocation, formatCategories } from "./utils";
 
 const Category: ListRenderItem<CategoriesWithCards> = ({ item }) => (
@@ -13,7 +13,7 @@ const Category: ListRenderItem<CategoriesWithCards> = ({ item }) => (
 );
 
 type Props = FlexBoxProps & {
-  locationId: ContentCardLocation;
+  locationId: AllLocations;
 };
 
 type CategoriesWithCards = {
@@ -21,7 +21,7 @@ type CategoriesWithCards = {
   cards: BrazeContentCard[];
 };
 
-const ContentCardsLocation = ({ locationId, ...containerProps }: Props) => {
+const ContentCardsLocationComponent = ({ locationId, ...containerProps }: Props) => {
   const { categoriesCards, mobileCards } = useDynamicContent();
 
   const categoriesToDisplay = filterCategoriesByLocation(categoriesCards, locationId);
@@ -36,16 +36,16 @@ const ContentCardsLocation = ({ locationId, ...containerProps }: Props) => {
         data={categoriesFormatted}
         renderItem={Category}
         keyExtractor={(item: CategoriesWithCards) => item.category.id}
-        ItemSeparatorComponent={() => <Flex height={8} />}
+        ItemSeparatorComponent={() => <Flex height={32} />}
       />
     </Flex>
   );
 };
 
-const ContentCardsLocationFeatureFlagged = (props: Props) => (
+const ContentCardsLocation = (props: Props) => (
   <FeatureToggle featureId="flexibleContentCards">
-    <ContentCardsLocation {...props} />
+    <ContentCardsLocationComponent {...props} />
   </FeatureToggle>
 );
 
-export default ContentCardsLocationFeatureFlagged;
+export default ContentCardsLocation;

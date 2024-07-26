@@ -1,6 +1,6 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { LottieViewProps } from "lottie-react-native/lib/typescript/LottieView.types";
+import type { LottieViewProps } from "lottie-react-native";
 import Config from "react-native-config";
 
 type AnimationSource = LottieViewProps["source"];
@@ -195,6 +195,84 @@ const animations: Animations = {
     },
   },
   stax: {
+    wired: {
+      plugAndPinCode: {
+        light: require("../animations/stax/enterPIN.json"),
+        dark: require("../animations/stax/enterPIN.json"),
+      },
+      enterPinCode: {
+        light: require("../animations/stax/enterPIN.json"),
+        dark: require("../animations/stax/enterPIN.json"),
+      },
+      quitApp: {
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
+      },
+      allowManager: {
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
+      },
+      openApp: {
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
+      },
+      verify: {
+        light: require("../animations/stax/verifyAddress.json"),
+        dark: require("../animations/stax/verifyAddress.json"),
+      },
+      sign: {
+        light: require("../animations/stax/signTransaction.json"),
+        dark: require("../animations/stax/signTransaction.json"),
+      },
+      allowUpdate: {
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
+      },
+    },
+    bluetooth: {
+      plugAndPinCode: {
+        light: require("../animations/stax/enterPIN.json"),
+        dark: require("../animations/stax/enterPIN.json"),
+      },
+      enterPinCode: {
+        light: require("../animations/stax/enterPIN.json"),
+        dark: require("../animations/stax/enterPIN.json"),
+      },
+      quitApp: {
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
+      },
+      allowManager: {
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
+      },
+      openApp: {
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
+      },
+      verify: {
+        light: require("../animations/stax/verifyAddress.json"),
+        dark: require("../animations/stax/verifyAddress.json"),
+      },
+      sign: {
+        light: require("../animations/stax/signTransaction.json"),
+        dark: require("../animations/stax/signTransaction.json"),
+      },
+      allowUpdate: {
+        light: require("../animations/stax/allowConnection.json"),
+        dark: require("../animations/stax/allowConnection.json"),
+      },
+      blePairing: {
+        light: require("../animations/stax/pairingProgress.json"),
+        dark: require("../animations/stax/pairingProgress.json"),
+      },
+      blePaired: {
+        light: require("../animations/stax/pairingSuccess.json"),
+        dark: require("../animations/stax/pairingSuccess.json"),
+      },
+    },
+  },
+  europa: {
     wired: {
       plugAndPinCode: {
         light: require("../animations/stax/enterPIN.json"),

@@ -1,4 +1,3 @@
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/devices";
 import StepResetDevice, { StepResetFooter } from "../steps/00-step-reset-device";
@@ -8,6 +7,8 @@ import StepRestore from "../steps/02-step-restore";
 import StepUpdating from "../steps/02-step-updating";
 import StepConfirmation, { StepConfirmFooter } from "../steps/03-step-confirmation";
 import { Step, StepId, STEPS } from "../types";
+import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/device/use-cases/isDeviceLocalizationSupported";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 export const createFirmwareUpdateSteps = ({
   firmware,
@@ -23,7 +24,8 @@ export const createFirmwareUpdateSteps = ({
   stateStepId: StepId;
 }) => {
   const hasRestoreStep =
-    firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId);
+    isCustomLockScreenSupported(deviceModelId) ||
+    (firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId));
 
   const restoreStepLabel =
     stateStepId === STEPS.FINISH
@@ -47,8 +49,8 @@ export const createFirmwareUpdateSteps = ({
     label: firmware?.osu?.hash
       ? "manager.modal.identifier"
       : stateStepId === STEPS.RESET_DEVICE || stateStepId === STEPS.ID_CHECK
-      ? "manager.modal.steps.prepare"
-      : "manager.modal.steps.prepareDone",
+        ? "manager.modal.steps.prepare"
+        : "manager.modal.steps.prepareDone",
     component: StepPrepare,
   };
 

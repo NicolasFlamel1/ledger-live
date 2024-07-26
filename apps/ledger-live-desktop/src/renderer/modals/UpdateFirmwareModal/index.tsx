@@ -139,7 +139,10 @@ const UpdateModal = ({
     setIsLanguagePromptOpen,
     confirmedPrompt,
     setConfirmedPrompt,
-    deviceHasPin: !(deviceModelId === DeviceModelId.stax && !props.deviceInfo?.onboarded),
+    deviceHasPin: !(
+      [DeviceModelId.stax, DeviceModelId.europa].includes(deviceModelId) &&
+      !props.deviceInfo?.onboarded
+    ),
   };
 
   const getMainContent = () => {
@@ -158,7 +161,7 @@ const UpdateModal = ({
     } else if (cancel || isDeviceDisconnected) {
       return <Cancel onContinue={onContinue} onCancel={onRequestClose} />;
     } else if (showDisclaimer) {
-      return <Disclaimer onContinue={() => setShowDisclaimer(false)} t={t} firmware={firmware} />;
+      return <Disclaimer onContinue={() => setShowDisclaimer(false)} firmware={firmware} />;
     } else {
       return (
         <FlowStepper.Indexed

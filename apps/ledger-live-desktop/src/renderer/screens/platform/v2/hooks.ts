@@ -20,15 +20,30 @@ import { dismissBanner } from "~/renderer/actions/settings";
 import { useCallback, useMemo } from "react";
 import { useHistory } from "react-router";
 import { closePlatformAppDrawer, openPlatformAppDisclaimerDrawer } from "~/renderer/actions/UI";
+import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
-export function useCatalog(db: RecentlyUsedDB) {
-  const categories = useCategories();
-  const recentlyUsed = useRecentlyUsed(categories.manifests.all, db);
+export function useCatalog(recentlyUsedDB: RecentlyUsedDB) {
+  const completeManifests = useManifests({ visibility: ["complete"] });
+  const combinedManifests = useManifests({ visibility: ["searchable", "complete"] });
+  const categories = useCategories(completeManifests);
+  const recentlyUsed = useRecentlyUsed(combinedManifests, recentlyUsedDB);
+  const { state: localLiveApps } = useLocalLiveAppContext();
+
   const search = useSearch({
-    list: categories.manifests.searchable,
+    list: combinedManifests,
     options: BROWSE_SEARCH_OPTIONS,
-    filter: item =>
-      categories.selected === "all" ? true : item.categories.includes(categories.selected),
+    filter: (item: AppManifest, input: string) => {
+      // Return all manifests when searching
+      if (input) return true;
+
+      // Only return complete manifests when not searching
+      if (item.visibility !== "complete") return false;
+
+      if (categories.selected === "all") return true;
+
+      return item.categories.includes(categories.selected);
+    },
   });
   const disclaimer = useDisclaimer(recentlyUsed.append);
 
@@ -37,11 +52,21 @@ export function useCatalog(db: RecentlyUsedDB) {
     recentlyUsed,
     disclaimer,
     search,
+    localLiveApps,
   };
 }
 
-export function useDiscoverDB() {
+export function useRecentlyUsedDB() {
   return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, state => state.recentlyUsed);
+}
+
+export function useCurrentAccountHistDB() {
+  return useDB(
+    "app",
+    DISCOVER_STORE_KEY,
+    INITIAL_PLATFORM_STATE,
+    state => state.currentAccountHist,
+  );
 }
 
 export type Disclaimer = DisclaimerRaw;

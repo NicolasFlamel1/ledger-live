@@ -18,10 +18,10 @@ import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
 import Spinning from "~/components/Spinning";
 import AssetsNavigationHeader from "./AssetsNavigationHeader";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
-import AddAccountsModal from "../AddAccounts/AddAccountsModal";
-import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { Asset } from "~/types/asset";
 import { ScreenName } from "~/const";
+import { blacklistedTokenIdsSelector } from "~/reducers/settings";
+import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 
 const List = globalSyncRefreshControl<FlatListProps<Asset>>(FlatList);
 
@@ -30,6 +30,9 @@ function Assets() {
   const isUpToDate = useSelector(isUpToDateSelector);
   const globalSyncState = useGlobalSyncState();
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
+
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
   const { t } = useTranslation();
   const distribution = useDistribution({
@@ -47,11 +50,22 @@ function Assets() {
     [distribution],
   );
 
+  const assetsToDisplay = useMemo(
+    () =>
+      assets.filter(
+        asset =>
+          asset.currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(asset.currency.id),
+      ),
+    [assets, blacklistedTokenIdsSet],
+  );
+
   const [isAddModalOpened, setAddModalOpened] = useState(false);
 
   const openAddModal = useCallback(() => setAddModalOpened(true), [setAddModalOpened]);
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
+
+  const reopenAddModal = useCallback(() => setAddModalOpened(true), [setAddModalOpened]);
 
   const renderItem = useCallback(
     ({ item }: { item: Asset }) => (
@@ -78,7 +92,7 @@ function Assets() {
           )}
           <Flex px={6} flex={1}>
             <List
-              data={assets}
+              data={assetsToDisplay}
               renderItem={renderItem}
               keyExtractor={i => i.currency.id}
               showsVerticalScrollIndicator={false}
@@ -104,10 +118,10 @@ function Assets() {
             />
           </Flex>
         </Flex>
-        <AddAccountsModal
-          navigation={navigation as unknown as BaseNavigation}
+        <AddAccountDrawer
           isOpened={isAddModalOpened}
           onClose={closeAddModal}
+          reopenDrawer={reopenAddModal}
         />
       </SafeAreaView>
     </ReactNavigationPerformanceView>

@@ -5,17 +5,12 @@ import { useTrack } from "~/renderer/analytics/segment";
 import styled from "styled-components";
 
 export const Base = styled(BaseButton)<{ big?: boolean }>`
-  border-radius: 44px;
-
   font-size: ${p => (p.big ? "14px" : "12px")};
   height: 40px;
   line-height: 40px;
   padding: 0 24px;
 
-  ${p =>
-    p.variant === "shade"
-      ? `background-color: transparent!important;border-color: currentColor;`
-      : ``}
+  ${p => (p.variant === "shade" ? `background-color: transparent!important;` : ``)}
 `;
 
 export type Props = BaseButtonProps & {
@@ -55,6 +50,7 @@ function Button({
       disabled={disabled}
       onClick={isClickDisabled ? undefined : onClickHandler}
       data-test-id={buttonTestId}
+      ref={null}
     >
       {children}
     </Base>

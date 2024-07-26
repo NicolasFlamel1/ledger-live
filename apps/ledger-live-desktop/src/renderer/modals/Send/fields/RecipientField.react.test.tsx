@@ -1,6 +1,5 @@
 import React from "react";
 import axios from "axios";
-import { jest, describe, beforeAll, beforeEach, it, expect } from "@jest/globals";
 import BigNumber from "bignumber.js";
 import { render, screen, waitFor } from "tests/testUtils";
 
@@ -10,7 +9,7 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { Account } from "@ledgerhq/types-live";
 import { InvalidAddress } from "@ledgerhq/errors";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import RecipientField from "./RecipientField";
@@ -25,7 +24,7 @@ jest.mock("axios");
 
 const mockedAxios = jest.mocked(axios);
 
-jest.mock("@ledgerhq/live-config/featureFlags/index", () => ({
+jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
   useFeature: jest.fn(),
 }));
 
@@ -39,7 +38,6 @@ const polygon = getCryptoCurrencyById("polygon");
 const ethMockAccount: Account = {
   type: "Account",
   id: "js:2:ethereum:0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3:",
-  starred: false,
   used: true,
   seedIdentifier:
     "0441996d9ce858d8fd6304dd790e645500fc6cee7ae0fccfee8c8fa884dfa8ccf1f6f8cc82cc0aa71fc659c895a8a43b69f918b08a22b3a6145a0bbd93c5cb9308",
@@ -47,13 +45,6 @@ const ethMockAccount: Account = {
   index: 0,
   freshAddress: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
   freshAddressPath: "44'/60'/0'/0/0",
-  freshAddresses: [
-    {
-      address: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
-      derivationPath: "44'/60'/0'/0/0",
-    },
-  ],
-  name: "Ethereum 1",
   blockHeight: 16626551,
   creationDate: new Date("2021-03-23T14:17:07.001Z"),
   balance: new BigNumber("22913015427119498"),
@@ -61,11 +52,6 @@ const ethMockAccount: Account = {
   operations: [],
   operationsCount: 0,
   pendingOperations: [],
-  unit: {
-    name: "ether",
-    code: "ETH",
-    magnitude: 18,
-  },
   currency: eth,
   lastSyncDate: new Date("2023-02-14T11:01:19.252Z"),
   swapHistory: [],
@@ -80,7 +66,6 @@ const ethMockAccount: Account = {
 const polygonMockAccount: Account = {
   type: "Account",
   id: "js:2:polygon:0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3:",
-  starred: false,
   used: true,
   seedIdentifier:
     "0441996d9ce858d8fd6304dd790e645500fc6cee7ae0fccfee8c8fa884dfa8ccf1f6f8cc82cc0aa71fc659c895a8a43b69f918b08a22b3a6145a0bbd93c5cb9308",
@@ -88,13 +73,6 @@ const polygonMockAccount: Account = {
   index: 0,
   freshAddress: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
   freshAddressPath: "44'/60'/0'/0/0",
-  freshAddresses: [
-    {
-      address: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
-      derivationPath: "44'/60'/0'/0/0",
-    },
-  ],
-  name: "Polygon 1",
   blockHeight: 16626551,
   creationDate: new Date("2021-03-23T14:17:07.001Z"),
   balance: new BigNumber("22913015427119498"),
@@ -102,11 +80,6 @@ const polygonMockAccount: Account = {
   operations: [],
   operationsCount: 0,
   pendingOperations: [],
-  unit: {
-    name: "matic",
-    code: "MATIC",
-    magnitude: 18,
-  },
   currency: polygon,
   lastSyncDate: new Date("2023-02-14T11:01:19.252Z"),
   swapHistory: [],
@@ -300,9 +273,9 @@ describe("RecipientField", () => {
             recipientDomain: undefined,
           });
         });
-        expect(
-          screen.getByText("send.steps.recipient.domainService.noResolution.title"),
-        ).toBeTruthy();
+        await waitFor(() => {
+          expect(screen.getByText("No address found for this domain")).toBeTruthy();
+        });
 
         expect(screen.getByTestId("domain-error-no-resolution")).toBeTruthy();
       });

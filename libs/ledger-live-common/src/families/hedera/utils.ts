@@ -1,9 +1,9 @@
-import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import estimateMaxSpendable from "./js-estimateMaxSpendable";
-import type { Transaction } from "./types";
+import type { Account } from "@ledgerhq/types-live";
+import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { getFiatCurrencyByTicker } from "../../currencies/index";
-import cvsApi from "../../countervalues/api";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import type { Transaction } from "./types";
 
 export const estimatedFeeSafetyRate = 2;
 
@@ -13,6 +13,7 @@ export async function getEstimatedFees(account: Account): Promise<BigNumber> {
       {
         from: account.currency,
         to: getFiatCurrencyByTicker("USD"),
+        startDate: new Date(),
       },
     ]);
 

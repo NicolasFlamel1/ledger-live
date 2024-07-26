@@ -8,8 +8,8 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { CryptoCurrencyId, Currency } from "@ledgerhq/types-cryptoassets";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import type { CryptoCurrencyId, Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import { AvailableProviderV3, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -26,6 +26,8 @@ import {
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import { WalletState } from "@ledgerhq/live-wallet/store";
 
 // === ACCOUNT STATE ===
 
@@ -158,8 +160,7 @@ export enum OnboardingType {
 
 export type CurrencySettings = {
   confirmationsNb: number;
-  // FIXME: SEEMS TO NEVER BE USED - DROPPING ?
-  // exchange?: any | null;
+  unit: Unit;
 };
 
 export type Privacy = {
@@ -191,6 +192,7 @@ export type SettingsState = {
   counterValueExchange: string | null | undefined;
   reportErrorsEnabled: boolean;
   analyticsEnabled: boolean;
+  personalizedRecommendationsEnabled: boolean;
   privacy: Privacy | null | undefined;
   currenciesSettings: Record<string, CurrencySettings>;
   pairExchanges: Record<string, string | null | undefined>;
@@ -222,19 +224,20 @@ export type SettingsState = {
     acceptedProviders: string[];
     selectableCurrencies: string[];
   };
-  lastSeenDevice: DeviceModelInfo | null | undefined;
+  lastSeenDevice: DeviceModelInfo | null;
   knownDeviceModelIds: Record<DeviceModelId, boolean>;
   hasSeenStaxEnabledNftsPopup: boolean;
-  starredMarketCoins: string[];
-  lastConnectedDevice: Device | null | undefined;
-  marketRequestParams: MarketListRequestParams;
+  lastConnectedDevice: Device | null;
   marketCounterCurrency: string | null | undefined;
-  marketFilterByStarredAccounts: boolean;
   sensitiveAnalytics: boolean;
   onboardingHasDevice: boolean | null;
   onboardingType: OnboardingType | null;
-  customImageType: ImageType | null;
-  customImageBackup?: { hex: string; hash: string };
+  customLockScreenType: ImageType | null;
+  customLockScreenBackup: {
+    hex: string;
+    hash: string;
+    deviceModelId: CLSSupportedDeviceModelId;
+  } | null;
   lastSeenCustomImage: {
     size: number;
     hash: string;
@@ -255,12 +258,14 @@ export type SettingsState = {
   };
   userNps: number | null;
   supportedCounterValues: supportedCountervaluesData[];
+  hasSeenAnalyticsOptInPrompt: boolean;
+  dismissedContentCards: { [id: string]: number };
+  starredMarketCoins: string[];
 };
 
 export type NotificationsSettings = {
   areNotificationsAllowed: boolean;
   announcementsCategory: boolean;
-  recommendationsCategory: boolean;
   largeMoverCategory: boolean;
   transactionsAlertsCategory: boolean;
 };
@@ -326,6 +331,14 @@ export type NftGalleryChainFiltersState = Pick<
   "polygon" | "ethereum"
 >;
 
+// === MARKET STATE ===
+
+export type MarketState = {
+  marketParams: MarketListRequestParams;
+  marketFilterByStarredCurrencies: boolean;
+  marketCurrentPage: number;
+};
+
 // === ROOT STATE ===
 
 export type State = {
@@ -342,4 +355,6 @@ export type State = {
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
   nft: NftState;
+  market: MarketState;
+  wallet: WalletState;
 };

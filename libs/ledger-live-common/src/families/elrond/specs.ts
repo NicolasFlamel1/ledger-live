@@ -21,7 +21,7 @@ import {
 import BigNumber from "bignumber.js";
 import { MIN_DELEGATION_AMOUNT } from "./constants";
 import { SubAccount } from "@ledgerhq/types-live";
-import { sample } from "lodash";
+import sample from "lodash/sample";
 
 const currency = getCryptoCurrencyById("elrond");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
@@ -342,14 +342,13 @@ const elrondSpec: AppSpec<Transaction> = {
         invariant(delegations?.length, "account doesn't have any delegations");
         invariant(
           // among all delegations
-          delegations.some(
-            d =>
-              // among all undelegating amounts
-              d.userUndelegatedList?.some(
-                u =>
-                  new BigNumber(u.amount).gt(0) && // the undelegation has a positive amount
-                  new BigNumber(u.seconds).eq(0), // the undelegation period has ended
-              ),
+          delegations.some(d =>
+            // among all undelegating amounts
+            d.userUndelegatedList?.some(
+              u =>
+                new BigNumber(u.amount).gt(0) && // the undelegation has a positive amount
+                new BigNumber(u.seconds).eq(0), // the undelegation period has ended
+            ),
           ),
           "no withdrawable stake for account",
         );

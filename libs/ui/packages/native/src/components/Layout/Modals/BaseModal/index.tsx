@@ -120,8 +120,8 @@ export function ModalHeaderCloseButton({
 
   return (
     <CloseContainer>
-      <ClosePressableExtendedBounds onPress={onClose}>
-        <Close color={colors.neutral.c100} size="S" />
+      <ClosePressableExtendedBounds onPress={onClose} testID="modal-close-button">
+        <Close color={colors.neutral.c100} size="XS" />
       </ClosePressableExtendedBounds>
     </CloseContainer>
   );

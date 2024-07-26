@@ -7,7 +7,14 @@ export enum DeviceModelId {
   nanoSP = "nanoSP",
   nanoX = "nanoX",
   stax = "stax",
+  europa = "europa",
 }
+
+/**
+ * QRCodeDevices is a list of DeviceModelId of whom the Ledger device can present a QR code.
+ */
+export const QRCodeDevices: DeviceModelId[] = [DeviceModelId.stax, DeviceModelId.europa];
+
 /**
  * a DeviceModel contains all the information of a specific Ledger hardware wallet model.
  */

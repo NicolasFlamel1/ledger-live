@@ -7,6 +7,10 @@ inputs:
   skip_builds:
     description: "skip the steps to build the desktop and dummy-live-app"
     required: false
+  build_type:
+    description: "whether to use the ':testing' suffix for the build command"
+    required: false
+    default: "testing"
   install_node_gyp:
     description: "install node-gyp"
     required: false
@@ -27,7 +31,7 @@ runs:
     - uses: ruby/setup-ruby@v1
       if: ${{ !inputs.skip_ruby }}
       with:
-        ruby-version: 3.2.2
+        ruby-version: 3.3.0
     - name: Install node-gyp globally
       if: ${{ inputs.install_node_gyp }}
       run: |
@@ -36,7 +40,7 @@ runs:
     - name: Install dependencies
       env:
         LANG: en_US.UTF-8
-      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-*-app..." --unsafe-perm
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
       shell: bash
     - name: Install playwright dependencies
       if: ${{ inputs.install_playwright }}
@@ -57,7 +61,7 @@ runs:
         GOMEMLIMIT: 5GiB
       if: ${{ !inputs.skip_builds }}
       run: |
-        pnpm desktop build:testing
+        pnpm desktop build:${{ inputs.build_type || 'testing' }}
       shell: bash
     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}

@@ -23,23 +23,14 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
 
   const tracking = useMemo(
     () =>
-      trackingWrapper(
-        (
-          eventName: string,
-          properties?: Record<string, unknown> | null,
-          mandatory?: boolean | null,
-        ) =>
-          track(
-            eventName,
-            {
-              ...properties,
-              flowInitiatedFrom:
-                currentRouteNameRef.current === "Platform Catalog"
-                  ? "Discover"
-                  : currentRouteNameRef.current,
-            },
-            mandatory,
-          ),
+      trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>
+        track(eventName, {
+          ...properties,
+          flowInitiatedFrom:
+            currentRouteNameRef.current === "Platform Catalog"
+              ? "Discover"
+              : currentRouteNameRef.current,
+        }),
       ),
     [],
   );
@@ -51,21 +42,28 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
         tracking,
         manifest,
         uiHooks: {
-          "custom.exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
+          "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformStartExchange,
               params: {
                 request: {
-                  exchangeType: ExchangeType[exchangeType],
+                  ...exchangeParams,
+                  exchangeType: ExchangeType[exchangeParams.exchangeType],
                 },
                 onResult: result => {
                   if (result.startExchangeError) {
-                    onCancel(result.startExchangeError);
+                    onCancel(
+                      result.startExchangeError.error,
+                      result.startExchangeError.device || device,
+                    );
                   }
 
                   if (result.startExchangeResult) {
                     setDevice(result.device);
-                    onSuccess(result.startExchangeResult);
+                    onSuccess(
+                      result.startExchangeResult.nonce,
+                      result.startExchangeResult.device || device,
+                    );
                   }
 
                   navigation.pop();
@@ -99,6 +97,9 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
                 },
               },
             });
+          },
+          "custom.exchange.error": () => {
+            // todo add screen for LLM
           },
         },
       }),

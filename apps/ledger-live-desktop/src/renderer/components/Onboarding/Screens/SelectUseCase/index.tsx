@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { UseCaseOption } from "./UseCaseOption";
@@ -206,8 +206,10 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 onClick={() => {
                   track("Onboarding - Restore With Recover");
 
-                  // An array is used here because we'll have to allow Stax later
-                  if (deviceModelId && [DeviceModelId.nanoX].includes(deviceModelId)) {
+                  if (
+                    deviceModelId &&
+                    [DeviceModelId.nanoX, DeviceModelId.stax].includes(deviceModelId)
+                  ) {
                     setUseCase(UseCase.recover);
                     history.push(`/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`);
                   } else {

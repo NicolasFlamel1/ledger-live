@@ -7,8 +7,12 @@ import { retry } from "@ledgerhq/live-common/promise";
 import TransportNodeHidSingleton from "@ledgerhq/hw-transport-node-hid-singleton";
 import TransportHttp from "@ledgerhq/hw-transport-http";
 import { DisconnectedDevice } from "@ledgerhq/errors";
-import { TraceContext, listen as listenLogs } from "@ledgerhq/logs";
+import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
 import { ForwardToMainLogger } from "./logger";
+import { LOG_TYPE_INTERNAL } from "./logger";
+import SpeculosHttpTransport, {
+  SpeculosHttpTransportOpts,
+} from "@ledgerhq/hw-transport-node-speculos-http";
 
 /* eslint-disable guard-for-in */
 for (const k in process.env) {
@@ -18,7 +22,7 @@ for (const k in process.env) {
 
 const forwardToMainLogger = ForwardToMainLogger.getLogger();
 
-// Listens to logs from the internal threads, and forwards them to the main thread
+// Listens to logs from the internal process, and forwards them to the main process
 listenLogs(log => {
   forwardToMainLogger.log(log);
 });
@@ -30,7 +34,18 @@ setErrorRemapping(e => {
   }
   return throwError(() => e);
 });
-if (getEnv("DEVICE_PROXY_URL")) {
+
+if (getEnv("SPECULOS_API_PORT")) {
+  const req: Record<string, number> = {
+    apiPort: getEnv("SPECULOS_API_PORT"),
+  };
+
+  registerTransportModule({
+    id: "speculos-http",
+    open: () => retry(() => SpeculosHttpTransport.open(req as SpeculosHttpTransportOpts)),
+    disconnect: () => Promise.resolve(),
+  });
+} else if (getEnv("DEVICE_PROXY_URL")) {
   const Tr = TransportHttp(getEnv("DEVICE_PROXY_URL").split("|"));
   registerTransportModule({
     id: "proxy",
@@ -40,15 +55,40 @@ if (getEnv("DEVICE_PROXY_URL")) {
 } else {
   registerTransportModule({
     id: "hid",
-    open: (id: string, timeoutMs?: number, context?: TraceContext) =>
-      retry(() => TransportNodeHidSingleton.open(id, timeoutMs, context), {
-        maxRetry: 4,
-      }),
-    disconnect: () => Promise.resolve(),
-    setAllowAutoDisconnect: async (transport, _, allow) =>
-      (transport as TransportNodeHidSingleton).setAllowAutoDisconnect(allow),
+    open: (id: string, timeoutMs?: number, context?: TraceContext) => {
+      trace({
+        type: LOG_TYPE_INTERNAL,
+        message: "Open called on registered module",
+        data: {
+          transport: "TransportNodeHidSingleton",
+          timeoutMs,
+        },
+        context: {
+          openContext: context,
+        },
+      });
+
+      // No retry in the `internal` process to avoid multiplying retries. Retries are done in the `renderer` process.
+      return TransportNodeHidSingleton.open(id, timeoutMs, context);
+    },
+    disconnect: () => {
+      trace({
+        type: LOG_TYPE_INTERNAL,
+        message: "Disconnect called on registered module. Not doing anything for HID USB.",
+        data: {
+          transport: "TransportNodeHidSingleton",
+        },
+      });
+      return Promise.resolve();
+    },
   });
 }
+
+/**
+ * Cleans up all transports
+ *
+ * Only the TransportNodeHidSingleton for now.
+ */
 export function unsubscribeSetup() {
   TransportNodeHidSingleton.disconnect();
 }
