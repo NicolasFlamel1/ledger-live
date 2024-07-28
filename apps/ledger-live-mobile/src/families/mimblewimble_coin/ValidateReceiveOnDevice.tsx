@@ -2,7 +2,7 @@ import React from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useTheme } from "@react-navigation/native";
@@ -14,6 +14,7 @@ import { DataRowUnitValue, TextValueField } from "../../components/ValidateOnDev
 import Animation from "../../components/Animation";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import { TitleText } from "../../components/DeviceAction/rendering";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 function AmountField({
   account,
@@ -25,7 +26,7 @@ function AmountField({
   amount: string;
 }) {
   const mainAccount = getMainAccount(account, parentAccount);
-  const unit = getAccountUnit(mainAccount);
+  const unit = useAccountUnit(mainAccount);
   return <DataRowUnitValue label={"Amount"} unit={unit} value={new BigNumber(amount)} />;
 }
 
@@ -39,7 +40,7 @@ function FeesField({
   fee: string;
 }) {
   const mainAccount = getMainAccount(account, parentAccount);
-  const feesUnit = getAccountUnit(mainAccount);
+  const feesUnit = useAccountUnit(mainAccount);
   return <DataRowUnitValue label={"Fee"} unit={feesUnit} value={new BigNumber(fee)} />;
 }
 

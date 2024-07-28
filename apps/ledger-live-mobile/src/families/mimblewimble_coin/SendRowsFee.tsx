@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Trans, useTranslation } from "react-i18next";
-import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
@@ -11,6 +11,7 @@ import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import { ScreenName } from "../../const";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const styles = StyleSheet.create({
   amountContainer: {
@@ -45,7 +46,7 @@ export default ({
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
   const navigation = useNavigation();
   const onCustomizeBaseFeePress = useCallback(() => {

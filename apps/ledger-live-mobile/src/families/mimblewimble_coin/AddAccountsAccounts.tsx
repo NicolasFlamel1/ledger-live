@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useState, useRef, memo, useMemo } from "
 import { StyleSheet, View, Linking, SafeAreaView } from "react-native";
 import { concat, from, Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { compose } from "redux";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import type { AddAccountSupportLink } from "@ledgerhq/live-wallet/addAccounts";
@@ -10,10 +10,10 @@ import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { Trans, useTranslation } from "react-i18next";
+import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
-import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { accountsSelector } from "~/reducers/accounts";
 import logger from "../../logger";
@@ -50,6 +50,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import Config from "react-native-config";
 import { groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
 import { useMaybeAccountName } from "~/reducers/wallet";
+import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -344,6 +345,7 @@ function AddAccountsAccounts(props: Props) {
     scannedAccounts,
     selectedIds,
   ]);
+
   const onCancel = useCallback(() => {
     setError(null);
     setCancelled(true);
@@ -354,15 +356,14 @@ function AddAccountsAccounts(props: Props) {
     }
   }, [cancelled, navigation]);
   const viewAllCreatedAccounts = useCallback(() => setShowAllCreatedAccounts(true), []);
+
+  const dispatch = useDispatch();
+
   const onAccountNameChange = useCallback(
     (name: string, changedAccount: Account) => {
-      setScannedAccounts(
-        scannedAccounts.map(account =>
-          account.id === changedAccount.id ? { ...account, name } : account,
-        ),
-      );
+      dispatch(setAccountName(changedAccount.id, name));
     },
-    [scannedAccounts],
+    [dispatch],
   );
   const { sections, alreadyEmptyAccount } = useMemo(
     () =>

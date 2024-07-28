@@ -4,11 +4,7 @@ import { Platform, StyleSheet, View, Share } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
-import {
-  getMainAccount,
-  formatOperation,
-  addPendingOperation,
-} from "@ledgerhq/live-common/account/index";
+import { formatOperation, addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { createAction as createTransactionAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { createAction as createOpenAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
@@ -35,6 +31,7 @@ import { useRoute, useNavigation, useTheme } from "@react-navigation/native";
 import type { Account, AccountLike, SignedOperation, Operation } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { StackNavigationProp } from "@react-navigation/stack";
 import type {
@@ -51,7 +48,7 @@ import TranslatedError from "../../components/TranslatedError";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import logger from "../../logger";
-import { ScreenName } from "../../const";
+import { ScreenName } from "~/const";
 import { navigateToSelectDevice } from "../../screens/ConnectDevice";
 import { TrackScreen, track } from "../../analytics";
 import { renderLoading } from "../../components/DeviceAction/rendering";
@@ -60,6 +57,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+
 const transactionAction = createTransactionAction(connectApp);
 
 const openAction = createOpenAction(connectApp);

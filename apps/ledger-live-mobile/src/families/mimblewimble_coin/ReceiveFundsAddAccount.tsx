@@ -3,7 +3,7 @@ import { FlatList } from "react-native";
 import { concat, from } from "rxjs";
 import type { Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
@@ -29,9 +29,13 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
 import Animation from "~/components/Animation";
-import lottie from "../../screens/ReceiveFunds/assets/lottie.json";
+import lottie from "~/screens/ReceiveFunds/assets/lottie.json";
 import GradientContainer from "~/components/GradientContainer";
 import { useTheme } from "styled-components/native";
+import { walletSelector } from "~/reducers/wallet";
+import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { accountsSelector } from "~/reducers/accounts";
 import styled from "styled-components/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
@@ -40,7 +44,6 @@ import { TitleText } from "../../components/DeviceAction/rendering";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useTheme as useThemeNavigation } from "@react-navigation/native";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 
 const DeviceActionContainer = styled(Flex).attrs({
   flexDirection: "row",
@@ -110,6 +113,7 @@ function AddAccountsAccounts(props: Props) {
   const [rootPublicKeyRequested, setRootPublicKeyRequested] = useState(false);
   const [accountIndex, setAccountIndex] = useState(0);
 
+  const existingAccounts = useSelector(accountsSelector);
   const scanSubscription = useRef<Subscription | null>();
 
   const { currency, device } = route.params || {};
@@ -148,7 +152,7 @@ function AddAccountsAccounts(props: Props) {
         }
       }
     },
-    [dispatch, navigation, route.params, scannedAccounts, selectedAccount],
+    [dispatch, navigation, route.params, scannedAccounts, existingAccounts, selectedAccount],
   );
 
   useEffect(() => {
@@ -156,7 +160,7 @@ function AddAccountsAccounts(props: Props) {
       setAddingAccount(true);
       selectAccount(scannedAccounts[0], 4000);
     }
-  }, [scanning, scannedAccounts, selectAccount, currency]);
+  }, [scanning, scannedAccounts, selectAccount]);
 
   const startSubscription = useCallback(() => {
     const c = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
@@ -264,6 +268,8 @@ function AddAccountsAccounts(props: Props) {
     }
   }, [cancelled, navigation]);
 
+  const walletState = useSelector(walletSelector);
+
   const renderItem = useCallback(
     ({ item: account }: { item: Account }) => {
       const acc =
@@ -278,14 +284,16 @@ function AddAccountsAccounts(props: Props) {
             onPress={() => selectAccount(account)}
             AccountSubTitle={
               currency.type === "TokenCurrency" ? (
-                <LText color="neutral.c70">{account.name}</LText>
+                <LText color="neutral.c70">
+                  {accountNameWithDefaultSelector(walletState, account)}
+                </LText>
               ) : null
             }
           />
         </Flex>
       ) : null;
     },
-    [currency.id, currency.type, selectAccount],
+    [currency.id, currency.type, selectAccount, walletState],
   );
 
   const renderHeader = useCallback(
@@ -362,6 +370,7 @@ function ScanLoading({
   stopSubscription: () => void;
 }) {
   const { t } = useTranslation();
+  const numberOfAccountsFound = scannedAccounts?.length;
 
   return (
     <Loading
@@ -387,11 +396,11 @@ function ScanLoading({
           m={6}
           justifyContent="flex-end"
         >
-          {scannedAccounts?.length > 0 ? (
+          {numberOfAccountsFound > 0 ? (
             <>
               <LText textAlign="center" mb={6} variant="body" color="neutral.c80">
-                {t("transfer.receive.addAccount.foundAccounts", {
-                  count: scannedAccounts?.length,
+                {t("transfer.receive.addAccount.foundAccount", {
+                  count: numberOfAccountsFound,
                 })}
               </LText>
               <Button type="secondary" onPress={stopSubscription}>

@@ -11,6 +11,7 @@ import CopyLink from "../../components/CopyLink";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { localeSelector } from "../../reducers/settings";
 import NavigationScrollView from "../../components/NavigationScrollView";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const styles = StyleSheet.create({
   container: {
@@ -34,12 +35,16 @@ export default function ValidateReceiveSuccess({
   const { width } = getWindowDimensions();
   const qRSize = Math.round(width / 1.2 - 15);
   const locale = useSelector(localeSelector);
-  const formattedAmount = formatCurrencyUnit(mainAccount.unit, new BigNumber(operationAmount), {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-    locale,
-  });
+  const formattedAmount = formatCurrencyUnit(
+    useAccountUnit(mainAccount),
+    new BigNumber(operationAmount),
+    {
+      disableRounding: true,
+      alwaysShowSign: false,
+      showCode: true,
+      locale,
+    },
+  );
   return (
     <NavigationScrollView
       style={[styles.container, { flex: 1 }]}
