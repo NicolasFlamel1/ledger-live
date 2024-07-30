@@ -7,7 +7,12 @@ import broadcast from "../js-broadcast";
 import { scanAccounts, sync } from "../js-synchronisation";
 import { createTransaction, updateTransaction, prepareTransaction } from "../js-transaction";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
-import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
+} from "../serialization";
 
 const getPreloadStrategy = (): any => {};
 
@@ -36,6 +41,8 @@ const accountBridge: AccountBridge<Transaction> = {
   broadcast,
   assignFromAccountRaw,
   assignToAccountRaw,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
 };
 
 export default {

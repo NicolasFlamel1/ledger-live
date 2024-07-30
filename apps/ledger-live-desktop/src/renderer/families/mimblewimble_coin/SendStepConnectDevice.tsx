@@ -338,16 +338,18 @@ class StepConnectDevice extends PureComponent<Props, State> {
         (operation: Operation) => {
           if (!onConfirmationHandler) {
             onOperationBroadcasted(operation);
-            transitionTo("confirmation");
-          } else {
-            closeModal();
-            onConfirmationHandler(operation);
           }
           const mainAccount = account ? getMainAccount(account, parentAccount) : null;
           invariant(account && mainAccount, "No account given");
           updateAccountWithUpdater(mainAccount.id, (account: Account) => {
             return addSentTransactionToAccount(account, signedOperation);
           });
+          if (!onConfirmationHandler) {
+            transitionTo("confirmation");
+          } else {
+            closeModal();
+            onConfirmationHandler(operation);
+          }
         },
         (error: Error) => {
           if (!onFailHandler) {

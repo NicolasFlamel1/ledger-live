@@ -380,13 +380,6 @@ class StepReceiveFunds extends PureComponent<Props, State> {
                 },
                 (error: Error | null | undefined) => {
                   if (this.processTransactionSubscription) {
-                    this.updateState({
-                      transactionResponse: transactionResponse!,
-                      useTransactionResponseQrCode: !error,
-                      currentDevice: null,
-                      operationId: operation!.id,
-                      operationAmount: operation!.value,
-                    });
                     onChangeOnBack(undefined);
                     updateAccountWithUpdater(mainAccount.id, (account: Account) => {
                       return addReceivedTransactionToAccount(
@@ -395,6 +388,13 @@ class StepReceiveFunds extends PureComponent<Props, State> {
                         nextIdentifier!,
                         operation!,
                       );
+                    });
+                    this.updateState({
+                      transactionResponse: transactionResponse!,
+                      useTransactionResponseQrCode: !error,
+                      currentDevice: null,
+                      operationId: operation!.id,
+                      operationAmount: operation!.value,
                     });
                   }
                 },

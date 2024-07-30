@@ -81,7 +81,7 @@ const getAccountShape: GetAccountShape = async (
       initialAccount?.operations || [],
       initialAccount?.pendingOperations || [],
       cacheCleared ? [] : recentHeights,
-      initialAccount
+      initialAccount && !cacheCleared
         ? new BigNumber(initialAccount.blockHeight)
         : Consensus.getHardwareWalletStartingHeight(currency),
       nextIdentifier,
