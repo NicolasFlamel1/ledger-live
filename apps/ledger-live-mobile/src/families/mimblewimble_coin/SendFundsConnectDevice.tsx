@@ -114,10 +114,6 @@ function useSignedTxHandler({
           "transaction-summary",
           `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(operation)}`,
         );
-        (navigation as StackNavigationProp<{ [key: string]: object }>).replace(
-          route.name.replace("ConnectDevice", "ValidationSuccess"),
-          { ...route.params, result: operation },
-        );
         dispatch(
           updateAccountWithUpdater({
             accountId: mainAccount.id,
@@ -128,6 +124,10 @@ function useSignedTxHandler({
               );
             },
           }),
+        );
+        (navigation as StackNavigationProp<{ [key: string]: object }>).replace(
+          route.name.replace("ConnectDevice", "ValidationSuccess"),
+          { ...route.params, result: operation },
         );
       } catch (error) {
         if (

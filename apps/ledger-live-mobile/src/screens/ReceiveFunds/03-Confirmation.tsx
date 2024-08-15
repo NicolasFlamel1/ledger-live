@@ -157,9 +157,17 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const completeAction = useCompleteActionCallback();
 
   useEffect(() => {
+    if (
+      currency &&
+      currency.type === "CryptoCurrency" &&
+      Object.keys(byFamily).includes(currency.family) &&
+      byFamily[currency.family as keyof typeof byFamily]
+    ) {
+      return;
+    }
     completeAction(PostOnboardingActionId.assetsTransfer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currency]);
 
   useEffect(() => {
     if (
