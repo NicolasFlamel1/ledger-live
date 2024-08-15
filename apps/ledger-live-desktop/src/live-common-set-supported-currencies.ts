@@ -63,6 +63,8 @@ setSupportedCurrencies([
   "epic_cash",
   "epic_cash_floonet",
   "near",
+  "icon",
+  "icon_berlin_testnet",
   "optimism",
   "optimism_sepolia",
   "arbitrum",
@@ -96,4 +98,5 @@ setSupportedCurrencies([
   "blast_sepolia",
   "scroll",
   "scroll_sepolia",
+  "ton",
 ]);

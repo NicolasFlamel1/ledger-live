@@ -20,6 +20,8 @@ import { resolver as stellar } from "../families/stellar/setup";
 import { resolver as tezos } from "../families/tezos/setup";
 import { resolver as tron } from "../families/tron/setup";
 import { resolver as xrp } from "../families/xrp/setup";
+import { resolver as icon } from "../families/icon/setup";
+import { resolver as ton } from "../families/ton/setup";
 
 export default {
   casper,
@@ -44,4 +46,6 @@ export default {
   tezos,
   tron,
   xrp,
+  icon,
+  ton,
 };

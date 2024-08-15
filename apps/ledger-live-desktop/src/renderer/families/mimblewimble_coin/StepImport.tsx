@@ -359,7 +359,7 @@ class StepImport extends PureComponent<StepProps, State> {
     return (
       <>
         <TrackPage category="AddAccounts" name="Step3" currencyName={currencyName} />
-        <Box data-test-id={"add-accounts-step-import-accounts-list"} mt={-4}>
+        <Box data-testid={"add-accounts-step-import-accounts-list"} mt={-4}>
           {sections.map(({ id, selectable, defaultSelected, data, supportLink }, i) => {
             return (
               <SectionAccounts
@@ -457,11 +457,11 @@ const StepImportFooter = (props: StepProps) => {
     <>
       <Box grow>{currency && <CurrencyBadge currency={currency} />}</Box>
       {scanStatus === "error" ? (
-        <RetryButton data-test-id={"add-accounts-import-retry-button"} primary onClick={onRetry} />
+        <RetryButton data-testid={"add-accounts-import-retry-button"} primary onClick={onRetry} />
       ) : null}
       {scanStatus === "scanning" ? (
         <Button
-          data-test-id={"add-accounts-import-stop-button"}
+          data-testid={"add-accounts-import-stop-button"}
           onClick={() => setScanStatus("finished")}
         >
           {t("common.stop")}
@@ -469,7 +469,7 @@ const StepImportFooter = (props: StepProps) => {
       ) : null}
       {scanStatus === "error" ? null : (
         <Button
-          data-test-id={"add-accounts-import-add-button"}
+          data-testid={"add-accounts-import-add-button"}
           primary
           disabled={scanStatus !== "finished"}
           onClick={onClick}

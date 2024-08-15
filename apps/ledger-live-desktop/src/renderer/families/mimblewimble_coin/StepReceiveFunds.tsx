@@ -769,7 +769,7 @@ class StepReceiveFundsFooter extends PureComponent<StepProps, FooterState> {
       <>
         {transactionResponse !== null ? (
           <Button
-            data-test-id="modal-continue-button"
+            data-testid="modal-continue-button"
             primary
             onClick={() => {
               closeModal();
@@ -794,7 +794,7 @@ class StepReceiveFundsFooter extends PureComponent<StepProps, FooterState> {
               <Trans i18nKey="common.reverify" />
             </Button>
             <Button
-              data-test-id="modal-continue-button"
+              data-testid="modal-continue-button"
               primary
               disabled={disableContinue}
               onClick={stepReceiveFunds.onContinue}

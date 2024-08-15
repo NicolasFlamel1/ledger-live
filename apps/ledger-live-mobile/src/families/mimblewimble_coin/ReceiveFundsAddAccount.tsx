@@ -109,7 +109,6 @@ function AddAccountsAccounts(props: Props) {
   const [error, setError] = useState(null);
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [cancelled, setCancelled] = useState(false);
-  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const [rootPublicKeyRequested, setRootPublicKeyRequested] = useState(false);
   const [accountIndex, setAccountIndex] = useState(0);
 
@@ -125,42 +124,32 @@ function AddAccountsAccounts(props: Props) {
   }, []);
 
   const selectAccount = useCallback(
-    (account: Account, addingAccountDelayMs?: number) => {
-      if (!selectedAccount) {
-        setSelectedAccount(account.id);
-        dispatch(
-          addAccountsAction({
-            existingAccounts,
-            scannedAccounts,
-            selectedIds: [account.id],
-            renamings: {},
-          }),
-        );
-        if (addingAccountDelayMs) {
-          setTimeout(() => {
-            setAddingAccount(false);
-            navigation.navigate(ScreenName.ReceiveConfirmation, {
-              ...route.params,
-              accountId: account.id,
-            });
-          }, addingAccountDelayMs);
-        } else {
+    (account: Account, currentScannedAccounts: Account[], addingAccountDelayMs?: number) => {
+      dispatch(
+        addAccountsAction({
+          existingAccounts,
+          scannedAccounts: currentScannedAccounts,
+          selectedIds: [account.id],
+          renamings: {},
+        }),
+      );
+      if (addingAccountDelayMs) {
+        setTimeout(() => {
+          setAddingAccount(false);
           navigation.navigate(ScreenName.ReceiveConfirmation, {
             ...route.params,
             accountId: account.id,
           });
-        }
+        }, addingAccountDelayMs);
+      } else {
+        navigation.navigate(ScreenName.ReceiveConfirmation, {
+          ...route.params,
+          accountId: account.id,
+        });
       }
     },
-    [dispatch, navigation, route.params, scannedAccounts, existingAccounts, selectedAccount],
+    [dispatch, navigation, route.params, existingAccounts],
   );
-
-  useEffect(() => {
-    if (!scanning && scannedAccounts.length === 1) {
-      setAddingAccount(true);
-      selectAccount(scannedAccounts[0], 4000);
-    }
-  }, [scanning, scannedAccounts, selectAccount]);
 
   const startSubscription = useCallback(() => {
     const c = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
@@ -225,6 +214,13 @@ function AddAccountsAccounts(props: Props) {
       complete: () => {
         setRootPublicKeyRequested(false);
         setScanning(false);
+        setScannedAccounts(prevScannedAccounts => {
+          if (prevScannedAccounts.length === 1) {
+            setAddingAccount(true);
+            selectAccount(prevScannedAccounts[0], prevScannedAccounts, 4000);
+          }
+          return prevScannedAccounts;
+        });
       },
       error: error => {
         setRootPublicKeyRequested(false);
@@ -232,7 +228,7 @@ function AddAccountsAccounts(props: Props) {
         setError(error);
       },
     });
-  }, [currency, device.deviceId]);
+  }, [currency, device.deviceId, selectAccount]);
 
   const restartSubscription = useCallback(() => {
     const c = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
@@ -281,7 +277,7 @@ function AddAccountsAccounts(props: Props) {
         <Flex px={6}>
           <AccountCard
             account={acc}
-            onPress={() => selectAccount(account)}
+            onPress={() => selectAccount(account, scannedAccounts)}
             AccountSubTitle={
               currency.type === "TokenCurrency" ? (
                 <LText color="neutral.c70">
@@ -293,7 +289,7 @@ function AddAccountsAccounts(props: Props) {
         </Flex>
       ) : null;
     },
-    [currency.id, currency.type, selectAccount, walletState],
+    [currency.id, currency.type, scannedAccounts, selectAccount, walletState],
   );
 
   const renderHeader = useCallback(

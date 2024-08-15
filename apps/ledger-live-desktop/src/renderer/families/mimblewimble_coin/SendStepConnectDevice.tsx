@@ -537,7 +537,7 @@ class StepConnectDeviceFooter extends PureComponent<StepProps, FooterState> {
         !finalizingTransaction &&
         transactionData !== null ? (
           <Button
-            data-test-id="modal-continue-button"
+            data-testid="modal-continue-button"
             primary
             disabled={disableContinue}
             onClick={stepConnectDevice.onContinue}
