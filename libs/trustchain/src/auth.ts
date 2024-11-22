@@ -32,8 +32,8 @@ export async function genericWithJWT<T>(
     policy === "no-cache" || !initialJWT
       ? await auth()
       : policy === "refresh"
-        ? await refresh(initialJWT)
-        : initialJWT;
+      ? await refresh(initialJWT)
+      : initialJWT;
 
   return job(jwt).catch(async e => {
     // JWT expiration handling: if the function fails, we will recover a valid jwt accordingly to spec. https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/4207083687/TCH+Usage+documentation#JWT-expiration-handling

@@ -68,8 +68,8 @@ describe("CloudSyncSDK basics", () => {
           postCounter % 3 === 0
             ? {}
             : postCounter % 3 === 1
-              ? { info: "lld/0.0.0" }
-              : { info: null };
+            ? { info: "lld/0.0.0" }
+            : { info: null };
         return HttpResponse.json({
           status: "out-of-sync",
           version: storedVersion,

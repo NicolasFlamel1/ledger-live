@@ -23,7 +23,9 @@ jest.mock("@ledgerhq/live-nft/api/simplehash", () => ({
     }
 
     return Promise.resolve({
-      message: `${opts.refreshType === "nft" ? `NFT ${opts.tokenId}, ` : ""}Contract ${opts.contractAddress} on ${opts.chainId} refreshed`,
+      message: `${opts.refreshType === "nft" ? `NFT ${opts.tokenId}, ` : ""}Contract ${
+        opts.contractAddress
+      } on ${opts.chainId} refreshed`,
     });
   }),
 }));

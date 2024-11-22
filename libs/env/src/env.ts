@@ -109,7 +109,7 @@ const envDefinitions = {
   },
   API_GRIN_NODE: {
     parser: stringParser,
-    def: "https://grinnode.live:3413",
+    def: "https://grincoin.org",
     desc: "Node for Grin",
   },
   API_GRIN_TESTNET_NODE: {

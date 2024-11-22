@@ -33,7 +33,9 @@ export function useTrustchainSdk() {
     const applicationId = 16;
     const hash = getEnv("USER_ID").slice(0, 5);
 
-    const name = `${platformMap[Platform.OS] ?? Platform.OS} ${Platform.Version} ${hash ? " " + hash : ""}`;
+    const name = `${platformMap[Platform.OS] ?? Platform.OS} ${Platform.Version} ${
+      hash ? " " + hash : ""
+    }`;
     return { applicationId, name, apiBaseUrl: trustchainApiBaseUrl };
   }, [trustchainApiBaseUrl]);
 

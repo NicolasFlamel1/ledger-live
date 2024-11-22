@@ -127,13 +127,11 @@ const SwapForm = () => {
   const swapError = keepTronAccountAliveError
     ? keepTronAccountAliveError
     : swapTransaction.fromAmountError instanceof NotEnoughBalance
-      ? new NotEnoughBalanceSwap(swapTransaction.fromAmountError?.message)
-      : swapTransaction.fromAmountError ||
-        exchangeRatesState?.error ||
-        maybeTezosAccountUnrevealedAccount(swapTransaction) ||
-        (ptxSwapReceiveTRC20WithoutTrx?.enabled
-          ? undefined
-          : maybeTronEmptyAccount(swapTransaction));
+    ? new NotEnoughBalanceSwap(swapTransaction.fromAmountError?.message)
+    : swapTransaction.fromAmountError ||
+      exchangeRatesState?.error ||
+      maybeTezosAccountUnrevealedAccount(swapTransaction) ||
+      (ptxSwapReceiveTRC20WithoutTrx?.enabled ? undefined : maybeTronEmptyAccount(swapTransaction));
 
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);

@@ -54,9 +54,9 @@ const dummyContext: WalletSyncDataManagerResolutionContext = {
       initial.id === account4unsupported.id
         ? throwError(() => new Error("simulate sync failure"))
         : // this mock bridge will migrate 0->1 on versions
-          initial.id.startsWith("mock:0")
-          ? of(acc => ({ ...acc, id: acc.id.replace("mock:0", "mock:1") }))
-          : of(acc => acc),
+        initial.id.startsWith("mock:0")
+        ? of(acc => ({ ...acc, id: acc.id.replace("mock:0", "mock:1") }))
+        : of(acc => acc),
     receive: () => {
       throw new Error("not implemented");
     },

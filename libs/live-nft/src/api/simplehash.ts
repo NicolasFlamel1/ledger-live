@@ -153,7 +153,9 @@ export type RefreshOpts = {
  * Refresh Metada of Contract or Nft using SimpleHash API.
  */
 export async function refreshMetadata(opts: RefreshOpts): Promise<SimpleHashRefreshResponse> {
-  const url = `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/refresh/${opts.chainId}/${opts.contractAddress}`;
+  const url = `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/refresh/${opts.chainId}/${
+    opts.contractAddress
+  }`;
   const { data } = await network<SimpleHashRefreshResponse>({
     method: "POST",
     url,

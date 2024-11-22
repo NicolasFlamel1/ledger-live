@@ -16,8 +16,10 @@ export type AppName = string;
 /**
  * The key used to store the application data in the device storage, is a combination of the device model ID and the application name.
  */
-export type AppStorageKey =
-  `${Exclude<DeviceModelId, DeviceModelId.blue | DeviceModelId.nanoS>}-${AppName}`;
+export type AppStorageKey = `${Exclude<
+  DeviceModelId,
+  DeviceModelId.blue | DeviceModelId.nanoS
+>}-${AppName}`;
 
 export type AppStorageType = {
   appDataInfo: AppStorageInfo;
