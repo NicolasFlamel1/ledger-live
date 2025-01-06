@@ -2496,12 +2496,14 @@ export default class Slate {
         }
         if (
           "coin_type" in serializedSlate &&
+          serializedSlate.coin_type !== null &&
           serializedSlate.coin_type !== Slate.getCoinType(cryptocurrency)
         ) {
           return null;
         }
         if (
           "network_type" in serializedSlate &&
+          serializedSlate.network_type !== null &&
           serializedSlate.network_type !== Slate.getNetworkType(cryptocurrency)
         ) {
           return null;
