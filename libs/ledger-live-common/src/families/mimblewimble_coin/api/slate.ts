@@ -2036,8 +2036,8 @@ export default class Slate {
       case "mimblewimble_coin":
       case "mimblewimble_coin_floonet":
         if (
-          recipientSupportedVersions &&
-          recipientSupportedVersions.indexOf("SP") !== -1 &&
+          ((recipientSupportedVersions && recipientSupportedVersions.indexOf("SP") !== -1) ||
+            (recipientSupportedVersions === null && this.hasPaymentProof())) &&
           this.getKernelFeatures() === SlateKernel.Features.PLAIN
         ) {
           return "SP";
