@@ -200,11 +200,11 @@ export default class Consensus {
 
   public static getMaximumFee(cryptocurrency: CryptoCurrency): number {
     switch (cryptocurrency.id) {
-      case "mimblewimble_coin":
-      case "mimblewimble_coin_floonet":
       case "epic_cash":
       case "epic_cash_floonet":
         return Number.POSITIVE_INFINITY;
+      case "mimblewimble_coin":
+      case "mimblewimble_coin_floonet":
       case "grin":
       case "grin_testnet":
         return Math.pow(2, 40) - 1;
