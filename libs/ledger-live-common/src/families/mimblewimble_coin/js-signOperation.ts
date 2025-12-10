@@ -505,6 +505,7 @@ export default ({
             const serializedSlate = await slate.serialize(Slate.Purpose.SEND_INITIAL, false);
             if (serializedSlate instanceof Buffer) {
               const response = await WalletApi.getSerializedSlateResponse(
+                account.currency,
                 recipientAddress,
                 await Slatepack.encode(
                   account,
@@ -547,6 +548,7 @@ export default ({
               }
             } else {
               serializedSlateResponse = (await WalletApi.getSerializedSlateResponse(
+                account.currency,
                 recipientAddress,
                 serializedSlate,
               )) as { [key: string]: any };

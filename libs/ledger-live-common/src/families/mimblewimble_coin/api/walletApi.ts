@@ -1,4 +1,5 @@
 import JsonRpc from "./jsonRpc";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   MimbleWimbleCoinNoResponseFromRecipient,
   MimbleWimbleCoinUnsupportedResponseFromRecipient,
@@ -50,16 +51,30 @@ export default class WalletApi {
   }
 
   public static async getSerializedSlateResponse(
+    cryptocurrency: CryptoCurrency,
     url: string,
     serializedSlate: { [key: string]: any } | string,
   ): Promise<{ [key: string]: any } | string> {
+    let parameters: Array<any>;
+    switch (cryptocurrency.id) {
+      case "mimblewimble_coin":
+      case "mimblewimble_coin_floonet":
+      case "grin":
+      case "grin_testnet":
+        parameters = [serializedSlate, null, null];
+        break;
+      case "epic_cash":
+      case "epic_cash_floonet":
+        parameters = [serializedSlate, null, null, null];
+        break;
+    }
     const serializedSlateResponse = await JsonRpc.sendRequest(
       url,
       WalletApi.getNoResponseError(),
       WalletApi.getInvalidResponseError(),
       false,
       "receive_tx",
-      [serializedSlate, null, null],
+      parameters,
     );
     return serializedSlateResponse;
   }
