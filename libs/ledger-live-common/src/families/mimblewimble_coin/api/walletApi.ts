@@ -32,21 +32,6 @@ export default class WalletApi {
         "Invalid supported slate versions from recipient",
       );
     }
-    const slatepackVersionIndex = supported_slate_versions.indexOf("SP");
-    if (slatepackVersionIndex !== -1) {
-      let removeSlatepackVersionSupport = false;
-      try {
-        const parsedUrl = new URL(url);
-        if (parsedUrl.hostname === "mwc.hotbit.io") {
-          removeSlatepackVersionSupport = true;
-        }
-      } catch (error: any) {
-        // eslint-disable-next-line no-empty
-      }
-      if (removeSlatepackVersionSupport) {
-        supported_slate_versions.splice(slatepackVersionIndex, 1);
-      }
-    }
     return supported_slate_versions;
   }
 
