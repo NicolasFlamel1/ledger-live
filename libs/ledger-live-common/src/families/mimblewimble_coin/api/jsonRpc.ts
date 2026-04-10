@@ -14,6 +14,7 @@ export default class JsonRpc {
 
   public static async sendRequest(
     url: string,
+    authorization: string | null,
     noResponseError: Error,
     invalidResponseError: Error,
     allowInternalErrorString: boolean,
@@ -42,6 +43,12 @@ export default class JsonRpc {
         adapter: httpAdapter,
       };
     }
+    let authorizationSettings: { [key: string]: any } = {};
+    if(authorization !== null) {
+      authorizationSettings = {
+        "Authorization": authorization,
+      };
+    }
     try {
       response = await axios({
         url: `${url}/v2/foreign`,
@@ -49,6 +56,7 @@ export default class JsonRpc {
         headers: {
           "Content-Type": "application/json",
           "Accept-Encoding": "gzip",
+          ...authorizationSettings,
         },
         timeout: JsonRpc.TIMEOUT_SECONDS * Common.MILLISECONDS_IN_A_SECOND,
         data: JSONBigNumber.stringify({

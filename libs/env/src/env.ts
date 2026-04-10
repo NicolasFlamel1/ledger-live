@@ -97,35 +97,65 @@ const envDefinitions = {
     def: "https://filecoin.coin.ledger.com",
     desc: "Filecoin API url",
   },
-  API_MIMBLEWIMBLE_COIN_NODE: {
+  API_MIMBLEWIMBLE_COIN_NODE_ADDRESS: {
     parser: stringParser,
     def: "https://mwc713.mwc.mw",
-    desc: "Node for MimbleWimble Coin",
+    desc: "Node address for MimbleWimble Coin",
   },
-  API_MIMBLEWIMBLE_COIN_FLOONET_NODE: {
+  API_MIMBLEWIMBLE_COIN_NODE_SECRET: {
+    parser: stringParser,
+    def: "11ne3EAUtOXVKwhxm84U",
+    desc: "Node secret for MimbleWimble Coin",
+  },
+  API_MIMBLEWIMBLE_COIN_FLOONET_NODE_ADDRESS: {
     parser: stringParser,
     def: "https://mwc713.floonet.mwc.mw",
-    desc: "Node for MimbleWimble Coin floonet",
+    desc: "Node address for MimbleWimble Coin floonet",
   },
-  API_GRIN_NODE: {
+  API_MIMBLEWIMBLE_COIN_FLOONET_NODE_SECRET: {
     parser: stringParser,
-    def: "https://grincoin.org",
-    desc: "Node for Grin",
+    def: "11ne3EAUtOXVKwhxm84U",
+    desc: "Node secret for MimbleWimble Coin floonet",
   },
-  API_GRIN_TESTNET_NODE: {
+  API_GRIN_NODE_ADDRESS: {
     parser: stringParser,
-    def: "http://localhost:13413",
-    desc: "Node for Grin testnet",
+    def: "https://api.grin.money",
+    desc: "Node address for Grin",
   },
-  API_EPIC_CASH_NODE: {
+  API_GRIN_NODE_SECRET: {
+    parser: stringParser,
+    def: "",
+    desc: "Node secret for Grin",
+  },
+  API_GRIN_TESTNET_NODE_ADDRESS: {
+    parser: stringParser,
+    def: "https://testapi.grin.money",
+    desc: "Node address for Grin testnet",
+  },
+  API_GRIN_TESTNET_NODE_SECRET: {
+    parser: stringParser,
+    def: "",
+    desc: "Node secret for Grin testnet",
+  },
+  API_EPIC_CASH_NODE_ADDRESS: {
     parser: stringParser,
     def: "https://node.epiccash.com:3413",
-    desc: "Node for Epic Cash",
+    desc: "Node address for Epic Cash",
   },
-  API_EPIC_CASH_FLOONET_NODE: {
+  API_EPIC_CASH_NODE_SECRET: {
     parser: stringParser,
-    def: "http://localhost:13413",
-    desc: "Node for Epic Cash floonet",
+    def: "",
+    desc: "Node secret for Epic Cash",
+  },
+  API_EPIC_CASH_FLOONET_NODE_ADDRESS: {
+    parser: stringParser,
+    def: "https://floonet.epiccash.com:13413",
+    desc: "Node address for Epic Cash floonet",
+  },
+  API_EPIC_CASH_FLOONET_NODE_SECRET: {
+    parser: stringParser,
+    def: "",
+    desc: "Node secret for Epic Cash floonet",
   },
   API_STACKS_ENDPOINT: {
     parser: stringParser,

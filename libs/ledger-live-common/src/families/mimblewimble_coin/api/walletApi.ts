@@ -14,6 +14,7 @@ export default class WalletApi {
   public static async getSupportedSlateVersions(url: string): Promise<string[]> {
     const { foreign_api_version, supported_slate_versions } = await JsonRpc.sendRequest(
       url,
+      null,
       WalletApi.getNoResponseError(),
       WalletApi.getInvalidResponseError(),
       false,
@@ -55,6 +56,7 @@ export default class WalletApi {
     }
     const serializedSlateResponse = await JsonRpc.sendRequest(
       url,
+      null,
       WalletApi.getNoResponseError(),
       WalletApi.getInvalidResponseError(),
       false,

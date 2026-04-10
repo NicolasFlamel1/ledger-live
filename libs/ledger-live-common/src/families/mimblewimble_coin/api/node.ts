@@ -19,7 +19,8 @@ export default class Node {
     tipHash: Buffer;
   }> {
     const { height, last_block_pushed } = await JsonRpc.sendRequest(
-      Node.getNodeUrl(cryptocurrency),
+      Node.getNodeAddress(cryptocurrency),
+      (Node.getNodeSecret(cryptocurrency) !== "") ? "Basic " + Buffer.from(Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency)).toString("base64") : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
@@ -39,7 +40,8 @@ export default class Node {
     timestamp: Date;
   }> {
     const { hash, timestamp } = await JsonRpc.sendRequest(
-      Node.getNodeUrl(cryptocurrency),
+      Node.getNodeAddress(cryptocurrency),
+      (Node.getNodeSecret(cryptocurrency) !== "") ? "Basic " + Buffer.from(Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency)).toString("base64") : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
@@ -61,7 +63,8 @@ export default class Node {
     endIndex: BigNumber;
   }> {
     const { last_retrieved_index, highest_index } = await JsonRpc.sendRequest(
-      Node.getNodeUrl(cryptocurrency),
+      Node.getNodeAddress(cryptocurrency),
+      (Node.getNodeSecret(cryptocurrency) !== "") ? "Basic " + Buffer.from(Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency)).toString("base64") : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
@@ -90,7 +93,8 @@ export default class Node {
     }[];
   }> {
     const { highest_index, last_retrieved_index, outputs } = await JsonRpc.sendRequest(
-      Node.getNodeUrl(cryptocurrency),
+      Node.getNodeAddress(cryptocurrency),
+      (Node.getNodeSecret(cryptocurrency) !== "") ? "Basic " + Buffer.from(Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency)).toString("base64") : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
@@ -137,7 +141,8 @@ export default class Node {
     proof: Buffer | null;
   }> {
     const response = await JsonRpc.sendRequest(
-      Node.getNodeUrl(cryptocurrency),
+      Node.getNodeAddress(cryptocurrency),
+      (Node.getNodeSecret(cryptocurrency) !== "") ? "Basic " + Buffer.from(Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency)).toString("base64") : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
@@ -159,7 +164,8 @@ export default class Node {
     height: BigNumber | null;
   }> {
     const response = await JsonRpc.sendRequest(
-      Node.getNodeUrl(cryptocurrency),
+      Node.getNodeAddress(cryptocurrency),
+      (Node.getNodeSecret(cryptocurrency) !== "") ? "Basic " + Buffer.from(Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency)).toString("base64") : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
@@ -178,7 +184,8 @@ export default class Node {
     let response: any;
     try {
       response = await JsonRpc.sendRequest(
-        Node.getNodeUrl(cryptocurrency),
+        Node.getNodeAddress(cryptocurrency),
+        (Node.getNodeSecret(cryptocurrency) !== "") ? "Basic " + Buffer.from(Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency)).toString("base64") : null,
         Node.getNoResponseError(cryptocurrency),
         Node.getInvalidResponseError(cryptocurrency),
         true,
@@ -204,20 +211,56 @@ export default class Node {
     }
   }
 
-  private static getNodeUrl(cryptocurrency: CryptoCurrency): string {
+  private static getNodeAddress(cryptocurrency: CryptoCurrency): string {
     switch (cryptocurrency.id) {
       case "mimblewimble_coin":
-        return getEnv("API_MIMBLEWIMBLE_COIN_NODE");
+        return getEnv("API_MIMBLEWIMBLE_COIN_NODE_ADDRESS");
       case "mimblewimble_coin_floonet":
-        return getEnv("API_MIMBLEWIMBLE_COIN_FLOONET_NODE");
+        return getEnv("API_MIMBLEWIMBLE_COIN_FLOONET_NODE_ADDRESS");
       case "grin":
-        return getEnv("API_GRIN_NODE");
+        return getEnv("API_GRIN_NODE_ADDRESS");
       case "grin_testnet":
-        return getEnv("API_GRIN_TESTNET_NODE");
+        return getEnv("API_GRIN_TESTNET_NODE_ADDRESS");
       case "epic_cash":
-        return getEnv("API_EPIC_CASH_NODE");
+        return getEnv("API_EPIC_CASH_NODE_ADDRESS");
       case "epic_cash_floonet":
-        return getEnv("API_EPIC_CASH_FLOONET_NODE");
+        return getEnv("API_EPIC_CASH_FLOONET_NODE_ADDRESS");
+      default:
+        throw new MimbleWimbleCoinInvalidParameters("Invalid cryptocurrency");
+    }
+  }
+
+  private static getNodeSecret(cryptocurrency: CryptoCurrency): string {
+    switch (cryptocurrency.id) {
+      case "mimblewimble_coin":
+        return getEnv("API_MIMBLEWIMBLE_COIN_NODE_SECRET");
+      case "mimblewimble_coin_floonet":
+        return getEnv("API_MIMBLEWIMBLE_COIN_FLOONET_NODE_SECRET");
+      case "grin":
+        return getEnv("API_GRIN_NODE_SECRET");
+      case "grin_testnet":
+        return getEnv("API_GRIN_TESTNET_NODE_SECRET");
+      case "epic_cash":
+        return getEnv("API_EPIC_CASH_NODE_SECRET");
+      case "epic_cash_floonet":
+        return getEnv("API_EPIC_CASH_FLOONET_NODE_SECRET");
+      default:
+        throw new MimbleWimbleCoinInvalidParameters("Invalid cryptocurrency");
+    }
+  }
+
+  private static getNodeUsername(cryptocurrency: CryptoCurrency): string {
+    switch (cryptocurrency.id) {
+      case "mimblewimble_coin":
+        return "mwcmain";
+      case "mimblewimble_coin_floonet":
+        return "mwcfloo";
+      case "grin":
+      case "grin_testnet":
+        return "grin";
+      case "epic_cash":
+      case "epic_cash_floonet":
+        return "epic";
       default:
         throw new MimbleWimbleCoinInvalidParameters("Invalid cryptocurrency");
     }
