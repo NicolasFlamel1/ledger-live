@@ -41,7 +41,7 @@ export default class WalletApi {
     url: string,
     serializedSlate: { [key: string]: any } | string,
   ): Promise<{ [key: string]: any } | string> {
-    let parameters: Array<any>;
+    let parameters: Array<any> = [];
     switch (cryptocurrency.id) {
       case "mimblewimble_coin":
       case "mimblewimble_coin_floonet":
