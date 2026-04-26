@@ -20,7 +20,12 @@ export default class Node {
   }> {
     const { height, last_block_pushed } = await JsonRpc.sendRequest(
       Node.getNodeAddress(cryptocurrency),
-      (Node.getNodeSecret(cryptocurrency) !== "") ? "Basic " + Buffer.from(Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency)).toString("base64") : null,
+      Node.getNodeSecret(cryptocurrency) !== ""
+        ? "Basic " +
+            Buffer.from(
+              Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency),
+            ).toString("base64")
+        : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
@@ -41,7 +46,12 @@ export default class Node {
   }> {
     const { hash, timestamp } = await JsonRpc.sendRequest(
       Node.getNodeAddress(cryptocurrency),
-      (Node.getNodeSecret(cryptocurrency) !== "") ? "Basic " + Buffer.from(Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency)).toString("base64") : null,
+      Node.getNodeSecret(cryptocurrency) !== ""
+        ? "Basic " +
+            Buffer.from(
+              Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency),
+            ).toString("base64")
+        : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
@@ -64,7 +74,12 @@ export default class Node {
   }> {
     const { last_retrieved_index, highest_index } = await JsonRpc.sendRequest(
       Node.getNodeAddress(cryptocurrency),
-      (Node.getNodeSecret(cryptocurrency) !== "") ? "Basic " + Buffer.from(Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency)).toString("base64") : null,
+      Node.getNodeSecret(cryptocurrency) !== ""
+        ? "Basic " +
+            Buffer.from(
+              Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency),
+            ).toString("base64")
+        : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
@@ -94,7 +109,12 @@ export default class Node {
   }> {
     const { highest_index, last_retrieved_index, outputs } = await JsonRpc.sendRequest(
       Node.getNodeAddress(cryptocurrency),
-      (Node.getNodeSecret(cryptocurrency) !== "") ? "Basic " + Buffer.from(Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency)).toString("base64") : null,
+      Node.getNodeSecret(cryptocurrency) !== ""
+        ? "Basic " +
+            Buffer.from(
+              Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency),
+            ).toString("base64")
+        : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
@@ -142,7 +162,12 @@ export default class Node {
   }> {
     const response = await JsonRpc.sendRequest(
       Node.getNodeAddress(cryptocurrency),
-      (Node.getNodeSecret(cryptocurrency) !== "") ? "Basic " + Buffer.from(Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency)).toString("base64") : null,
+      Node.getNodeSecret(cryptocurrency) !== ""
+        ? "Basic " +
+            Buffer.from(
+              Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency),
+            ).toString("base64")
+        : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
@@ -165,7 +190,12 @@ export default class Node {
   }> {
     const response = await JsonRpc.sendRequest(
       Node.getNodeAddress(cryptocurrency),
-      (Node.getNodeSecret(cryptocurrency) !== "") ? "Basic " + Buffer.from(Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency)).toString("base64") : null,
+      Node.getNodeSecret(cryptocurrency) !== ""
+        ? "Basic " +
+            Buffer.from(
+              Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency),
+            ).toString("base64")
+        : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
@@ -185,7 +215,12 @@ export default class Node {
     try {
       response = await JsonRpc.sendRequest(
         Node.getNodeAddress(cryptocurrency),
-        (Node.getNodeSecret(cryptocurrency) !== "") ? "Basic " + Buffer.from(Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency)).toString("base64") : null,
+        Node.getNodeSecret(cryptocurrency) !== ""
+          ? "Basic " +
+              Buffer.from(
+                Node.getNodeUsername(cryptocurrency) + ":" + Node.getNodeSecret(cryptocurrency),
+              ).toString("base64")
+          : null,
         Node.getNoResponseError(cryptocurrency),
         Node.getInvalidResponseError(cryptocurrency),
         true,

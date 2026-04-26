@@ -51,7 +51,7 @@ const buildOptimisticOperation = async (
     type: "OUT",
     value: slate.amount,
     fee: slate.fee,
-    senders: [account.freshAddress],
+    senders: slate.senderPaymentProofAddress !== null ? [slate.senderPaymentProofAddress] : [],
     recipients: [transaction.recipient.trim()],
     blockHash: null,
     blockHeight: null,

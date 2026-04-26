@@ -44,9 +44,9 @@ export default class JsonRpc {
       };
     }
     let authorizationSettings: { [key: string]: any } = {};
-    if(authorization !== null) {
+    if (authorization !== null) {
       authorizationSettings = {
-        "Authorization": authorization,
+        Authorization: authorization,
       };
     }
     try {

@@ -34,9 +34,9 @@ export default class Consensus {
     switch (cryptocurrency.id) {
       case "mimblewimble_coin":
       case "mimblewimble_coin_floonet":
-        return new BigNumber(`1E${cryptocurrency.units[0].magnitude.toFixed()}`).dividedToIntegerBy(
-          1000,
-        ).dividedToIntegerBy(1000);
+        return new BigNumber(`1E${cryptocurrency.units[0].magnitude.toFixed()}`)
+          .dividedToIntegerBy(1000)
+          .dividedToIntegerBy(1000);
       case "grin":
       case "grin_testnet":
         return new BigNumber(`1E${cryptocurrency.units[0].magnitude.toFixed()}`)
