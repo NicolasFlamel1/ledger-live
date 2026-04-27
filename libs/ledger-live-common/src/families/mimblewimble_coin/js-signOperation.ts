@@ -474,6 +474,7 @@ export default ({
                 if (
                   slate.recipientPaymentProofAddress !== null &&
                   senderAddress !== null &&
+                  slate.recipientPaymentProofAddress.length === Tor.ADDRESS_LENGTH &&
                   slate.recipientPaymentProofAddress !== senderAddress
                 ) {
                   throw new MimbleWimbleCoinUnsupportedResponseFromRecipient(
@@ -528,6 +529,7 @@ export default ({
                 if (
                   slate.recipientPaymentProofAddress !== null &&
                   senderAddress !== null &&
+                  slate.recipientPaymentProofAddress.length === Tor.ADDRESS_LENGTH &&
                   slate.recipientPaymentProofAddress !== senderAddress
                 ) {
                   throw new MimbleWimbleCoinUnsupportedResponseFromRecipient(

@@ -16,6 +16,7 @@ import Slate from "./api/slate";
 import SlateParticipant from "./api/slateParticipant";
 import SlateKernel from "./api/slateKernel";
 import SlateOutput from "./api/slateOutput";
+import Tor from "./api/tor";
 import type { MimbleWimbleCoinAccount, MimbleWimbleCoinOperationExtra } from "./types";
 import { fromAccountRaw } from "../../account/serialization";
 import Node from "./api/node";
@@ -169,6 +170,7 @@ export default (
             if (
               slate.senderPaymentProofAddress !== null &&
               senderAddress !== null &&
+              slate.senderPaymentProofAddress.length === Tor.ADDRESS_LENGTH &&
               slate.senderPaymentProofAddress !== senderAddress
             ) {
               throw new MimbleWimbleCoinUnsupportedSlate("Invalid slate payment proof");
