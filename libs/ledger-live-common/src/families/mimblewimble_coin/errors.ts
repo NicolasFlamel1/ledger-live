@@ -16,6 +16,18 @@ export const MimbleWimbleCoinNoResponseFromRecipient = createCustomErrorClass(
   "MimbleWimbleCoinNoResponseFromRecipient",
 );
 
+export const MimbleWimbleCoinInvalidResponseFromRecipient = createCustomErrorClass(
+  "MimbleWimbleCoinInvalidResponseFromRecipient",
+);
+
+export const MimbleWimbleCoinInvalidResponseFromRecipientUnknownReason = createCustomErrorClass(
+  "MimbleWimbleCoinInvalidResponseFromRecipientUnknownReason",
+);
+
+export const MimbleWimbleCoinNotFoundResponseFromRecipient = createCustomErrorClass(
+  "MimbleWimbleCoinNotFoundResponseFromRecipient",
+);
+
 export const MimbleWimbleCoinUnsupportedResponseFromRecipient = createCustomErrorClass(
   "MimbleWimbleCoinUnsupportedResponseFromRecipient",
 );

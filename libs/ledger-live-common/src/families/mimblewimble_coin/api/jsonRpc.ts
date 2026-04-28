@@ -17,7 +17,8 @@ export default class JsonRpc {
     authorization: string | null,
     noResponseError: Error,
     invalidResponseError: Error,
-    allowInternalErrorString: boolean,
+    notFoundResponseError: Error,
+    allowErrorString: boolean,
     method: string,
     parameters: any[] = [],
     parser: (string) => { [key: string]: any } = JSONBigNumber.parse,
@@ -75,24 +76,45 @@ export default class JsonRpc {
         ...platformSettings,
       });
     } catch (error: any) {
-      throw error.response || error.status ? invalidResponseError : noResponseError;
+      throw error.response || error.status
+        ? error.status === 404
+          ? notFoundResponseError
+          : invalidResponseError
+        : noResponseError;
     }
     if (
       !Common.isPureObject(response.data) ||
       "error" in response.data ||
       !("result" in response.data)
     ) {
+      if (
+        allowErrorString &&
+        "error" in response.data &&
+        Common.isPureObject(response.data.error) &&
+        "message" in response.data.error &&
+        typeof response.data.error.message === "string"
+      ) {
+        throw response.data.error.message;
+      }
       throw invalidResponseError;
     }
     if (
-      allowInternalErrorString &&
+      allowErrorString &&
       Common.isPureObject(response.data.result) &&
       "Err" in response.data.result &&
-      Common.isPureObject(response.data.result.Err) &&
-      "Internal" in response.data.result.Err &&
-      typeof response.data.result.Err.Internal === "string"
+      Common.isPureObject(response.data.result.Err)
     ) {
-      throw response.data.result.Err.Internal;
+      if (
+        "Internal" in response.data.result.Err &&
+        typeof response.data.result.Err.Internal === "string"
+      ) {
+        throw response.data.result.Err.Internal;
+      } else if (
+        "Fee" in response.data.result.Err &&
+        typeof response.data.result.Err.Fee === "string"
+      ) {
+        throw response.data.result.Err.Fee;
+      }
     }
     return Common.isPureObject(response.data.result) && "Ok" in response.data.result
       ? Array.isArray(response.data.result.Ok)

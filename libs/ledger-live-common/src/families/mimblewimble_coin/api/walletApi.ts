@@ -2,6 +2,8 @@ import JsonRpc from "./jsonRpc";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   MimbleWimbleCoinNoResponseFromRecipient,
+  MimbleWimbleCoinInvalidResponseFromRecipientUnknownReason,
+  MimbleWimbleCoinNotFoundResponseFromRecipient,
   MimbleWimbleCoinUnsupportedResponseFromRecipient,
 } from "../errors";
 import Common from "./common";
@@ -17,6 +19,7 @@ export default class WalletApi {
       null,
       WalletApi.getNoResponseError(),
       WalletApi.getInvalidResponseError(),
+      WalletApi.getNotFoundResponseError(),
       false,
       "check_version",
     );
@@ -59,7 +62,8 @@ export default class WalletApi {
       null,
       WalletApi.getNoResponseError(),
       WalletApi.getInvalidResponseError(),
-      false,
+      WalletApi.getNotFoundResponseError(),
+      true,
       "receive_tx",
       parameters,
     );
@@ -71,6 +75,12 @@ export default class WalletApi {
   }
 
   private static getInvalidResponseError(): Error {
-    return new MimbleWimbleCoinUnsupportedResponseFromRecipient("Invalid response from recipient");
+    return new MimbleWimbleCoinInvalidResponseFromRecipientUnknownReason(
+      "Invalid response from recipient",
+    );
+  }
+
+  private static getNotFoundResponseError(): Error {
+    return new MimbleWimbleCoinNotFoundResponseFromRecipient("Not Found response from recipient");
   }
 }

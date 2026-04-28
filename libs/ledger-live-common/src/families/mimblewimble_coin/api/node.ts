@@ -28,6 +28,7 @@ export default class Node {
         : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
+      Node.getInvalidResponseError(cryptocurrency),
       false,
       "get_tip",
     );
@@ -53,6 +54,7 @@ export default class Node {
             ).toString("base64")
         : null,
       Node.getNoResponseError(cryptocurrency),
+      Node.getInvalidResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
       "get_header",
@@ -81,6 +83,7 @@ export default class Node {
             ).toString("base64")
         : null,
       Node.getNoResponseError(cryptocurrency),
+      Node.getInvalidResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
       "get_pmmr_indices",
@@ -116,6 +119,7 @@ export default class Node {
             ).toString("base64")
         : null,
       Node.getNoResponseError(cryptocurrency),
+      Node.getInvalidResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
       false,
       "get_unspent_outputs",
@@ -170,6 +174,7 @@ export default class Node {
         : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
+      Node.getInvalidResponseError(cryptocurrency),
       false,
       "get_outputs",
       [[commitment.toString("hex")], null, null, true, false],
@@ -198,6 +203,7 @@ export default class Node {
         : null,
       Node.getNoResponseError(cryptocurrency),
       Node.getInvalidResponseError(cryptocurrency),
+      Node.getInvalidResponseError(cryptocurrency),
       false,
       "get_kernel",
       [excess.toString("hex"), startHeight, endHeight],
@@ -222,6 +228,7 @@ export default class Node {
               ).toString("base64")
           : null,
         Node.getNoResponseError(cryptocurrency),
+        Node.getInvalidResponseError(cryptocurrency),
         Node.getInvalidResponseError(cryptocurrency),
         true,
         "push_transaction",

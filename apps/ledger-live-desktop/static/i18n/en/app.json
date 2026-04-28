@@ -6123,6 +6123,18 @@
       "title": "No response from the recipient",
       "description": "Please verify that the recipient is listening at the address and retry"
     },
+    "MimbleWimbleCoinInvalidResponseFromRecipient": {
+      "title": "Invalid response from the recipient",
+      "description": "Recipient's response: {{reason}}"
+    },
+    "MimbleWimbleCoinInvalidResponseFromRecipientUnknownReason": {
+      "title": "Invalid response from the recipient",
+      "description": ""
+    },
+    "MimbleWimbleCoinNotFoundResponseFromRecipient": {
+      "title": "Not found response from the recipient",
+      "description": ""
+    },
     "MimbleWimbleCoinUnsupportedResponseFromRecipient": {
       "title": "Unsupported response from the recipient",
       "description": ""

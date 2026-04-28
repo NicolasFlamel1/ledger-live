@@ -23,6 +23,7 @@ import SlateParticipant from "./api/slateParticipant";
 import {
   MimbleWimbleCoinInvalidParameters,
   MimbleWimbleCoinUnsupportedResponseFromNode,
+  MimbleWimbleCoinInvalidResponseFromRecipient,
   MimbleWimbleCoinUnsupportedResponseFromRecipient,
   MimbleWimbleCoinCreatingSlateFailed,
   MimbleWimbleCoinFinalizingSlateFailed,
@@ -505,16 +506,30 @@ export default ({
           } else {
             const serializedSlate = await slate.serialize(Slate.Purpose.SEND_INITIAL, false);
             if (serializedSlate instanceof Buffer) {
-              const response = await WalletApi.getSerializedSlateResponse(
-                account.currency,
-                recipientAddress,
-                await Slatepack.encode(
-                  account,
-                  serializedSlate,
-                  mimbleWimbleCoin,
-                  slate.recipientPaymentProofAddress,
-                ),
-              );
+              let response: { [key: string]: any } | string | null;
+              try {
+                response = await WalletApi.getSerializedSlateResponse(
+                  account.currency,
+                  recipientAddress,
+                  await Slatepack.encode(
+                    account,
+                    serializedSlate,
+                    mimbleWimbleCoin,
+                    slate.recipientPaymentProofAddress,
+                  ),
+                );
+              } catch (error: any) {
+                if (typeof error === "string") {
+                  throw new MimbleWimbleCoinInvalidResponseFromRecipient(
+                    "Failed getting serialized slate response from recipient",
+                    {
+                      reason: error,
+                    },
+                  );
+                } else {
+                  throw error;
+                }
+              }
               try {
                 let senderAddress: string | null;
                 ({ serializedSlate: serializedSlateResponse, senderAddress } =
@@ -549,11 +564,24 @@ export default ({
                 throw error;
               }
             } else {
-              serializedSlateResponse = (await WalletApi.getSerializedSlateResponse(
-                account.currency,
-                recipientAddress,
-                serializedSlate,
-              )) as { [key: string]: any };
+              try {
+                serializedSlateResponse = (await WalletApi.getSerializedSlateResponse(
+                  account.currency,
+                  recipientAddress,
+                  serializedSlate,
+                )) as { [key: string]: any };
+              } catch (error: any) {
+                if (typeof error === "string") {
+                  throw new MimbleWimbleCoinInvalidResponseFromRecipient(
+                    "Failed getting serialized slate response from recipient",
+                    {
+                      reason: error,
+                    },
+                  );
+                } else {
+                  throw error;
+                }
+              }
             }
           }
           await mimbleWimbleCoin.startTransaction(
