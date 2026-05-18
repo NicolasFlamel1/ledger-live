@@ -119,7 +119,7 @@ const envDefinitions = {
   },
   API_GRIN_NODE_ADDRESS: {
     parser: stringParser,
-    def: "https://api.grin.money",
+    def: "https://grincoin.org",
     desc: "Node address for Grin",
   },
   API_GRIN_NODE_SECRET: {
@@ -129,7 +129,7 @@ const envDefinitions = {
   },
   API_GRIN_TESTNET_NODE_ADDRESS: {
     parser: stringParser,
-    def: "https://testapi.grin.money",
+    def: "https://testnet.grincoin.org",
     desc: "Node address for Grin testnet",
   },
   API_GRIN_TESTNET_NODE_SECRET: {
